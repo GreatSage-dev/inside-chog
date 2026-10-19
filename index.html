@@ -2474,8 +2474,8 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
 
       // Auto-Jump Pads on the floor in Phase 1
       wavePads = [
-        { x: 295, y: 410, w: 46, boostVy: -11.8, color: "#ffd166", label: "AUTO-PAD" },
-        { x: 450, y: 345, w: 42, boostVy: -11.4, color: "#ff99d3", label: "PINK PAD" }
+        { x: 330, y: 410, w: 46, boostVy: -11.8, color: "#ffd166", label: "AUTO-PAD", lastTrig: -99 },
+        { x: 450, y: 345, w: 42, boostVy: -11.4, color: "#ff99d3", label: "PINK PAD", lastTrig: -99 }
       ];
 
       // Floating Jump Orbs (Rings) across all 3 phases!
@@ -2487,7 +2487,7 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
 
       // Floor hazard in Phase 1 under the block & orb bridge (jump or take pad over it!)
       waveObstacles.push({
-        x: 395,
+        x: 405,
         y: 404,
         r: 22,
         angle: 0
@@ -2630,7 +2630,7 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         "CHOG #" + currentCartridge.tokenId + " · " + getModeDisplayName(selectedMode).toUpperCase();
       document.getElementById("arenaPool").textContent = effectiveBounty + " MON";
       document.getElementById("arenaStageBadge").textContent =
-        "STAGE " + currentStageLevel + " · ATTEMPT " + attemptCount;
+        "STG " + currentStageLevel + " · ATT " + attemptCount;
 
       coinsCollected = 0;
       coinSlots = [false, false, false];
@@ -2674,7 +2674,7 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       attemptCount++;
       document.getElementById("arenaOverlay").classList.remove("visible");
       document.getElementById("arenaStageBadge").textContent =
-        "STAGE " + currentStageLevel + " · ATTEMPT " + attemptCount;
+        "STG " + currentStageLevel + " · ATT " + attemptCount;
 
       particles = [];
       shockwaves = [];
@@ -2959,11 +2959,13 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         ctx.fillText(pad.label, pad.x - 2, pad.y - 14);
 
         if (
+          frameTick - (pad.lastTrig || -99) > 22 &&
           heistPlayer.x + 14 > pad.x &&
           heistPlayer.x - 14 < pad.x + pad.w &&
           Math.abs(heistPlayer.y + heistPlayer.radius - pad.y) < 16 &&
           heistPlayer.vy >= -2
         ) {
+          pad.lastTrig = frameTick;
           heistPlayer.vy = pad.boostVy;
           heistPlayer.isGrounded = false;
           heistPlayer.jumpsLeft = 2;
@@ -3326,11 +3328,14 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
           ctx.fillText(pad.label, sx - 2, pad.y - 14);
         }
         if (
+          wavePlayer.hasLaunched &&
+          frameTick - (pad.lastTrig || -99) > 22 &&
           playerWorldX + 14 > pad.x &&
           playerWorldX - 14 < pad.x + pad.w &&
           Math.abs(wavePlayer.y + 18 - pad.y) < 16 &&
           wavePlayer.vy >= -1
         ) {
+          pad.lastTrig = frameTick;
           wavePlayer.vy = pad.boostVy;
           wavePlayer.isGrounded = false;
           playTone(698.46, 0.1, "triangle", 0.08);

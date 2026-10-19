@@ -585,7 +585,7 @@
 
     .mode-selector-row {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(3, 1fr);
       gap: 12px;
       margin: 16px 0;
     }
@@ -1431,16 +1431,20 @@
           <tbody id="traitTableBody"></tbody>
         </table>
 
-        <!-- Game Mode Selection Before Entering the Game -->
-        <div style="font-weight: 600; font-size: var(--step-small); margin-top: 14px;">Select Playable Vault Mode</div>
+        <!-- 3-Game Arcade Selector Before Entering the Game -->
+        <div style="font-weight: 600; font-size: var(--step-small); margin-top: 14px;">Select Playable Vault Cartridge Game (3 Crowd-Puller Engines)</div>
         <div class="mode-selector-row">
-          <button type="button" class="mode-option selected" id="modeWaveBtn" onclick="selectGameMode('wave')">
-            <span class="mode-option-title">Mode A · 45° Laser Wave Tunnel</span>
-            <span class="mode-option-desc">Hold Space or Click to climb at +45°, release to dive at -45° through neon sawblade corridors from 0% to 100%.</span>
+          <button type="button" class="mode-option selected" id="modeHeistBtn" onclick="selectGameMode('heist')">
+            <span class="mode-option-title">Game 1 · Vault Platform Heist</span>
+            <span class="mode-option-desc">Original King of Thieves Remastered. Land on solid platforms, wall-bounce flip, time blinking lasers, and crack the top chest.</span>
           </button>
-          <button type="button" class="mode-option" id="modeBounceBtn" onclick="selectGameMode('bounce')">
-            <span class="mode-option-title">Mode B · Vault Wall-Bounce Climb</span>
-            <span class="mode-option-desc">King of Thieves vertical parkour. Tap Space or Click to wall-jump between shafts and dodge sweeping lasers.</span>
+          <button type="button" class="mode-option" id="modeWaveBtn" onclick="selectGameMode('wave')">
+            <span class="mode-option-title">Game 2 · Chog Dash: Portal Wave</span>
+            <span class="mode-option-desc">Geometry Dash + Jetpack Joyride. Safe floor/ceiling rail slide, Jetpack-to-45° Wave portals. Starts slow, gets longer &amp; faster each Stage!</span>
+          </button>
+          <button type="button" class="mode-option" id="modeFlappyBtn" onclick="selectGameMode('flappy')">
+            <span class="mode-option-title">Game 3 · $100 Parachute Flap</span>
+            <span class="mode-option-desc">Flappy Chog #7731. Tap to flap with your $100 MON bill parachute through laser gates, dodge green bulls, and grab 3 MON coins.</span>
           </button>
         </div>
 
@@ -1476,10 +1480,10 @@
         <div class="stage-fragment-title" id="stageFragTitle">Stage 1 · Deterministic ROM Compiler</div>
         <pre class="stage-code-block" id="stageFragCode">TOKEN_ID     = #402 (ARCADE STRIKER)
 KECCAK_SEED  = 0x9f4a8b12c402...e81b
-WAVE_ANGLE   = +/- 45.0 DEG (LOCKED)
-TUNNEL_GAP   = 148 PX
-SAW_FREQ     = 2.4 HZ
-SPEED_PORTAL = 1.45x TURBO</pre>
+GAME_ENGINES = HEIST / PORTAL_WAVE / FLAPPY_100
+STAGE_SCALE  = LONGER (+650PX) &amp; FASTER (+18%)
+COINS_PER_LV = 3 GOLDEN MON TOKENS
+SOLVER_CHECK = PASS (0.4ms)</pre>
       </div>
     </div>
 
@@ -1541,14 +1545,14 @@ SPEED_PORTAL = 1.45x TURBO</pre>
     <div class="proof-board">
       <div class="proof-tile proof-tile-lead reveal">
         <h2 class="proof-tile-heading">Six live ROMs.</h2>
-        <div style="font-size: var(--step-body);">Click any specimen tile to load its hazard genome into the Dossier.</div>
+        <div style="font-size: var(--step-body);">Click any specimen tile to load its hazard genome and signature game into the Dossier.</div>
       </div>
 
       <div class="proof-tile reveal" onclick="selectCartridge(0)">
         <img class="proof-tile-img" src="chog1.jpg" alt="Chog #402 Arcade Striker">
         <div class="proof-tile-content">
           <div class="proof-tile-name">CHOG #402</div>
-          <span class="proof-tile-caption">Arcade Joystick · <code>14.80 MON</code></span>
+          <span class="proof-tile-caption">Vault Platform Heist · <code>14.80 MON</code></span>
         </div>
       </div>
 
@@ -1556,7 +1560,7 @@ SPEED_PORTAL = 1.45x TURBO</pre>
         <img class="proof-tile-img" src="chognice.jpg" alt="Chog #8812 Overcharge">
         <div class="proof-tile-content">
           <div class="proof-tile-name">CHOG #8812</div>
-          <span class="proof-tile-caption">Laser Overcharge · <code>29.40 MON</code></span>
+          <span class="proof-tile-caption">Chog Dash Wave · <code>29.40 MON</code></span>
         </div>
       </div>
 
@@ -1564,7 +1568,7 @@ SPEED_PORTAL = 1.45x TURBO</pre>
         <img class="proof-tile-img" src="chog5.jpg" alt="Chog #1049 Bull Stampede">
         <div class="proof-tile-content">
           <div class="proof-tile-name">CHOG #1049</div>
-          <span class="proof-tile-caption">Green Bull Rush · <code>19.10 MON</code></span>
+          <span class="proof-tile-caption">Vault Platform Heist · <code>19.10 MON</code></span>
         </div>
       </div>
 
@@ -1572,7 +1576,7 @@ SPEED_PORTAL = 1.45x TURBO</pre>
         <img class="proof-tile-img" src="chog6.jpg" alt="Chog #7731 Fiat Parachute">
         <div class="proof-tile-content">
           <div class="proof-tile-name">CHOG #7731</div>
-          <span class="proof-tile-caption">Parachute Drift · <code>11.20 MON</code></span>
+          <span class="proof-tile-caption">$100 Parachute Flap · <code>11.20 MON</code></span>
         </div>
       </div>
 
@@ -1580,7 +1584,7 @@ SPEED_PORTAL = 1.45x TURBO</pre>
         <img class="proof-tile-img" src="chogbadge.jpg" alt="Chog #0001 Genesis Inspector">
         <div class="proof-tile-content">
           <div class="proof-tile-name">CHOG #0001</div>
-          <span class="proof-tile-caption">Inspector Badge · <code>42.00 MON</code></span>
+          <span class="proof-tile-caption">Chog Dash Wave · <code>42.00 MON</code></span>
         </div>
       </div>
 
@@ -1588,7 +1592,7 @@ SPEED_PORTAL = 1.45x TURBO</pre>
         <img class="proof-tile-img" src="chogwow.jpg" alt="Chog #9999 Mirror Revenge">
         <div class="proof-tile-content">
           <div class="proof-tile-name">CHOG #9999</div>
-          <span class="proof-tile-caption">Mirror Inversion · <code>33.60 MON</code></span>
+          <span class="proof-tile-caption">Vault Platform Heist · <code>33.60 MON</code></span>
         </div>
       </div>
     </div>
@@ -1598,7 +1602,7 @@ SPEED_PORTAL = 1.45x TURBO</pre>
   <a href="#cartridges" class="cta-band reveal" onclick="event.preventDefault(); openArenaWithCurrent();">
     <div class="cta-top-row">
       <p class="cta-next-sentence">
-        Slot the selected Chog cartridge into the 60FPS engine and attempt the 0% to 100% vault run right now.
+        Slot the selected Chog cartridge into the 60FPS engine and attempt the Stage 1 warmup run right now.
       </p>
       <svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
         <path d="M10 38L38 10M38 10H14M38 10V34" stroke="currentColor" stroke-width="5" stroke-linecap="square"/>
@@ -1624,13 +1628,13 @@ SPEED_PORTAL = 1.45x TURBO</pre>
         <strong>Cartridges</strong>
         <a href="#cartridges" onclick="selectCartridge(0)">Chog #402</a>
         <a href="#cartridges" onclick="selectCartridge(1)">Chog #8812</a>
-        <a href="#cartridges" onclick="selectCartridge(4)">Chog #0001</a>
+        <a href="#cartridges" onclick="selectCartridge(3)">Chog #7731</a>
       </div>
       <div class="footer-col">
-        <strong>Game Modes</strong>
-        <a href="#cartridges" onclick="selectGameMode('wave')">45° Laser Wave</a>
-        <a href="#cartridges" onclick="selectGameMode('bounce')">Wall-Bounce Heist</a>
-        <a href="#cartridges" onclick="toggleCartridgeEject()">Ablation Test</a>
+        <strong>3 Arcade Games</strong>
+        <a href="#cartridges" onclick="selectGameMode('heist')">Vault Platform Heist</a>
+        <a href="#cartridges" onclick="selectGameMode('wave')">Chog Dash Wave</a>
+        <a href="#cartridges" onclick="selectGameMode('flappy')">$100 Parachute Flap</a>
       </div>
       <div class="footer-col">
         <strong>Verification</strong>
@@ -1656,22 +1660,22 @@ SPEED_PORTAL = 1.45x TURBO</pre>
     </div>
   </footer>
 
-  <!-- STAGE 3: 60FPS PLAYABLE ARCADE ARENA MODAL -->
+  <!-- STAGE 3: 60FPS PLAYABLE 3-GAME ARCADE ARENA MODAL -->
   <div class="arena-modal" id="arenaModal">
     <div class="arena-hud">
       <div class="arena-cartridge-badge">
         <img id="arenaThumb" src="chog1.jpg" alt="Active Chog">
         <div>
-          <div style="font-family: var(--font-display); font-weight: 700; font-size: var(--step-body);" id="arenaTitle">CHOG #402 · WAVE TUNNEL</div>
+          <div style="font-family: var(--font-display); font-weight: 700; font-size: var(--step-body);" id="arenaTitle">CHOG #402 · STAGE 1</div>
           <div style="font-size: var(--step-small); color: var(--ink);">
-            Pool: <code id="arenaPool">14.80 MON</code> · Stake: <code id="arenaStake">1x (0.05 MON)</code>
+            Pool: <code id="arenaPool">14.80 MON</code> · Stage: <code id="arenaStageBadge">STAGE 1 (WARMUP)</code> · Coins: <code id="arenaCoinsBadge">0 / 3</code>
           </div>
         </div>
       </div>
 
       <div class="progress-wrap">
         <div class="progress-top">
-          <span id="arenaModeTag">HOLD SPACE / CLICK TO CLIMB (+45°) · RELEASE TO DIVE (-45°)</span>
+          <span id="arenaModeTag">TAP SPACE / CLICK TO JUMP PLATFORM TO PLATFORM</span>
           <code id="arenaPercent">0%</code>
         </div>
         <div class="progress-track">
@@ -1679,9 +1683,9 @@ SPEED_PORTAL = 1.45x TURBO</pre>
         </div>
       </div>
 
-      <div style="display: flex; justify-content: flex-end; gap: 10px;">
-        <button type="button" class="btn-motif-secondary" onclick="switchArenaModeInPlace()">
-          Switch Mode
+      <div style="display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap;">
+        <button type="button" class="btn-motif-secondary" id="switchGameBtn" onclick="switchArenaModeInPlace()">
+          Switch Game (1/3)
         </button>
         <button type="button" class="btn-motif-secondary" onclick="closeArena()">
           Back to Dossier
@@ -1692,21 +1696,27 @@ SPEED_PORTAL = 1.45x TURBO</pre>
     <div class="arena-stage-wrap">
       <canvas id="gameCanvas" width="1100" height="540"></canvas>
 
-      <!-- Death / Victory Overlay inside Arena -->
+      <!-- Death / Victory / Next Stage Overlay inside Arena -->
       <div class="arena-overlay-card" id="arenaOverlay">
-        <div class="arena-overlay-title" id="overlayHeadline">VAPORIZED AT 64%</div>
+        <div class="arena-overlay-title" id="overlayHeadline">STAGE 1 CLEARED · 100%</div>
         <p class="arena-overlay-sub" id="overlaySubtext">
-          0.02 MON routed to Landlord 0x71C...89A2 · 0.025 MON added to Vault Jackpot Pool.
+          You cracked Stage 1! Advance to Stage 2 (Longer &amp; Faster) for a 1.5x Bounty Multiplier.
         </p>
         <div style="display: flex; flex-wrap: wrap; gap: 14px; justify-content: center;">
+          <button type="button" class="btn-motif" id="nextStageBtn" style="display: none;" onclick="advanceToNextStage()">
+            Next Stage · Longer &amp; Faster (+50% Bounty)
+          </button>
           <button type="button" class="btn-motif" id="revengeBtn" onclick="startRaidRun(false)">
-            Instant Revenge · Retry (0.05 MON)
+            Instant Revenge · Retry Stage (0.05 MON)
           </button>
           <button type="button" class="btn-motif-secondary" id="doubleNothingBtn" style="display: none;" onclick="startRaidRun(true)">
-            Double or Nothing · 2x Turbo Speed for 2x Jackpot
+            2x Turbo Gamble · Double Jackpot
+          </button>
+          <button type="button" class="btn-motif-secondary" onclick="switchArenaModeInPlace()">
+            Try Another Game Mode
           </button>
           <button type="button" class="btn-motif-secondary" onclick="closeArena()">
-            Inspect Another Cartridge
+            Back to Dossier
           </button>
         </div>
       </div>
@@ -1717,14 +1727,14 @@ SPEED_PORTAL = 1.45x TURBO</pre>
         Session Receipt: <code id="arenaReceiptLog">Burner key 0x48F1...90B2 authorized · Zero wallet popup latency</code>
       </div>
       <div>
-        Controls: <kbd>SPACE</kbd> or <kbd>LEFT CLICK</kbd> / <kbd>TOUCH</kbd> · Instant Restart: <kbd>R</kbd>
+        Controls: <kbd>SPACE</kbd> or <kbd>LEFT CLICK</kbd> / <kbd>TOUCH</kbd> · Switch Game: <kbd>M</kbd> · Retry: <kbd>R</kbd>
       </div>
     </div>
   </div>
 
   <script>
     // =========================================================================
-    // 1. REAL CHOG CARTRIDGE SPECIMENS (6 LOCAL ARTWORKS + DETERMINISTIC COMPILER)
+    // 1. REAL CHOG CARTRIDGE SPECIMENS (6 LOCAL ARTWORKS + SIGNATURE GAMES)
     // =========================================================================
     const FEATURED_CARTRIDGES = [
       {
@@ -1733,16 +1743,17 @@ SPEED_PORTAL = 1.45x TURBO</pre>
         image: "chog1.jpg",
         owner: "0x71C4...89A2",
         bounty: 14.80,
-        mortality: "91.4%",
-        lore: "Gripping a competition joystick and mashing the red turbo actuator. Compiles into high-frequency 45° neon wave corridors with twin sawblade locks.",
-        speedMult: 1.45,
-        corridorGap: 148,
-        sawCount: 7,
+        mortality: "86.4%",
+        defaultMode: "heist",
+        lore: "Gripping a competition joystick and mashing the red turbo actuator. Signature Game: Original Vault Platform Heist with stepping-stone ledges, blinking lasers, and swinging pendulums.",
+        speedMult: 1.0,
+        corridorGap: 185,
+        sawCount: 4,
         traits: [
-          ["Action Prop", "Red Arcade Joystick", "Wave Speed +45% (1.45x)", "0x402A01"],
-          ["Expression", "Locked-In Smirk", "Corridor Aperture 148px", "0x402B09"],
-          ["Cabinet", "Crimson Polybius Frame", "7 Spinning Sawblade Nodes", "0x402C14"],
-          ["Background", "Starlight Burgundy", "Speed Portal at 50% Mark", "0x402D88"]
+          ["Action Prop", "Red Arcade Joystick", "Platform Jump Boost + Wall Flip", "0x402A01"],
+          ["Expression", "Locked-In Smirk", "Telegraphed Blinking Laser Gates", "0x402B09"],
+          ["Cabinet", "Crimson Polybius Frame", "Swinging Vault Anchor Pendulum", "0x402C14"],
+          ["Stage Scaling", "Progressive ROM", "+650px Length & +18% Speed / Win", "0x402D88"]
         ]
       },
       {
@@ -1751,16 +1762,17 @@ SPEED_PORTAL = 1.45x TURBO</pre>
         image: "chognice.jpg",
         owner: "0x38A9...11F0",
         bounty: 29.40,
-        mortality: "96.2%",
-        lore: "Dual gold-pink ocular beams firing through a lightning storm. Compiles into an overclocked hyper-wave tunnel with narrow gaps and rapid portal shifts.",
-        speedMult: 1.75,
-        corridorGap: 132,
-        sawCount: 9,
+        mortality: "91.2%",
+        defaultMode: "wave",
+        lore: "Dual gold-pink ocular beams firing through a lightning storm. Signature Game: Chog Dash Portal Wave — starts slow with safe floor/ceiling rail slide, then shifts from Jetpack into 45° Laser Wave.",
+        speedMult: 1.08,
+        corridorGap: 178,
+        sawCount: 5,
         traits: [
-          ["Eyes", "Dual Pink-Gold Laser Beams", "Hyper Wave Velocity 1.75x", "0x8812E1"],
-          ["Aura", "High-Voltage Lightning", "9 Oscillating Plasma Saws", "0x8812F4"],
-          ["Fur", "Cream Electric Spikes", "Tight 132px Laser Tunnel", "0x8812A7"],
-          ["Background", "Thunderstorm Indigo", "Double Speed Gate at 40%", "0x8812C2"]
+          ["Eyes", "Dual Pink-Gold Laser Beams", "Jetpack -> 45° Wave Portal Shift", "0x8812E1"],
+          ["Aura", "High-Voltage Lightning", "Safe Floor & Ceiling Rail Sparks", "0x8812F4"],
+          ["Fur", "Cream Electric Spikes", "Spinning Plasma Sawblades", "0x8812A7"],
+          ["Stage Scaling", "Geometry Progression", "Gets Longer & Faster Each Clear", "0x8812C2"]
         ]
       },
       {
@@ -1770,15 +1782,16 @@ SPEED_PORTAL = 1.45x TURBO</pre>
         owner: "0x90E2...44C1",
         bounty: 19.10,
         mortality: "88.7%",
-        lore: "Surrounded by charging emerald bulls with glowing eyes. Compiles into kinetic shockwave obstacles and heavy wall-bounce momentum.",
-        speedMult: 1.38,
-        corridorGap: 156,
-        sawCount: 6,
+        defaultMode: "heist",
+        lore: "Surrounded by charging emerald bulls with glowing eyes. Signature Game: Multi-Platform Vault Heist with electric floor shields, swinging anchors, and 3 golden MON coins.",
+        speedMult: 1.04,
+        corridorGap: 182,
+        sawCount: 4,
         traits: [
-          ["Companions", "Charging Emerald Bulls", "Moving Hazard Sweeps", "0x1049B1"],
-          ["Gaze", "Hypnotic Bullseye", "156px Vault Shaft Width", "0x1049C8"],
-          ["Horn Geometry", "Curved Ivory Horns", "6 Sawblade Choke Points", "0x1049D3"],
-          ["Ground", "Stampede Dust Field", "1.38x Base Wave Thrust", "0x1049F9"]
+          ["Companions", "Charging Emerald Bulls", "Vault Platform Patrol Guards", "0x1049B1"],
+          ["Gaze", "Hypnotic Bullseye", "3 Collectible Golden MON Coins", "0x1049C8"],
+          ["Horn Geometry", "Curved Ivory Horns", "Swinging Pendulum Anchor Traps", "0x1049D3"],
+          ["Ground", "Toxic Slime Basin", "Bubbling Acid Pit Under Platforms", "0x1049F9"]
         ]
       },
       {
@@ -1787,16 +1800,17 @@ SPEED_PORTAL = 1.45x TURBO</pre>
         image: "chog6.jpg",
         owner: "0x55B1...77D4",
         bounty: 11.20,
-        mortality: "84.5%",
-        lore: "Parachuting with a giant hundred-dollar bill over spiked pine treetops. Compiles into wide entry glides that tighten into razor-sharp pine spikes.",
-        speedMult: 1.28,
-        corridorGap: 164,
-        sawCount: 5,
+        mortality: "82.5%",
+        defaultMode: "flappy",
+        lore: "Parachuting with a giant hundred-dollar bill over spiked pine treetops. Signature Game: Flappy $100 Parachute — tap to flap through laser gates, dodge charging bulls, and snatch floating MON.",
+        speedMult: 0.96,
+        corridorGap: 192,
+        sawCount: 4,
         traits: [
-          ["Canopy", "100-Dollar Bill Parachute", "Smooth 1.28x Entry Glide", "0x7731A2"],
-          ["Terrain", "Spiked Pine Canopy", "Floor & Ceiling Spike Teeth", "0x7731B5"],
-          ["Goggles", "Aviator Drop Visor", "164px Safe Passage Corridor", "0x7731D0"],
-          ["Wind", "Alpine Updraft", "Low-Latency Turn Snapping", "0x7731E6"]
+          ["Canopy", "$100 MON Bill Parachute", "Low-Gravity Parachute Glide", "0x7731A2"],
+          ["Terrain", "Vault Laser Gates", "Wide Aperture Security Pillars", "0x7731B5"],
+          ["Goggles", "Aviator Drop Visor", "3 Floating Golden MON Coins", "0x7731D0"],
+          ["Wind", "Progressive Updraft", "Longer & Faster Every Stage Win", "0x7731E6"]
         ]
       },
       {
@@ -1805,15 +1819,16 @@ SPEED_PORTAL = 1.45x TURBO</pre>
         image: "chogbadge.jpg",
         owner: "0x01A0...0001",
         bounty: 42.00,
-        mortality: "97.8%",
-        lore: "Flashing the official Genesis Chog security clearance badge. The highest-bounty vault on Monad with relentless precision corridors.",
-        speedMult: 1.82,
-        corridorGap: 128,
-        sawCount: 10,
+        mortality: "94.8%",
+        defaultMode: "wave",
+        lore: "Flashing the official Genesis Chog security clearance badge. High-bounty Chog Dash Portal Wave vault with Jetpack-to-Wave transformations and 42.00 MON jackpot.",
+        speedMult: 1.12,
+        corridorGap: 172,
+        sawCount: 5,
         traits: [
-          ["Credential", "Genesis CHOG Security Pass", "10 High-Security Laser Locks", "0x0001A1"],
-          ["Suit", "Executive Crimson Collar", "128px Precision Aperture", "0x0001B9"],
-          ["Clearance", "Level-9 Vault Architect", "1.82x Overclocked Wave", "0x0001C4"],
+          ["Credential", "Genesis CHOG Security Pass", "Multi-Portal Wave Architecture", "0x0001A1"],
+          ["Suit", "Executive Crimson Collar", "Safe Rail Slide + Precision Saws", "0x0001B9"],
+          ["Clearance", "Level-9 Vault Architect", "Progressive Speed & Length Scaling", "0x0001C4"],
           ["Seal", "Monad Parallel Stamp", "42.00 MON Genesis Jackpot", "0x0001FF"]
         ]
       },
@@ -1823,22 +1838,24 @@ SPEED_PORTAL = 1.45x TURBO</pre>
         image: "chogwow.jpg",
         owner: "0xFF99...99E1",
         bounty: 33.60,
-        mortality: "94.1%",
-        lore: "Staring into the bathroom mirror locking in for one more revenge run. Compiles into symmetrical dual-lane sawblade gauntlets.",
-        speedMult: 1.60,
-        corridorGap: 140,
-        sawCount: 8,
+        mortality: "90.1%",
+        defaultMode: "heist",
+        lore: "Staring into the bathroom mirror locking in for one more revenge run. Compiles into a multi-tiered Vault Platform Heist with high-payout revenge multipliers.",
+        speedMult: 1.06,
+        corridorGap: 178,
+        sawCount: 5,
         traits: [
-          ["Reflection", "Dual Mirror Stare", "Symmetrical Twin Saw Gates", "0x9999A4"],
-          ["Mindset", "Zero-Tilt Revenge Lock", "1.60x Sustained Wave Speed", "0x9999B2"],
-          ["Chamber", "Tiled Mirror Sanctum", "140px Reflective Corridor", "0x9999D7"],
+          ["Reflection", "Dual Mirror Stare", "5-Tier Stepping Stone Platforms", "0x9999A4"],
+          ["Mindset", "Zero-Tilt Revenge Lock", "Telegraphed Laser Gate Timing", "0x9999B2"],
+          ["Chamber", "Tiled Mirror Sanctum", "Swinging Anchor + Electric Shield", "0x9999D7"],
           ["Vow", "Double-or-Nothing Pact", "2x GambleFi Multiplier Ready", "0x9999F0"]
         ]
       }
     ];
 
     let currentCartridge = FEATURED_CARTRIDGES[0];
-    let selectedMode = "wave";
+    let selectedMode = "heist"; // Defaults to "that first one" remastered!
+    let currentStageLevel = 1;  // Starts slow on Stage 1, gets longer & faster as you win!
     let cartridgeEjected = false;
     let walletConnected = false;
     let userWalletAddress = "0x48F1...90B2 (Burner)";
@@ -1860,18 +1877,20 @@ SPEED_PORTAL = 1.45x TURBO</pre>
       const cleanId = Math.max(1, Math.min(10000, Number(tokenId) || 1));
       const seed = hashSeed("MONAD_CHOG_" + cleanId);
       const artPool = ["chog1.jpg", "chognice.jpg", "chog5.jpg", "chog6.jpg", "chogbadge.jpg", "chogwow.jpg"];
+      const modePool = ["heist", "wave", "flappy"];
       const eyesPool = ["Laser Beam", "Hypno Spiral", "Visor-88", "Night Vision", "Gold Stare"];
       const headPool = ["Royal Crown", "Propeller Cap", "Viking Helm", "Neon Halo", "Bandana"];
       const bodyPool = ["Diamond Fleece", "Lava Suit", "Shadow Cloak", "Arcade Hoodie"];
 
       const img = artPool[seed % artPool.length];
+      const defMode = modePool[seed % modePool.length];
       const eye = eyesPool[(seed >>> 3) % eyesPool.length];
       const head = headPool[(seed >>> 6) % headPool.length];
       const body = bodyPool[(seed >>> 9) % bodyPool.length];
-      const speedMult = Number((1.25 + ((seed % 55) / 100)).toFixed(2));
-      const corridorGap = 128 + (seed % 38);
-      const sawCount = 5 + (seed % 6);
-      const bounty = Number((6.4 + ((seed % 340) / 10)).toFixed(2));
+      const speedMult = Number((0.95 + ((seed % 25) / 100)).toFixed(2));
+      const corridorGap = 172 + (seed % 24);
+      const sawCount = 4 + (seed % 3);
+      const bounty = Number((8.4 + ((seed % 340) / 10)).toFixed(2));
       const hexBase = "0x" + seed.toString(16).padStart(8, "0").toUpperCase();
 
       return {
@@ -1880,18 +1899,25 @@ SPEED_PORTAL = 1.45x TURBO</pre>
         image: img,
         owner: "0x" + seed.toString(16).slice(0, 4).toUpperCase() + "..." + seed.toString(16).slice(-4).toUpperCase(),
         bounty: bounty,
-        mortality: (82 + (seed % 16)) + "." + (seed % 9) + "%",
-        lore: "Deterministically compiled from Monad ERC-721 Token #" + cleanId + ". Verified solvable by Clear-Check in 0.4ms.",
+        mortality: (82 + (seed % 14)) + "." + (seed % 9) + "%",
+        defaultMode: defMode,
+        lore: "Deterministically compiled from Monad ERC-721 Token #" + cleanId + ". Starts slow on Stage 1 and scales in length and speed as you clear stages.",
         speedMult: speedMult,
         corridorGap: corridorGap,
         sawCount: sawCount,
         traits: [
-          ["Eyes", eye, "Wave Velocity " + speedMult + "x", hexBase.slice(0, 8)],
+          ["Eyes", eye, "Base Speed " + speedMult + "x (Stage 1 Warmup)", hexBase.slice(0, 8)],
           ["Headwear", head, "Corridor Aperture " + corridorGap + "px", "0x" + ((seed >>> 4) & 0xffffff).toString(16).padStart(6, "0").toUpperCase()],
-          ["Body", body, sawCount + " Sawblade Locks", "0x" + ((seed >>> 8) & 0xffffff).toString(16).padStart(6, "0").toUpperCase()],
+          ["Body", body, sawCount + " Stage-1 Hazard Nodes", "0x" + ((seed >>> 8) & 0xffffff).toString(16).padStart(6, "0").toUpperCase()],
           ["Seed Proof", "keccak256(#" + cleanId + ")", "Clear-Check Verified", "0xPASS04MS"]
         ]
       };
+    }
+
+    function getModeDisplayName(mode) {
+      if (mode === "heist") return "Vault Platform Heist";
+      if (mode === "wave") return "Chog Dash: Portal Wave";
+      return "$100 Parachute Flap";
     }
 
     function renderCartridgeDeck() {
@@ -1910,8 +1936,8 @@ SPEED_PORTAL = 1.45x TURBO</pre>
             <code>${cart.bounty.toFixed(2)} MON</code>
           </div>
           <div class="cartridge-card-sub">
-            <span>Speed ${cart.speedMult}x</span>
-            <span>Death ${cart.mortality}</span>
+            <span>${getModeDisplayName(cart.defaultMode).split(" ")[0]} Mode</span>
+            <span>Stage ${currentStageLevel}</span>
           </div>
         `;
         deck.appendChild(btn);
@@ -1943,6 +1969,10 @@ SPEED_PORTAL = 1.45x TURBO</pre>
         tbody.appendChild(tr);
       });
 
+      document.getElementById("modeHeistBtn").className = "mode-option" + (selectedMode === "heist" ? " selected" : "");
+      document.getElementById("modeWaveBtn").className = "mode-option" + (selectedMode === "wave" ? " selected" : "");
+      document.getElementById("modeFlappyBtn").className = "mode-option" + (selectedMode === "flappy" ? " selected" : "");
+
       const badge = document.getElementById("clearCheckBadge");
       const launchBtn = document.getElementById("launchHeistBtn");
       const ejectBtn = document.getElementById("ejectBtn");
@@ -1955,10 +1985,9 @@ SPEED_PORTAL = 1.45x TURBO</pre>
         ejectBtn.textContent = "Re-Insert NFT Cartridge";
       } else {
         badge.className = "status-pill";
-        badge.innerHTML = "<code>CLEAR-CHECK PASS · 0.4ms</code>";
+        badge.innerHTML = "<code>CLEAR-CHECK PASS · STAGE " + currentStageLevel + "</code>";
         launchBtn.disabled = false;
-        const modeLabel = selectedMode === "wave" ? "45° Laser Wave" : "Wall-Bounce Heist";
-        launchBtn.textContent = "Insert Cartridge #" + c.tokenId + " & Launch " + modeLabel + " (0.05 MON)";
+        launchBtn.textContent = "Insert #" + c.tokenId + " & Play " + getModeDisplayName(selectedMode) + " · Stage " + currentStageLevel + " (0.05 MON)";
         ejectBtn.textContent = "Eject NFT Cartridge";
       }
     }
@@ -1966,6 +1995,8 @@ SPEED_PORTAL = 1.45x TURBO</pre>
     function selectCartridge(index) {
       cartridgeEjected = false;
       currentCartridge = FEATURED_CARTRIDGES[index];
+      selectedMode = currentCartridge.defaultMode || "heist";
+      currentStageLevel = 1;
       document.getElementById("tokenInput").value = currentCartridge.tokenId;
       renderCartridgeDeck();
       renderDossier();
@@ -1975,14 +2006,14 @@ SPEED_PORTAL = 1.45x TURBO</pre>
       cartridgeEjected = false;
       const val = document.getElementById("tokenInput").value;
       currentCartridge = buildCartridgeFromTokenId(val);
+      selectedMode = currentCartridge.defaultMode || "heist";
+      currentStageLevel = 1;
       renderCartridgeDeck();
       renderDossier();
     }
 
     function selectGameMode(mode) {
       selectedMode = mode;
-      document.getElementById("modeWaveBtn").className = "mode-option" + (mode === "wave" ? " selected" : "");
-      document.getElementById("modeBounceBtn").className = "mode-option" + (mode === "bounce" ? " selected" : "");
       renderDossier();
     }
 
@@ -1998,28 +2029,28 @@ SPEED_PORTAL = 1.45x TURBO</pre>
     const ARCH_STAGES = [
       {
         clause: "First, traits<br>compile.",
-        narrative: "Our compiler hashes your Chog Token ID and ERC-721 attributes into a 64-byte level ROM. Laser Eyes set beam angular velocity; Crown headwear narrows the wave tunnel aperture.",
-        title: "Stage 1 · Deterministic ROM Compiler",
+        narrative: "Our compiler hashes your Chog Token ID and ERC-721 attributes into a 64-byte level ROM across 3 arcade engines: Vault Platform Heist, Chog Dash Portal Wave, and $100 Parachute Flap.",
+        title: "Stage 1 · Deterministic 3-Game ROM Compiler",
         code: `TOKEN_ID     = #402 (ARCADE STRIKER)
 KECCAK_SEED  = 0x9f4a8b12c402...e81b
-WAVE_ANGLE   = +/- 45.0 DEG (LOCKED)
-TUNNEL_GAP   = 148 PX
-SAW_FREQ     = 2.4 HZ
-SPEED_PORTAL = 1.45x TURBO`
+GAME_ENGINES = HEIST / PORTAL_WAVE / FLAPPY_100
+STAGE_SCALE  = LONGER (+650PX) & FASTER (+18%)
+COINS_PER_LV = 3 GOLDEN MON TOKENS
+SOLVER_CHECK = PASS (0.4ms)`
       },
       {
         clause: "Second, paths<br>verify.",
         narrative: "Before any vault accepts a single MON in tolls, our deterministic forward-kinematic solver simulates a 60FPS trajectory from 0% to 100% in 0.4 milliseconds. Impossible traps are rejected.",
         title: "Stage 2 · 0.4ms Solvability Governor",
-        code: `SOLVER_RUN   = FORWARD_WAVE_SIM_60HZ
-FRAMES_TEST  = 480 TICKS (8.0 SEC)
-MIN_CLEAR_PX = 26.4 PX MARGIN
+        code: `SOLVER_RUN   = FORWARD_KINEMATIC_60HZ
+STAGE_1_SPD  = 2.55 PX/FRAME (WARMUP)
+RAIL_SLIDE   = SAFE_FLOOR_CEILING_ENABLED
 COLLISIONS   = 0 DETECTED
 VERDICT      = SOLVABLE_PASS (0.41ms)`
       },
       {
         clause: "Third, deaths<br>pay out.",
-        narrative: "Challengers insert 0.05 MON to raid. When a raider clips a sawblade at 89%, 40% routes immediately to the Chog NFT owner, 50% swells the jackpot bounty, and 10% burns.",
+        narrative: "Challengers insert 0.05 MON to raid. When a raider clips a hazard at 89%, 40% routes immediately to the Chog NFT owner, 50% swells the jackpot bounty, and 10% burns.",
         title: "Stage 3 · 40 / 50 / 10 Raid Settlement",
         code: `RAID_TOLL    = 0.0500 MON
 LANDLORD_40  = 0.0200 MON -> 0x71C4...89A2
@@ -2029,7 +2060,7 @@ SESSION_SIG  = 0x88b1...f09a (ZERO_POPUP)`
       },
       {
         clause: "Fourth, vaults<br>parallelize.",
-        narrative: "Because each Chog NFT isolates its own bounty state slot, thousands of raiders can die, retry, and trigger Double-or-Nothing runs concurrently on Monad without global state lockups.",
+        narrative: "Because each Chog NFT isolates its own bounty state slot, thousands of raiders can clear Stage 1, scale to Stage 5, and trigger Double-or-Nothing runs concurrently on Monad.",
         title: "Stage 4 · Monad Parallel Execution",
         code: `NETWORK      = MONAD_TESTNET (10143)
 STATE_SLOT   = ISOLATED_PER_TOKEN_ID
@@ -2119,13 +2150,12 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       }
     }, { passive: true });
 
-    // Mini 45-degree wave preview animation in Hero card
     const miniCanvas = document.getElementById("heroMiniWave");
     const miniCtx = miniCanvas ? miniCanvas.getContext("2d") : null;
     let miniTick = 0;
     function animateMiniWave() {
       if (miniCtx) {
-        miniTick += 2.2;
+        miniTick += 1.6;
         miniCtx.clearRect(0, 0, 160, 36);
         miniCtx.strokeStyle = "#b8ff65";
         miniCtx.lineWidth = 3;
@@ -2167,12 +2197,18 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
     }
 
     // =========================================================================
-    // 7. STAGE 3: 60FPS PLAYABLE DUAL-MODE ARCADE ENGINE (WAVE + WALL-BOUNCE)
+    // 7. STAGE 3: 60FPS 3-GAME ARCADE ENGINE WITH PROGRESSIVE STAGE SCALING
+    //    - Game 1 ('heist'): Original 0a7bbcb Multi-Platform Vault Heist (Remastered)
+    //    - Game 2 ('wave') : Real Geometry Dash Portal Wave (Slow Start, Safe Rail Slide,
+    //                        Jetpack->Wave Portals, Gets Longer & Faster Every Stage!)
+    //    - Game 3 ('flappy'): Chog #7731 $100 Bill Parachute Flap + Bull Stampede
     // =========================================================================
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
     const chogSprite = new Image();
     chogSprite.src = "chog1.jpg";
+    const bullSprite = new Image();
+    bullSprite.src = "chog5.jpg";
 
     let animFrameId = null;
     let gameActive = false;
@@ -2180,14 +2216,59 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
     let progressPct = 0;
     let shakeFrames = 0;
     let particles = [];
+    let floatingTexts = [];
+    let coinsCollected = 0;
+    let frameTick = 0;
 
-    let wavePlayer = { x: 180, y: 270, vy: 0, trail: [] };
+    // -------------------------------------------------------------------------
+    // GAME 1 STATE: ORIGINAL 0a7bbcb VAULT PLATFORM HEIST (REMASTERED)
+    // -------------------------------------------------------------------------
+    let heistPlayer = {
+      x: 110,
+      y: 410,
+      vx: 3.4,
+      vy: 0,
+      radius: 20,
+      isGrounded: false,
+      jumpsLeft: 2,
+      trail: []
+    };
+    let heistPlatforms = [];
+    let heistHazards = [];
+    let heistCoins = [];
+    let heistVaultChest = { x: 930, y: 54, w: 68, h: 48 };
+
+    // -------------------------------------------------------------------------
+    // GAME 2 STATE: CHOG DASH PORTAL WAVE (REAL GEOMETRY DASH + JETPACK JOYRIDE)
+    // -------------------------------------------------------------------------
+    let wavePlayer = {
+      x: 190,
+      y: 270,
+      vy: 0,
+      form: "jetpack", // 'jetpack' -> 'wave' -> 'boost' via Portals!
+      onRail: false,
+      trail: []
+    };
     let waveObstacles = [];
+    let wavePortals = [];
+    let waveCoins = [];
     let waveCameraX = 0;
-    let levelLengthPx = 3400;
+    let levelLengthPx = 1550; // Starts short on Stage 1, grows +650px every stage!
 
-    let bouncePlayer = { x: 370, y: 460, vx: 7.2, vy: 0, dir: 1 };
-    let bounceLasers = [];
+    // -------------------------------------------------------------------------
+    // GAME 3 STATE: FLAPPY $100 BILL PARACHUTE (CHOG #7731 + BULL STAMPEDE)
+    // -------------------------------------------------------------------------
+    let flappyPlayer = {
+      x: 200,
+      y: 240,
+      vy: 0,
+      trail: []
+    };
+    let flappyGates = [];
+    let flappyBulls = [];
+    let flappyCoins = [];
+    let flappyCameraX = 0;
+    let flappyLengthPx = 1450;
 
     function openArenaWithCurrent() {
       if (cartridgeEjected) {
@@ -2204,78 +2285,289 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       gameActive = false;
       if (animFrameId) cancelAnimationFrame(animFrameId);
       document.getElementById("arenaModal").classList.remove("open");
+      renderCartridgeDeck();
+      renderDossier();
     }
 
     function switchArenaModeInPlace() {
-      selectedMode = selectedMode === "wave" ? "bounce" : "wave";
+      const order = ["heist", "wave", "flappy"];
+      const nextIdx = (order.indexOf(selectedMode) + 1) % order.length;
+      selectedMode = order[nextIdx];
       selectGameMode(selectedMode);
       startRaidRun(false);
     }
 
-    function buildWaveLevel(cart, isDouble) {
+    function advanceToNextStage() {
+      currentStageLevel += 1;
+      playTone(660, 0.12, "triangle", 0.09);
+      setTimeout(() => playTone(880, 0.18, "triangle", 0.1), 90);
+      startRaidRun(false);
+    }
+
+    function spawnFloatingText(x, y, text, color) {
+      floatingTexts.push({ x: x, y: y, text: text, color: color, life: 1.0 });
+    }
+
+    // -------------------------------------------------------------------------
+    // BUILD GAME 1: ORIGINAL 0a7bbcb VAULT PLATFORM HEIST (REMASTERED)
+    // -------------------------------------------------------------------------
+    function buildHeistLevel(cart, stage, isDouble) {
+      // Stepping-stone platforms climbing from bottom-left to top-right Golden Vault Chest!
+      heistPlatforms = [
+        // Safe starter platform on bottom-left above slime
+        { x: 36,  y: 458, w: 240, h: 18, label: "START SAFE PAD (PATROL)" },
+        // Safe bounce pad on bottom-right above slime
+        { x: 760, y: 458, w: 304, h: 18, label: "EAST BOUNCE PAD" },
+        // Tier 1 center-left stepping stone
+        { x: 290, y: 388, w: 230, h: 18, label: "TIER 1 LEDGE" },
+        // Tier 2 right stepping stone (bounce off right wall or jump across)
+        { x: 580, y: 318, w: 250, h: 18, label: "TIER 2 LEDGE" },
+        // Tier 3 center-left high platform
+        { x: 230, y: 240, w: 240, h: 18, label: "TIER 3 LEDGE" },
+        // Tier 4 upper-center bridge
+        { x: 530, y: 168, w: 225, h: 18, label: "TIER 4 BRIDGE" },
+        // Top Vault Sanctuary Platform
+        { x: 810, y: 104, w: 250, h: 20, label: "VAULT SANCTUARY" }
+      ];
+
+      const stageSpeedScale = 1 + (stage - 1) * 0.22 + (isDouble ? 0.25 : 0);
+
+      heistHazards = [
+        // 1. Bubbling Toxic Green Slime Pit in the center floor (between West & East pads)
+        {
+          type: "SLIME",
+          x: 276,
+          y: 504,
+          w: 484,
+          h: 36
+        },
+        // 2. Telegraphed Blinking Laser Gate 1 (predictable rhythm, dotted warning when off!)
+        {
+          type: "LASER",
+          x: 415,
+          y: 255,
+          h: 133,
+          phase: 0.2,
+          speed: 0.025 * stageSpeedScale
+        },
+        // 3. Swinging Pendulum Anchor (from original 0a7bbcb!)
+        {
+          type: "ANCHOR",
+          pivotX: 540,
+          pivotY: 36,
+          length: 160,
+          angle: 0,
+          speed: 0.024 * stageSpeedScale
+        },
+        // 4. Electric Floor Shield on Tier 2
+        {
+          type: "ELECTRIC",
+          x: 715,
+          y: 302,
+          r: 20 + Math.min(10, (stage - 1) * 3)
+        }
+      ];
+
+      // Add a second telegraphed laser near the top on Stage 2+
+      if (stage >= 2) {
+        heistHazards.push({
+          type: "LASER",
+          x: 780,
+          y: 40,
+          h: 140,
+          phase: 1.8,
+          speed: 0.03 * stageSpeedScale
+        });
+      }
+
+      // 3 Golden MON Coins along the platform climb
+      heistCoins = [
+        { x: 405, y: 346, r: 14, collected: false },
+        { x: 650, y: 274, r: 14, collected: false },
+        { x: 350, y: 196, r: 14, collected: false }
+      ];
+
+      heistVaultChest = { x: 925, y: 50, w: 66, h: 54 };
+
+      const baseRunSpd = (3.1 + Math.min(2.2, (stage - 1) * 0.45)) * (isDouble ? 1.2 : 1);
+      heistPlayer = {
+        x: 110,
+        y: 434,
+        vx: baseRunSpd,
+        vy: 0,
+        radius: 20,
+        isGrounded: true,
+        jumpsLeft: 2,
+        hasJumpedOnce: false,
+        trail: []
+      };
+    }
+
+    // -------------------------------------------------------------------------
+    // BUILD GAME 2: CHOG DASH PORTAL WAVE (SLOWER START, LONGER & FASTER EACH STAGE)
+    // -------------------------------------------------------------------------
+    function buildWaveLevel(cart, stage, isDouble) {
       waveObstacles = [];
-      const seed = hashSeed("WAVE_" + cart.tokenId);
-      const count = cart.sawCount + (isDouble ? 4 : 0);
-      levelLengthPx = 3200;
+      wavePortals = [];
+      waveCoins = [];
+
+      const seed = hashSeed("WAVE_" + cart.tokenId + "_STAGE_" + stage);
+      // Stage 1 is short (1550px = ~9.5 sec) and adds +650px every stage you win!
+      levelLengthPx = 1550 + (stage - 1) * 650 + (isDouble ? 450 : 0);
+
+      // Transformation Portals (Real Geometry Dash style!)
+      const wavePortalX = Math.floor(levelLengthPx * 0.34);
+      const boostPortalX = Math.floor(levelLengthPx * 0.68);
+      wavePortals = [
+        { x: wavePortalX, targetForm: "wave", label: "45° WAVE PORTAL", color: "#b8ff65", triggered: false },
+        { x: boostPortalX, targetForm: "boost", label: "TURBO WAVE PORTAL", color: "#ffd166", triggered: false }
+      ];
+
+      // Stage 1 starts with just 4 well-spaced obstacles; each stage adds +2 obstacles!
+      const count = 4 + (stage - 1) * 2 + (isDouble ? 2 : 0);
+      const startX = 480;
+      const usableSpan = levelLengthPx - 720;
 
       for (let i = 0; i < count; i++) {
-        const x = 520 + i * ((levelLengthPx - 750) / count);
-        const centerOffset = ((seed + i * 137) % 180) - 90;
-        const centerY = 270 + centerOffset;
-        const radius = 34 + ((seed + i * 29) % 18);
+        const x = startX + i * (usableSpan / count);
+        // Alternate bottom-rail, top-rail, and center so rail-sliding is safe AND requires active weaving!
+        const lanePattern = (i + stage) % 3;
+        let centerY = 270;
+        if (lanePattern === 0) centerY = 415;      // Near bottom rail — hold SPACE to hop over!
+        else if (lanePattern === 1) centerY = 125; // Near top rail — release SPACE to dive under!
+        else centerY = 270 + (((seed + i * 71) % 50) - 25);
+
+        const radius = 28 + Math.min(14, (stage - 1) * 2) + ((seed + i * 19) % 8);
         waveObstacles.push({
           x: x,
           y: centerY,
           r: radius,
-          angle: 0,
-          isPortal: i === Math.floor(count / 2)
+          angle: 0
         });
+
+        // Place 3 Golden MON Coins in the safe open lanes!
+        if (i < 3) {
+          const coinY = centerY > 270 ? 165 : 375;
+          waveCoins.push({
+            x: x + 40,
+            y: coinY,
+            r: 15,
+            collected: false
+          });
+        }
       }
+
+      wavePlayer = {
+        x: 190,
+        y: 270,
+        vy: 0,
+        form: "jetpack",
+        onRail: false,
+        trail: []
+      };
+      waveCameraX = 0;
     }
 
-    function buildBounceLevel(cart, isDouble) {
-      bounceLasers = [];
-      const count = 6 + (isDouble ? 2 : 0);
-      for (let i = 0; i < count; i++) {
-        bounceLasers.push({
-          y: 410 - i * 62,
-          phase: i * 1.1,
-          speed: (0.04 + (i * 0.006)) * cart.speedMult * (isDouble ? 1.3 : 1)
+    // -------------------------------------------------------------------------
+    // BUILD GAME 3: FLAPPY $100 PARACHUTE (CHOG #7731 + CHARGING BULLS)
+    // -------------------------------------------------------------------------
+    function buildFlappyLevel(cart, stage, isDouble) {
+      flappyGates = [];
+      flappyBulls = [];
+      flappyCoins = [];
+
+      const seed = hashSeed("FLAPPY_" + cart.tokenId + "_STAGE_" + stage);
+      flappyLengthPx = 1450 + (stage - 1) * 600 + (isDouble ? 400 : 0);
+
+      const gateCount = 4 + (stage - 1) * 2 + (isDouble ? 2 : 0);
+      const gapHeight = Math.max(150, 215 - (stage - 1) * 10); // Very generous 215px gap on Stage 1!
+
+      for (let i = 0; i < gateCount; i++) {
+        const gx = 540 + i * ((flappyLengthPx - 740) / gateCount);
+        const gapCenterY = 185 + ((seed + i * 83) % 170);
+        flappyGates.push({
+          x: gx,
+          gapY: gapCenterY,
+          gapH: gapHeight,
+          w: 44
+        });
+
+        if (i < 3) {
+          flappyCoins.push({
+            x: gx + 22,
+            y: gapCenterY,
+            r: 15,
+            collected: false
+          });
+        }
+      }
+
+      // Charging emerald bulls along the ground lane
+      const bullCount = 2 + stage;
+      for (let b = 0; b < bullCount; b++) {
+        flappyBulls.push({
+          x: 720 + b * 440,
+          y: 454,
+          vx: 1.3 + stage * 0.3
         });
       }
+
+      flappyPlayer = {
+        x: 200,
+        y: 225,
+        vy: 0,
+        hasFlappedOnce: false,
+        trail: []
+      };
+      flappyCameraX = 0;
     }
 
     function startRaidRun(isDoubleOrNothing) {
       activeDoubleOrNothing = Boolean(isDoubleOrNothing);
       document.getElementById("arenaOverlay").classList.remove("visible");
       document.getElementById("doubleNothingBtn").style.display = "none";
+      document.getElementById("nextStageBtn").style.display = "none";
 
-      const modeName = selectedMode === "wave" ? "45° LASER WAVE" : "WALL-BOUNCE HEIST";
+      const stageMultiplier = Number((1 + (currentStageLevel - 1) * 0.5).toFixed(2));
+      const effectiveBounty = (currentCartridge.bounty * stageMultiplier * (activeDoubleOrNothing ? 2 : 1)).toFixed(2);
+
+      const order = ["heist", "wave", "flappy"];
+      const gameIdx = order.indexOf(selectedMode) + 1;
+      document.getElementById("switchGameBtn").textContent = "Switch Game (" + gameIdx + "/3)";
+
       document.getElementById("arenaTitle").textContent =
-        "CHOG #" + currentCartridge.tokenId + " · " + modeName + (activeDoubleOrNothing ? " (2X TURBO)" : "");
-      document.getElementById("arenaPool").textContent =
-        (activeDoubleOrNothing ? (currentCartridge.bounty * 2).toFixed(2) : currentCartridge.bounty.toFixed(2)) + " MON";
-      document.getElementById("arenaStake").textContent =
-        activeDoubleOrNothing ? "2x DOUBLE-OR-NOTHING" : "1x (0.05 MON)";
-      document.getElementById("arenaModeTag").textContent =
-        selectedMode === "wave"
-          ? "HOLD SPACE / CLICK TO CLIMB (+45°) · RELEASE TO DIVE (-45°)"
-          : "TAP SPACE / CLICK TO WALL-JUMP UP THE VAULT SHAFT";
+        "CHOG #" + currentCartridge.tokenId + " · " + getModeDisplayName(selectedMode).toUpperCase();
+      document.getElementById("arenaPool").textContent = effectiveBounty + " MON";
+      document.getElementById("arenaStageBadge").textContent =
+        "STAGE " + currentStageLevel + (currentStageLevel === 1 ? " (SLOW WARMUP)" : " (" + stageMultiplier + "x SPEED/LEN)");
+
+      coinsCollected = 0;
+      document.getElementById("arenaCoinsBadge").textContent = "0 / 3";
+
+      if (selectedMode === "heist") {
+        document.getElementById("arenaModeTag").textContent =
+          "AUTO-RUNS & WALL-FLIPS · TAP SPACE / CLICK TO JUMP UP PLATFORMS TO THE CHEST";
+      } else if (selectedMode === "wave") {
+        document.getElementById("arenaModeTag").textContent =
+          "HOLD SPACE / CLICK TO CLIMB · RELEASE TO DIVE (FLOOR & CEILING RAILS ARE SAFE!)";
+      } else {
+        document.getElementById("arenaModeTag").textContent =
+          "TAP SPACE / CLICK TO FLAP · RELEASE TO GLIDE WITH $100 PARACHUTE";
+      }
 
       progressPct = 0;
       particles = [];
+      floatingTexts = [];
       shakeFrames = 0;
+      frameTick = 0;
 
-      wavePlayer = { x: 180, y: 270, vy: 0, trail: [] };
-      waveCameraX = 0;
-      buildWaveLevel(currentCartridge, activeDoubleOrNothing);
-
-      bouncePlayer = { x: 380, y: 480, vx: 7.5, vy: -9.5, dir: 1 };
-      buildBounceLevel(currentCartridge, activeDoubleOrNothing);
+      buildHeistLevel(currentCartridge, currentStageLevel, activeDoubleOrNothing);
+      buildWaveLevel(currentCartridge, currentStageLevel, activeDoubleOrNothing);
+      buildFlappyLevel(currentCartridge, currentStageLevel, activeDoubleOrNothing);
 
       const txHash = "0x" + hashSeed(Date.now() + "_" + currentCartridge.tokenId).toString(16).padStart(8, "0");
       document.getElementById("arenaReceiptLog").textContent =
-        "Raid Toll 0.05 MON signed by " + userWalletAddress + " · Tx " + txHash + " (0ms popup lag)";
+        "Stage " + currentStageLevel + " Raid Toll 0.05 MON signed by " + userWalletAddress + " · Tx " + txHash;
 
       playTone(440, 0.12, "triangle", 0.08);
       gameActive = true;
@@ -2298,63 +2590,398 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       }
     }
 
-    function triggerEndState(won) {
+    function triggerEndState(won, deathReason) {
       gameActive = false;
       shakeFrames = 14;
       const overlay = document.getElementById("arenaOverlay");
       const headline = document.getElementById("overlayHeadline");
       const subtext = document.getElementById("overlaySubtext");
       const doubleBtn = document.getElementById("doubleNothingBtn");
+      const nextStageBtn = document.getElementById("nextStageBtn");
+      const revengeBtn = document.getElementById("revengeBtn");
+
+      const stageMultiplier = Number((1 + (currentStageLevel - 1) * 0.5).toFixed(2));
+      const coinBonus = (coinsCollected * 0.5).toFixed(2);
+      const payout = (
+        currentCartridge.bounty * stageMultiplier * (activeDoubleOrNothing ? 2 : 1) +
+        coinsCollected * 0.5
+      ).toFixed(2);
 
       if (won) {
-        playTone(587.33, 0.15, "square", 0.09);
-        setTimeout(() => playTone(880, 0.28, "square", 0.1), 120);
-        const payout = activeDoubleOrNothing
-          ? (currentCartridge.bounty * 2).toFixed(2)
-          : currentCartridge.bounty.toFixed(2);
-        headline.textContent = "VAULT CLEARED · 100%";
+        playTone(587.33, 0.14, "square", 0.09);
+        setTimeout(() => playTone(880, 0.26, "square", 0.1), 110);
+        headline.textContent = "STAGE " + currentStageLevel + " CLEARED · 100%";
         headline.style.color = "var(--acid)";
         subtext.textContent =
-          "You survived Chog #" + currentCartridge.tokenId + "! Claim " + payout + " MON now or risk it all in Double-or-Nothing Turbo Mode.";
+          "Payout unlocked: " + payout + " MON (includes +" + coinBonus + " MON from " + coinsCollected + "/3 Coins). Ready for Stage " + (currentStageLevel + 1) + " (Longer & Faster)?";
+        nextStageBtn.style.display = "inline-flex";
+        nextStageBtn.textContent = "Play Stage " + (currentStageLevel + 1) + " · Longer & Faster (" + (stageMultiplier + 0.5).toFixed(1) + "x Bounty)";
+        revengeBtn.textContent = "Replay Stage " + currentStageLevel;
         doubleBtn.style.display = activeDoubleOrNothing ? "none" : "inline-flex";
       } else {
         playTone(130, 0.32, "sawtooth", 0.12);
         currentCartridge.bounty = Number((currentCartridge.bounty + 0.025).toFixed(2));
         renderDossier();
-        headline.textContent = "VAPORIZED AT " + Math.min(99, Math.floor(progressPct)) + "%";
+        headline.textContent = (deathReason || "VAPORIZED") + " AT " + Math.min(99, Math.floor(progressPct)) + "%";
         headline.style.color = "var(--ink)";
         subtext.textContent =
-          "0.02 MON routed to Landlord " + currentCartridge.owner + " · 0.025 MON added to Jackpot (" + currentCartridge.bounty.toFixed(2) + " MON).";
+          "Stage " + currentStageLevel + " run halted. 0.02 MON paid to Landlord " + currentCartridge.owner + " · 0.025 MON added to Vault Pool (" + currentCartridge.bounty.toFixed(2) + " MON).";
+        nextStageBtn.style.display = "none";
+        revengeBtn.textContent = "Instant Revenge · Retry Stage " + currentStageLevel + " (0.05 MON)";
         doubleBtn.style.display = "none";
       }
 
       setTimeout(() => {
         overlay.classList.add("visible");
-      }, 220);
+      }, 200);
     }
 
-    function updateAndDrawWave() {
-      const speed = 5.4 * currentCartridge.speedMult * (activeDoubleOrNothing ? 1.32 : 1);
-      waveCameraX += speed;
-      wavePlayer.vy = holdingInput ? -speed * 0.78 : speed * 0.78;
-      wavePlayer.y += wavePlayer.vy;
+    // =========================================================================
+    // ENGINE 1: ORIGINAL 0a7bbcb VAULT PLATFORM HEIST (REMASTERED)
+    // =========================================================================
+    function updateAndDrawHeist() {
+      frameTick++;
 
-      wavePlayer.trail.push({ x: waveCameraX + wavePlayer.x, y: wavePlayer.y });
-      if (wavePlayer.trail.length > 90) wavePlayer.trail.shift();
+      // Draw Vault Background Grid & Walls
+      ctx.strokeStyle = "rgba(255, 153, 211, 0.07)";
+      ctx.lineWidth = 1;
+      for (let gx = 0; gx < canvas.width; gx += 55) {
+        ctx.beginPath();
+        ctx.moveTo(gx, 0);
+        ctx.lineTo(gx, canvas.height);
+        ctx.stroke();
+      }
+      for (let gy = 0; gy < canvas.height; gy += 55) {
+        ctx.beginPath();
+        ctx.moveTo(0, gy);
+        ctx.lineTo(canvas.width, gy);
+        ctx.stroke();
+      }
 
-      progressPct = Math.min(100, (waveCameraX / (levelLengthPx - 300)) * 100);
+      // Outer Vault Walls (Left & Right)
+      const leftWall = 28;
+      const rightWall = canvas.width - 28;
+      ctx.fillStyle = "#3d0012";
+      ctx.fillRect(0, 0, leftWall, canvas.height);
+      ctx.fillRect(rightWall, 0, leftWall, canvas.height);
+      ctx.strokeStyle = "#ff99d3";
+      ctx.lineWidth = 3;
+      ctx.strokeRect(leftWall, 12, rightWall - leftWall, canvas.height - 24);
+
+      // Physics Update (Exact 0a7bbcb Platformer + Safe Starter Patrol!)
+      heistPlayer.vy += 0.52; // Smooth gravity
+      heistPlayer.x += heistPlayer.vx;
+      heistPlayer.y += heistPlayer.vy;
+
+      // Before the player's first jump, patrol safely back and forth on the Start Pad!
+      if (!heistPlayer.hasJumpedOnce && heistPlayer.x > 250) {
+        heistPlayer.x = 250;
+        heistPlayer.vx = -Math.abs(heistPlayer.vx);
+      }
+
+      // Wall Bounce Direction Flip (King of Thieves mechanic!)
+      if (heistPlayer.x + heistPlayer.radius > rightWall) {
+        heistPlayer.x = rightWall - heistPlayer.radius;
+        heistPlayer.vx *= -1;
+        playTone(340, 0.05, "triangle", 0.04);
+      } else if (heistPlayer.x - heistPlayer.radius < leftWall) {
+        heistPlayer.x = leftWall + heistPlayer.radius;
+        heistPlayer.vx *= -1;
+        playTone(340, 0.05, "triangle", 0.04);
+      }
+
+      // Stepping-Stone Platform Collisions (Land & Stand safely!)
+      heistPlayer.isGrounded = false;
+      for (let i = 0; i < heistPlatforms.length; i++) {
+        const p = heistPlatforms[i];
+        if (
+          heistPlayer.x + heistPlayer.radius * 0.7 > p.x &&
+          heistPlayer.x - heistPlayer.radius * 0.7 < p.x + p.w &&
+          heistPlayer.y + heistPlayer.radius >= p.y &&
+          heistPlayer.y + heistPlayer.radius <= p.y + p.h + 14 &&
+          heistPlayer.vy >= 0
+        ) {
+          heistPlayer.y = p.y - heistPlayer.radius;
+          heistPlayer.vy = 0;
+          heistPlayer.isGrounded = true;
+          heistPlayer.jumpsLeft = 2; // Reset double jump on landing!
+        }
+      }
+
+      // Draw Stepping-Stone Platforms with Chamfered Neon Trim
+      for (let i = 0; i < heistPlatforms.length; i++) {
+        const p = heistPlatforms[i];
+        ctx.fillStyle = "#4d0519";
+        ctx.fillRect(p.x, p.y, p.w, p.h);
+        ctx.fillStyle = i === heistPlatforms.length - 1 ? "#b8ff65" : "#ff99d3";
+        ctx.fillRect(p.x, p.y, p.w, 4);
+        ctx.fillStyle = "rgba(255, 179, 223, 0.7)";
+        ctx.font = "700 11px 'Libre Franklin', sans-serif";
+        ctx.fillText(p.label, p.x + 8, p.y + 14);
+      }
+
+      if (!heistPlayer.hasJumpedOnce) {
+        ctx.fillStyle = "#b8ff65";
+        ctx.font = "700 13px 'Libre Franklin', sans-serif";
+        ctx.fillText("READY ON SAFE PAD · TAP SPACE OR CLICK TO JUMP!", 44, 412);
+      }
+
+      // Draw Golden Vault Chest at Top Sanctuary
+      const vc = heistVaultChest;
+      ctx.fillStyle = "#ffd166";
+      ctx.fillRect(vc.x, vc.y, vc.w, vc.h);
+      ctx.fillStyle = "#3d0012";
+      ctx.fillRect(vc.x + 6, vc.y + 22, vc.w - 12, 6);
+      ctx.fillStyle = "#b8ff65";
+      ctx.fillRect(vc.x + vc.w / 2 - 7, vc.y + 16, 14, 16);
+      ctx.fillStyle = "#ffd166";
+      ctx.font = "700 13px 'Libre Franklin', sans-serif";
+      ctx.fillText("VAULT CHEST (100%)", vc.x - 24, vc.y - 8);
+
+      // Draw & Check 3 Collectible Golden MON Coins
+      for (let c = 0; c < heistCoins.length; c++) {
+        const coin = heistCoins[c];
+        if (coin.collected) continue;
+        const bob = Math.sin(frameTick * 0.08 + c) * 4;
+        ctx.save();
+        ctx.translate(coin.x, coin.y + bob);
+        ctx.fillStyle = "#ffd166";
+        ctx.beginPath();
+        ctx.arc(0, 0, coin.r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#3d0012";
+        ctx.font = "700 11px 'Libre Franklin', sans-serif";
+        ctx.fillText("M", -5, 4);
+        ctx.restore();
+
+        if (Math.hypot(heistPlayer.x - coin.x, heistPlayer.y - (coin.y + bob)) < heistPlayer.radius + coin.r) {
+          coin.collected = true;
+          coinsCollected++;
+          document.getElementById("arenaCoinsBadge").textContent = coinsCollected + " / 3";
+          playTone(784, 0.1, "sine", 0.09);
+          spawnFloatingText(coin.x, coin.y, "+0.50 MON", "#ffd166");
+        }
+      }
+
+      // Draw & Check Original 0a7bbcb Hazards (SLIME, LASER, ANCHOR, ELECTRIC)
+      for (let i = 0; i < heistHazards.length; i++) {
+        const hz = heistHazards[i];
+
+        if (hz.type === "SLIME") {
+          ctx.fillStyle = "#b8ff65";
+          ctx.fillRect(hz.x, hz.y, hz.w, hz.h);
+          ctx.fillStyle = "#3d0012";
+          ctx.font = "700 12px 'Libre Franklin', sans-serif";
+          ctx.fillText("TOXIC ACID BASIN · JUMP OVER", hz.x + 140, hz.y + 23);
+
+          // Bubbling slime droplets
+          const bx = hz.x + ((frameTick * 5) % hz.w);
+          const by = hz.y - Math.abs(Math.sin(frameTick * 0.12)) * 10;
+          ctx.fillStyle = "#b8ff65";
+          ctx.beginPath();
+          ctx.arc(bx, by, 5, 0, Math.PI * 2);
+          ctx.fill();
+
+          if (heistPlayer.x + 12 > hz.x && heistPlayer.x - 12 < hz.x + hz.w && heistPlayer.y + heistPlayer.radius > hz.y + 4) {
+            spawnExplosion(heistPlayer.x, heistPlayer.y, "#b8ff65");
+            triggerEndState(false, "DISSOLVED IN SLIME");
+            return;
+          }
+        } else if (hz.type === "LASER") {
+          hz.phase += hz.speed;
+          const isFiring = Math.sin(hz.phase) > 0.42; // Telegraphed! Active ~35% of cycle
+          const isWarmingUp = Math.sin(hz.phase) > 0.1 && !isFiring;
+
+          // Laser Emitter Caps
+          ctx.fillStyle = "#ff99d3";
+          ctx.fillRect(hz.x - 10, hz.y - 6, 20, 10);
+          ctx.fillRect(hz.x - 10, hz.y + hz.h - 4, 20, 10);
+
+          if (isFiring) {
+            ctx.strokeStyle = "#ff4d6d";
+            ctx.lineWidth = 6;
+            ctx.beginPath();
+            ctx.moveTo(hz.x, hz.y);
+            ctx.lineTo(hz.x, hz.y + hz.h);
+            ctx.stroke();
+
+            if (
+              Math.abs(heistPlayer.x - hz.x) < heistPlayer.radius - 2 &&
+              heistPlayer.y + heistPlayer.radius > hz.y &&
+              heistPlayer.y - heistPlayer.radius < hz.y + hz.h
+            ) {
+              spawnExplosion(heistPlayer.x, heistPlayer.y, "#ff4d6d");
+              triggerEndState(false, "SLICED BY LASER");
+              return;
+            }
+          } else {
+            ctx.strokeStyle = isWarmingUp ? "#ffd166" : "rgba(255, 153, 211, 0.28)";
+            ctx.lineWidth = isWarmingUp ? 3 : 2;
+            ctx.setLineDash([6, 6]);
+            ctx.beginPath();
+            ctx.moveTo(hz.x, hz.y);
+            ctx.lineTo(hz.x, hz.y + hz.h);
+            ctx.stroke();
+            ctx.setLineDash([]);
+          }
+        } else if (hz.type === "ANCHOR") {
+          hz.angle = Math.sin(frameTick * hz.speed) * 1.05;
+          const bobX = hz.pivotX + Math.sin(hz.angle) * hz.length;
+          const bobY = hz.pivotY + Math.cos(hz.angle) * hz.length;
+
+          // Chain line
+          ctx.strokeStyle = "rgba(255, 179, 223, 0.55)";
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.moveTo(hz.pivotX, hz.pivotY);
+          ctx.lineTo(bobX, bobY);
+          ctx.stroke();
+
+          // Anchor Wrecking Orb
+          ctx.fillStyle = "#ff4d6d";
+          ctx.beginPath();
+          ctx.arc(bobX, bobY, 20, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = "#ffd166";
+          ctx.beginPath();
+          ctx.arc(bobX, bobY, 7, 0, Math.PI * 2);
+          ctx.fill();
+
+          if (Math.hypot(heistPlayer.x - bobX, heistPlayer.y - bobY) < heistPlayer.radius + 15) {
+            spawnExplosion(heistPlayer.x, heistPlayer.y, "#ff4d6d");
+            triggerEndState(false, "CRUSHED BY PENDULUM");
+            return;
+          }
+        } else if (hz.type === "ELECTRIC") {
+          const pulse = Math.sin(frameTick * 0.2) * 3;
+          ctx.strokeStyle = "#ffd166";
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.arc(hz.x, hz.y, hz.r + pulse, 0, Math.PI * 2);
+          ctx.stroke();
+
+          ctx.fillStyle = "rgba(255, 209, 102, 0.25)";
+          ctx.beginPath();
+          ctx.arc(hz.x, hz.y, hz.r, 0, Math.PI * 2);
+          ctx.fill();
+
+          if (Math.hypot(heistPlayer.x - hz.x, heistPlayer.y - hz.y) < heistPlayer.radius + hz.r - 4) {
+            spawnExplosion(heistPlayer.x, heistPlayer.y, "#ffd166");
+            triggerEndState(false, "SHOCKED BY SHIELD");
+            return;
+          }
+        }
+      }
+
+      // Player Trail & Chog Avatar
+      heistPlayer.trail.push({ x: heistPlayer.x, y: heistPlayer.y });
+      if (heistPlayer.trail.length > 14) heistPlayer.trail.shift();
+
+      for (let t = 0; t < heistPlayer.trail.length; t++) {
+        const pt = heistPlayer.trail[t];
+        ctx.fillStyle = "rgba(255, 153, 211, " + ((t / 14) * 0.35) + ")";
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, heistPlayer.radius * 0.7, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.save();
+      ctx.translate(heistPlayer.x, heistPlayer.y);
+      ctx.fillStyle = "#ff99d3";
+      ctx.beginPath();
+      ctx.arc(0, 0, heistPlayer.radius + 2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(0, 0, heistPlayer.radius - 1, 0, Math.PI * 2);
+      ctx.clip();
+      ctx.drawImage(chogSprite, -heistPlayer.radius, -heistPlayer.radius, heistPlayer.radius * 2, heistPlayer.radius * 2);
+      ctx.restore();
+
+      // Update Progress Bar based on climb + distance toward Top Vault Chest
+      const climbPct = Math.max(0, Math.min(98, ((434 - heistPlayer.y) / 345) * 100));
+      progressPct = climbPct;
       document.getElementById("arenaPercent").textContent = Math.floor(progressPct) + "%";
       document.getElementById("arenaProgressFill").style.width = progressPct + "%";
 
-      const corridorHalf = currentCartridge.corridorGap + 45;
+      // Check Vault Chest Victory Collision!
+      if (
+        heistPlayer.x + heistPlayer.radius > vc.x &&
+        heistPlayer.x - heistPlayer.radius < vc.x + vc.w &&
+        heistPlayer.y + heistPlayer.radius > vc.y &&
+        heistPlayer.y - heistPlayer.radius < vc.y + vc.h
+      ) {
+        progressPct = 100;
+        document.getElementById("arenaPercent").textContent = "100%";
+        document.getElementById("arenaProgressFill").style.width = "100%";
+        spawnExplosion(vc.x + vc.w / 2, vc.y + vc.h / 2, "#b8ff65");
+        triggerEndState(true);
+      }
+    }
+
+    // =========================================================================
+    // ENGINE 2: CHOG DASH PORTAL WAVE (SLOWER START, SAFE RAIL SLIDE,
+    //           JETPACK->WAVE PORTALS, LONGER & FASTER EACH STAGE WIN!)
+    // =========================================================================
+    function updateAndDrawWave() {
+      frameTick++;
+
+      // Starts gentle on Stage 1 (2.55px/frame) and gets +18% faster each Stage cleared!
+      const stageSpeedMult = 1 + (currentStageLevel - 1) * 0.18;
+      const portalTurbo = wavePlayer.form === "boost" ? 1.22 : 1.0;
+      const speed = 2.55 * currentCartridge.speedMult * stageSpeedMult * portalTurbo * (activeDoubleOrNothing ? 1.25 : 1);
+
+      const corridorHalf = Math.max(150, currentCartridge.corridorGap + 25 - (currentStageLevel - 1) * 5);
       const topWall = 270 - corridorHalf;
       const botWall = 270 + corridorHalf;
 
+      if (!wavePlayer.hasLaunched) {
+        // Cruise into starting position (110px) and hover safely until player presses SPACE/Click!
+        if (waveCameraX < 110) waveCameraX += speed;
+        wavePlayer.y = 265 + Math.sin(frameTick * 0.09) * 18;
+        wavePlayer.vy = 0;
+      } else {
+        waveCameraX += speed;
+        // Form-specific physics (Jetpack thrust vs 45° Geometry Wave!)
+        if (wavePlayer.form === "jetpack") {
+          if (holdingInput) {
+            wavePlayer.vy -= 0.48;
+          } else {
+            wavePlayer.vy += 0.42;
+          }
+          wavePlayer.vy = Math.max(-5.2, Math.min(5.2, wavePlayer.vy));
+          wavePlayer.y += wavePlayer.vy;
+        } else {
+          // Crisp 45-degree Geometry Dash Wave physics (matched to current speed!)
+          wavePlayer.vy = holdingInput ? -speed * 0.76 : speed * 0.76;
+          wavePlayer.y += wavePlayer.vy;
+        }
+      }
+
+      // SAFE FLOOR & CEILING RAIL SLIDING (Never kills you! Slides with sparks like real GD Wave!)
+      wavePlayer.onRail = false;
+      if (wavePlayer.y - 16 <= topWall) {
+        wavePlayer.y = topWall + 16;
+        wavePlayer.vy = 0;
+        wavePlayer.onRail = true;
+      } else if (wavePlayer.y + 16 >= botWall) {
+        wavePlayer.y = botWall - 16;
+        wavePlayer.vy = 0;
+        wavePlayer.onRail = true;
+      }
+
+      wavePlayer.trail.push({ x: waveCameraX + wavePlayer.x, y: wavePlayer.y, form: wavePlayer.form });
+      if (wavePlayer.trail.length > 45) wavePlayer.trail.shift();
+
+      progressPct = Math.min(100, (waveCameraX / (levelLengthPx - 260)) * 100);
+      document.getElementById("arenaPercent").textContent = Math.floor(progressPct) + "%";
+      document.getElementById("arenaProgressFill").style.width = progressPct + "%";
+
+      // Draw Top & Bottom Safe Slide Walls
       ctx.fillStyle = "#3d0012";
       ctx.fillRect(0, 0, canvas.width, topWall);
       ctx.fillRect(0, botWall, canvas.width, canvas.height - botWall);
 
-      ctx.strokeStyle = "#ff99d3";
+      ctx.strokeStyle = "#b8ff65";
       ctx.lineWidth = 4;
       ctx.beginPath();
       ctx.moveTo(0, topWall);
@@ -2363,40 +2990,89 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       ctx.lineTo(canvas.width, botWall);
       ctx.stroke();
 
-      ctx.strokeStyle = "rgba(255, 153, 211, 0.12)";
+      ctx.fillStyle = "rgba(184, 255, 101, 0.75)";
+      ctx.font = "700 11px 'Libre Franklin', sans-serif";
+      ctx.fillText("SAFE MAGNETIC CEILING RAIL (SLIDE OK)", 24, topWall - 10);
+      ctx.fillText("SAFE MAGNETIC FLOOR RAIL (SLIDE OK) · STAGE " + currentStageLevel + " LENGTH: " + levelLengthPx + "PX", 24, botWall + 20);
+
+      // Diagonal Parallax Grid
+      ctx.strokeStyle = "rgba(255, 153, 211, 0.11)";
       ctx.lineWidth = 1;
       const offset = -(waveCameraX % 80);
       for (let gx = offset; gx < canvas.width; gx += 80) {
         ctx.beginPath();
         ctx.moveTo(gx, topWall);
-        ctx.lineTo(gx + 60, botWall);
+        ctx.lineTo(gx + 55, botWall);
         ctx.stroke();
       }
 
+      // Draw Transformation Portals (Jetpack -> 45° Wave -> Turbo Boost)
+      for (let p = 0; p < wavePortals.length; p++) {
+        const portal = wavePortals[p];
+        const sx = portal.x - waveCameraX;
+        if (sx > -80 && sx < canvas.width + 80) {
+          ctx.strokeStyle = portal.color;
+          ctx.lineWidth = 6;
+          ctx.strokeRect(sx - 18, topWall + 8, 36, botWall - topWall - 16);
+          ctx.fillStyle = portal.color;
+          ctx.font = "700 12px 'Libre Franklin', sans-serif";
+          ctx.fillText(portal.label, sx - 48, topWall + 26);
+        }
+        if (!portal.triggered && waveCameraX + wavePlayer.x >= portal.x) {
+          portal.triggered = true;
+          wavePlayer.form = portal.targetForm;
+          playTone(660, 0.14, "triangle", 0.09);
+          spawnFloatingText(wavePlayer.x, wavePlayer.y - 30, portal.label + "!", portal.color);
+        }
+      }
+
+      // Draw & Check 3 Secret Golden MON Coins
+      for (let c = 0; c < waveCoins.length; c++) {
+        const coin = waveCoins[c];
+        if (coin.collected) continue;
+        const sx = coin.x - waveCameraX;
+        if (sx < -40 || sx > canvas.width + 40) continue;
+
+        ctx.save();
+        ctx.translate(sx, coin.y);
+        ctx.fillStyle = "#ffd166";
+        ctx.beginPath();
+        ctx.arc(0, 0, coin.r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#3d0012";
+        ctx.font = "700 11px 'Libre Franklin', sans-serif";
+        ctx.fillText("MON", -12, 4);
+        ctx.restore();
+
+        if (Math.hypot(wavePlayer.x - sx, wavePlayer.y - coin.y) < coin.r + 18) {
+          coin.collected = true;
+          coinsCollected++;
+          document.getElementById("arenaCoinsBadge").textContent = coinsCollected + " / 3";
+          playTone(784, 0.1, "sine", 0.09);
+          spawnFloatingText(wavePlayer.x, wavePlayer.y - 20, "+0.50 MON", "#ffd166");
+        }
+      }
+
+      // Draw Neon Wave / Jetpack Trail
       if (wavePlayer.trail.length > 1) {
-        ctx.strokeStyle = "#b8ff65";
+        ctx.strokeStyle = wavePlayer.form === "boost" ? "#ffd166" : "#b8ff65";
         ctx.lineWidth = 6;
         ctx.beginPath();
         for (let i = 0; i < wavePlayer.trail.length; i++) {
           const pt = wavePlayer.trail[i];
-          const sx = pt.x - waveCameraX;
+          const sx = pt.x - waveCameraX - (wavePlayer.hasLaunched ? 0 : (wavePlayer.trail.length - i) * 3);
           if (i === 0) ctx.moveTo(sx, pt.y);
           else ctx.lineTo(sx, pt.y);
         }
         ctx.stroke();
       }
 
+      // Draw & Check Spinning Sawblade Hazards
       for (let i = 0; i < waveObstacles.length; i++) {
         const ob = waveObstacles[i];
-        ob.angle += 0.08;
+        ob.angle += 0.06;
         const sx = ob.x - waveCameraX;
         if (sx < -100 || sx > canvas.width + 100) continue;
-
-        if (ob.isPortal) {
-          ctx.strokeStyle = "#ffd166";
-          ctx.lineWidth = 5;
-          ctx.strokeRect(sx - 18, topWall + 10, 36, botWall - topWall - 20);
-        }
 
         ctx.save();
         ctx.translate(sx, ob.y);
@@ -2419,39 +3095,41 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         ctx.fill();
         ctx.restore();
 
+        // Forgiving hitbox (-4px grace margin)
         const dx = wavePlayer.x - sx;
         const dy = wavePlayer.y - ob.y;
-        if (Math.hypot(dx, dy) < ob.r + 12) {
+        if (Math.hypot(dx, dy) < ob.r + 10) {
           spawnExplosion(wavePlayer.x, wavePlayer.y, "#ff4d6d");
-          triggerEndState(false);
+          triggerEndState(false, "CLIPPED SAWBLADE");
           return;
         }
       }
 
+      // Goal Gate at 100%
       const goalScreenX = levelLengthPx - 120 - waveCameraX;
       if (goalScreenX < canvas.width) {
         ctx.fillStyle = "#b8ff65";
-        ctx.fillRect(goalScreenX, topWall, 28, botWall - topWall);
+        ctx.fillRect(goalScreenX, topWall, 34, botWall - topWall);
+        ctx.fillStyle = "#3d0012";
+        ctx.font = "700 13px 'Libre Franklin', sans-serif";
+        ctx.fillText("100%", goalScreenX + 2, 270);
       }
 
+      if (!wavePlayer.hasLaunched) {
+        ctx.fillStyle = "#b8ff65";
+        ctx.font = "700 13px 'Libre Franklin', sans-serif";
+        ctx.fillText("READY IN JETPACK CORRIDOR · HOLD SPACE OR CLICK TO LAUNCH STAGE " + currentStageLevel + "!", 150, 215);
+      }
+
+      // Draw Chog Wave / Jetpack Rider
       ctx.save();
       ctx.translate(wavePlayer.x, wavePlayer.y);
-      ctx.rotate(holdingInput ? -Math.PI / 4 : Math.PI / 4);
+      const tilt = !wavePlayer.hasLaunched || wavePlayer.onRail ? 0 : (holdingInput ? -Math.PI / 5 : Math.PI / 5);
+      ctx.rotate(tilt);
       ctx.fillStyle = "#ff99d3";
-      ctx.beginPath();
-      ctx.moveTo(18, 0);
-      ctx.lineTo(-14, -12);
-      ctx.lineTo(-8, 0);
-      ctx.lineTo(-14, 12);
-      ctx.closePath();
-      ctx.fill();
+      ctx.fillRect(-18, -18, 36, 36);
+      ctx.drawImage(chogSprite, -15, -15, 30, 30);
       ctx.restore();
-
-      if (wavePlayer.y - 12 < topWall || wavePlayer.y + 12 > botWall) {
-        spawnExplosion(wavePlayer.x, wavePlayer.y, "#ff99d3");
-        triggerEndState(false);
-        return;
-      }
 
       if (progressPct >= 100) {
         spawnExplosion(wavePlayer.x, wavePlayer.y, "#b8ff65");
@@ -2459,78 +3137,170 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       }
     }
 
-    function updateAndDrawBounce() {
-      const leftWall = 340;
-      const rightWall = 760;
+    // =========================================================================
+    // ENGINE 3: FLAPPY $100 PARACHUTE (CHOG #7731 + CHARGING BULL STAMPEDE)
+    // =========================================================================
+    function updateAndDrawFlappy() {
+      frameTick++;
 
-      ctx.fillStyle = "#3d0012";
-      ctx.fillRect(0, 0, leftWall, canvas.height);
-      ctx.fillRect(rightWall, 0, canvas.width - rightWall, canvas.height);
+      const stageSpeedMult = 1 + (currentStageLevel - 1) * 0.18;
+      const speed = 2.4 * currentCartridge.speedMult * stageSpeedMult * (activeDoubleOrNothing ? 1.25 : 1);
 
-      ctx.strokeStyle = "#ff99d3";
-      ctx.lineWidth = 4;
-      ctx.beginPath();
-      ctx.moveTo(leftWall, 0);
-      ctx.lineTo(leftWall, canvas.height);
-      ctx.moveTo(rightWall, 0);
-      ctx.lineTo(rightWall, canvas.height);
-      ctx.stroke();
-
-      ctx.fillStyle = "#b8ff65";
-      ctx.fillRect(leftWall + 40, 26, rightWall - leftWall - 80, 24);
-      ctx.fillStyle = "#3d0012";
-      ctx.font = "700 14px 'Libre Franklin', sans-serif";
-      ctx.fillText("VAULT BOUNTY CHEST · 100%", leftWall + 125, 43);
-
-      bouncePlayer.x += bouncePlayer.vx * bouncePlayer.dir;
-      bouncePlayer.vy += 0.42;
-      bouncePlayer.y += bouncePlayer.vy;
-
-      if (bouncePlayer.x >= rightWall - 22) {
-        bouncePlayer.x = rightWall - 22;
-        bouncePlayer.dir = -1;
-        playTone(320, 0.06, "triangle", 0.05);
-      } else if (bouncePlayer.x <= leftWall + 22) {
-        bouncePlayer.x = leftWall + 22;
-        bouncePlayer.dir = 1;
-        playTone(320, 0.06, "triangle", 0.05);
+      // Gentle auto-hover updraft at starting line until first tap!
+      if (!flappyPlayer.hasFlappedOnce) {
+        if (flappyCameraX < 120) flappyCameraX += speed;
+        flappyPlayer.y = 225 + Math.sin(frameTick * 0.08) * 14;
+        flappyPlayer.vy = 0;
+      } else {
+        flappyCameraX += speed;
+        flappyPlayer.vy += 0.25; // Gentle parachute gravity
+        if (flappyPlayer.vy > 4.0) flappyPlayer.vy = 4.0;
+        flappyPlayer.y += flappyPlayer.vy;
       }
 
-      if (bouncePlayer.y > canvas.height - 28) {
-        bouncePlayer.y = canvas.height - 28;
-        bouncePlayer.vy = -10.5;
+      // Safe Ceiling & Floor Clamp
+      const topCeiling = 46;
+      const groundY = 485;
+      if (flappyPlayer.y < topCeiling + 20) {
+        flappyPlayer.y = topCeiling + 20;
+        flappyPlayer.vy = 0;
+      }
+      if (flappyPlayer.y > groundY - 20) {
+        flappyPlayer.y = groundY - 20;
+        flappyPlayer.vy = -5.4; // Bouncy trampoline floor!
       }
 
-      progressPct = Math.max(0, Math.min(100, ((500 - bouncePlayer.y) / 450) * 100));
+      progressPct = Math.min(100, (flappyCameraX / (flappyLengthPx - 250)) * 100);
       document.getElementById("arenaPercent").textContent = Math.floor(progressPct) + "%";
       document.getElementById("arenaProgressFill").style.width = progressPct + "%";
 
-      for (let i = 0; i < bounceLasers.length; i++) {
-        const lz = bounceLasers[i];
-        lz.phase += lz.speed;
-        const active = Math.sin(lz.phase) > 0.15;
-        ctx.strokeStyle = active ? "#ff4d6d" : "rgba(255, 153, 211, 0.25)";
-        ctx.lineWidth = active ? 5 : 2;
-        ctx.beginPath();
-        ctx.moveTo(leftWall, lz.y);
-        ctx.lineTo(rightWall, lz.y);
-        ctx.stroke();
+      // Sky & Ground Bar
+      ctx.fillStyle = "#3d0012";
+      ctx.fillRect(0, 0, canvas.width, topCeiling);
+      ctx.fillRect(0, groundY, canvas.width, canvas.height - groundY);
+      ctx.strokeStyle = "#b8ff65";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(0, groundY);
+      ctx.lineTo(canvas.width, groundY);
+      ctx.stroke();
 
-        if (active && Math.abs(bouncePlayer.y - lz.y) < 15) {
-          spawnExplosion(bouncePlayer.x, bouncePlayer.y, "#ff4d6d");
-          triggerEndState(false);
+      // Draw Laser Security Gates (Top & Bottom Pillars with generous gap!)
+      for (let i = 0; i < flappyGates.length; i++) {
+        const g = flappyGates[i];
+        const sx = g.x - flappyCameraX;
+        if (sx < -80 || sx > canvas.width + 80) continue;
+
+        const topH = g.gapY - g.gapH / 2 - topCeiling;
+        const botY = g.gapY + g.gapH / 2;
+        const botH = groundY - botY;
+
+        ctx.fillStyle = "#610922";
+        ctx.fillRect(sx, topCeiling, g.w, topH);
+        ctx.fillRect(sx, botY, g.w, botH);
+
+        ctx.strokeStyle = "#ff4d6d";
+        ctx.lineWidth = 3;
+        ctx.strokeRect(sx, topCeiling, g.w, topH);
+        ctx.strokeRect(sx, botY, g.w, botH);
+
+        // Collision check with forgiving margin
+        if (flappyPlayer.x + 14 > sx && flappyPlayer.x - 14 < sx + g.w) {
+          if (flappyPlayer.y - 14 < topCeiling + topH || flappyPlayer.y + 14 > botY) {
+            spawnExplosion(flappyPlayer.x, flappyPlayer.y, "#ff4d6d");
+            triggerEndState(false, "HIT SECURITY GATE");
+            return;
+          }
+        }
+      }
+
+      // Draw & Check 3 Floating Golden MON Coins
+      for (let c = 0; c < flappyCoins.length; c++) {
+        const coin = flappyCoins[c];
+        if (coin.collected) continue;
+        const sx = coin.x - flappyCameraX;
+        if (sx < -40 || sx > canvas.width + 40) continue;
+
+        ctx.save();
+        ctx.translate(sx, coin.y);
+        ctx.fillStyle = "#ffd166";
+        ctx.beginPath();
+        ctx.arc(0, 0, coin.r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#3d0012";
+        ctx.font = "700 11px 'Libre Franklin', sans-serif";
+        ctx.fillText("$", -4, 4);
+        ctx.restore();
+
+        if (Math.hypot(flappyPlayer.x - sx, flappyPlayer.y - coin.y) < coin.r + 20) {
+          coin.collected = true;
+          coinsCollected++;
+          document.getElementById("arenaCoinsBadge").textContent = coinsCollected + " / 3";
+          playTone(784, 0.1, "sine", 0.09);
+          spawnFloatingText(flappyPlayer.x, flappyPlayer.y - 20, "+0.50 MON", "#ffd166");
+        }
+      }
+
+      // Draw Charging Emerald Bulls along the floor!
+      for (let b = 0; b < flappyBulls.length; b++) {
+        const bull = flappyBulls[b];
+        if (flappyPlayer.hasFlappedOnce) bull.x -= bull.vx;
+        const sx = bull.x - flappyCameraX;
+        if (sx < -80 || sx > canvas.width + 80) continue;
+
+        ctx.fillStyle = "#b8ff65";
+        ctx.fillRect(sx - 20, bull.y - 20, 40, 40);
+        ctx.drawImage(bullSprite, sx - 18, bull.y - 18, 36, 36);
+
+        if (Math.hypot(flappyPlayer.x - sx, flappyPlayer.y - bull.y) < 30) {
+          spawnExplosion(flappyPlayer.x, flappyPlayer.y, "#b8ff65");
+          triggerEndState(false, "TRAMPLED BY BULL");
           return;
         }
       }
 
+      // Goal Line
+      const goalX = flappyLengthPx - 120 - flappyCameraX;
+      if (goalX < canvas.width) {
+        ctx.fillStyle = "#b8ff65";
+        ctx.fillRect(goalX, topCeiling, 32, groundY - topCeiling);
+      }
+
+      if (!flappyPlayer.hasFlappedOnce) {
+        ctx.fillStyle = "#b8ff65";
+        ctx.font = "700 13px 'Libre Franklin', sans-serif";
+        ctx.fillText("HOVERING IN UPDRAFT · TAP SPACE OR CLICK TO FLAP $100 PARACHUTE!", 140, 155);
+      }
+
+      // Draw Chog with Custom $100 MON Bill Parachute Canopy!
       ctx.save();
+      ctx.translate(flappyPlayer.x, flappyPlayer.y);
+
+      // Parachute strings
+      ctx.strokeStyle = "#ffd166";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(-14, -10);
+      ctx.lineTo(-24, -34);
+      ctx.moveTo(14, -10);
+      ctx.lineTo(24, -34);
+      ctx.stroke();
+
+      // $100 Bill Parachute Canopy
+      ctx.fillStyle = "#b8ff65";
+      ctx.fillRect(-28, -48, 56, 16);
+      ctx.fillStyle = "#3d0012";
+      ctx.font = "700 11px 'Libre Franklin', sans-serif";
+      ctx.fillText("$100 MON", -24, -36);
+
+      // Chog Avatar
       ctx.fillStyle = "#ff99d3";
-      ctx.fillRect(bouncePlayer.x - 18, bouncePlayer.y - 18, 36, 36);
-      ctx.drawImage(chogSprite, bouncePlayer.x - 15, bouncePlayer.y - 15, 30, 30);
+      ctx.fillRect(-18, -18, 36, 36);
+      ctx.drawImage(chogSprite, -15, -15, 30, 30);
       ctx.restore();
 
-      if (bouncePlayer.y <= 54) {
-        spawnExplosion(bouncePlayer.x, bouncePlayer.y, "#b8ff65");
+      if (progressPct >= 100) {
+        spawnExplosion(flappyPlayer.x, flappyPlayer.y, "#b8ff65");
         triggerEndState(true);
       }
     }
@@ -2546,13 +3316,16 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       if (gameActive) {
-        if (selectedMode === "wave") {
+        if (selectedMode === "heist") {
+          updateAndDrawHeist();
+        } else if (selectedMode === "wave") {
           updateAndDrawWave();
         } else {
-          updateAndDrawBounce();
+          updateAndDrawFlappy();
         }
       }
 
+      // Draw Particle Explosions
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
         p.x += p.vx;
@@ -2568,18 +3341,50 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         ctx.globalAlpha = 1;
       }
 
+      // Draw Floating Coin / Portal Popups
+      for (let i = floatingTexts.length - 1; i >= 0; i--) {
+        const ft = floatingTexts[i];
+        ft.y -= 1.2;
+        ft.life -= 0.025;
+        if (ft.life <= 0) {
+          floatingTexts.splice(i, 1);
+          continue;
+        }
+        ctx.fillStyle = ft.color;
+        ctx.globalAlpha = ft.life;
+        ctx.font = "700 14px 'Libre Franklin', sans-serif";
+        ctx.fillText(ft.text, ft.x - 28, ft.y);
+        ctx.globalAlpha = 1;
+      }
+
       ctx.restore();
-      if (gameActive || particles.length > 0) {
+      if (gameActive || particles.length > 0 || floatingTexts.length > 0) {
         animFrameId = requestAnimationFrame(gameLoop);
       }
     }
 
     function handlePressStart() {
       holdingInput = true;
-      if (gameActive && selectedMode === "bounce") {
-        bouncePlayer.vy = -10.2;
-        bouncePlayer.dir *= -1;
-        playTone(520, 0.08, "sine", 0.07);
+      if (!gameActive) return;
+
+      if (selectedMode === "heist") {
+        // Allow jumping from platforms OR double-jumping in mid-air!
+        if (heistPlayer.isGrounded || heistPlayer.jumpsLeft > 0) {
+          if (!heistPlayer.hasJumpedOnce) {
+            heistPlayer.hasJumpedOnce = true;
+            heistPlayer.vx = Math.abs(heistPlayer.vx); // Always leap forward onto Tier 1 on first jump!
+          }
+          heistPlayer.vy = -12.4;
+          heistPlayer.isGrounded = false;
+          heistPlayer.jumpsLeft--;
+          playTone(520, 0.08, "sine", 0.07);
+        }
+      } else if (selectedMode === "wave") {
+        wavePlayer.hasLaunched = true;
+      } else if (selectedMode === "flappy") {
+        flappyPlayer.hasFlappedOnce = true;
+        flappyPlayer.vy = -5.8;
+        playTone(480, 0.07, "triangle", 0.06);
       }
     }
 
@@ -2600,6 +3405,9 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       } else if (e.code === "KeyR") {
         e.preventDefault();
         startRaidRun(false);
+      } else if (e.code === "KeyM") {
+        e.preventDefault();
+        switchArenaModeInPlace();
       } else if (e.code === "Escape") {
         closeArena();
       }

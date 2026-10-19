@@ -1,0 +1,27 @@
+{
+  "name": "inside-chog",
+  "version": "1.0.0",
+  "description": "Inside Chog: The Asymmetric On-Chain Vault Heist Protocol on Monad",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "test": "node --import tsx --test src/**/*.test.ts",
+    "serve": "npx serve ."
+  },
+  "keywords": [
+    "monad",
+    "chog",
+    "nft",
+    "gaming",
+    "heist",
+    "procedural",
+    "compiler"
+  ],
+  "author": "King's Court",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.13.9",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
+  }
+}

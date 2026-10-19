@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Inside Chog — On-Chain Vault Heist on Monad</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background-color: #06050a;
+      color: #e4e4e7;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    canvas {
+      image-rendering: pixelated;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 30px rgba(228, 96, 157, 0.15);
+    }
+    .glow-card {
+      background: rgba(12, 10, 18, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-between p-3 sm:p-6 overflow-x-hidden">
+
+  <!-- Top Bar: Brand, Stats & Selected Chog -->
+  <header class="w-full max-w-4xl flex items-center justify-between mb-4">
+    <div class="flex items-center space-x-3">
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-[#e4609d] via-[#f093bf] to-[#490e2a] flex items-center justify-center font-black text-black text-lg shadow-lg shadow-[#e4609d]/20">
+        ⚡
+      </div>
+      <div>
+        <h1 class="text-base sm:text-lg font-bold tracking-tight text-white flex items-center gap-2">
+          INSIDE CHOG <span class="text-[10px] mono bg-[#e4609d]/20 text-[#f093bf] px-1.5 py-0.5 rounded border border-[#e4609d]/40">MONAD DEVNET</span>
+        </h1>
+        <p class="text-xs text-zinc-400">The 30-Second Asymmetric Den Heist Protocol</p>
+      </div>
+    </div>
+
+    <!-- Active Monad Vault Stats -->
+    <div class="flex items-center space-x-2 sm:space-x-4 mono text-xs">
+      <div class="bg-black/60 border border-white/10 px-3 py-1.5 rounded-lg text-right">
+        <span class="text-zinc-500 block text-[9px] uppercase tracking-wider">Vault Bounty</span>
+        <span id="stat-bounty" class="text-emerald-400 font-bold text-sm">200 $CHOG</span>
+      </div>
+      <div class="bg-black/60 border border-white/10 px-3 py-1.5 rounded-lg text-right">
+        <span class="text-zinc-500 block text-[9px] uppercase tracking-wider">Raid Clock</span>
+        <span id="stat-clock" class="text-[#f093bf] font-bold text-sm tabular-nums">00:30:00</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Chog Cartridge Selector Strip -->
+  <section class="w-full max-w-4xl mb-4">
+    <div class="glow-card p-3 rounded-2xl flex items-center justify-between overflow-x-auto gap-3">
+      <div class="flex items-center space-x-2 text-xs mono text-zinc-400 shrink-0">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span>SELECT CARTRIDGE:</span>
+      </div>
+      <div class="flex items-center space-x-2 overflow-x-auto shrink-0" id="chog-selector">
+        <button onclick="selectChog(1)" class="chog-btn border border-[#e4609d] bg-[#e4609d]/10 px-3 py-1.5 rounded-xl flex items-center space-x-2 text-xs font-semibold text-white transition-all" data-id="1">
+          <img src="chog1.jpg" class="w-6 h-6 rounded-lg object-cover">
+          <span>Chog #1 (Laser Pirate)</span>
+        </button>
+        <button onclick="selectChog(5)" class="chog-btn border border-white/10 bg-black/40 hover:border-white/30 px-3 py-1.5 rounded-xl flex items-center space-x-2 text-xs font-semibold text-zinc-300 transition-all" data-id="5">
+          <img src="chog5.jpg" class="w-6 h-6 rounded-lg object-cover">
+          <span>Chog #5 (Gold Teeth)</span>
+        </button>
+        <button onclick="selectChog(6)" class="chog-btn border border-white/10 bg-black/40 hover:border-white/30 px-3 py-1.5 rounded-xl flex items-center space-x-2 text-xs font-semibold text-zinc-300 transition-all" data-id="6">
+          <img src="chog6.jpg" class="w-6 h-6 rounded-lg object-cover">
+          <span>Chog #6 (Void Crown)</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Game Canvas Container -->
+  <main class="w-full max-w-4xl relative flex flex-col items-center">
+    <div class="relative w-full aspect-[16/10] max-h-[500px] rounded-2xl overflow-hidden border border-white/10 bg-[#07060b]">
+      
+      <!-- HTML5 Canvas -->
+      <canvas id="gameCanvas" width="800" height="500" class="w-full h-full block cursor-pointer"></canvas>
+
+      <!-- On-Canvas HUD Overlay -->
+      <div class="absolute top-3 left-4 flex items-center space-x-3 pointer-events-none">
+        <div class="mono text-xs bg-black/70 backdrop-blur px-2.5 py-1 rounded-md border border-white/10 text-zinc-300">
+          HEALTH: <span id="hud-health" class="text-rose-400 font-bold">100%</span>
+        </div>
+        <div class="mono text-xs bg-black/70 backdrop-blur px-2.5 py-1 rounded-md border border-white/10 text-zinc-300">
+          HAZARDS: <span id="hud-hazards" class="text-amber-400 font-bold">4 ACTIVE</span>
+        </div>
+      </div>
+
+      <!-- Start / Respawn Overlay -->
+      <div id="overlay-start" class="absolute inset-0 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center z-20">
+        <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-[#e4609d] to-purple-600 flex items-center justify-center text-3xl mb-3 shadow-xl shadow-[#e4609d]/30">
+          👑
+        </div>
+        <h2 id="overlay-title" class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mb-2">READY TO RAID VAULT</h2>
+        <p id="overlay-subtitle" class="text-xs sm:text-sm text-zinc-400 max-w-md mb-6">
+          Tap or Click to Jump. Bounce off walls to reverse direction. Reach the Vault Chest before the 30-second Monad block window closes!
+        </p>
+        <button onclick="startRaid()" class="bg-[#e4609d] hover:bg-[#f093bf] text-black font-extrabold px-8 py-3.5 rounded-xl text-sm shadow-xl shadow-[#e4609d]/40 transition-transform active:scale-95">
+          START 30S HEIST (SPACEBAR / TAP)
+        </button>
+      </div>
+
+      <!-- Victory / Receipt Overlay -->
+      <div id="overlay-receipt" class="absolute inset-0 bg-black/90 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center z-30 hidden">
+        <div class="w-14 h-14 rounded-full bg-emerald-500/20 border border-emerald-500 flex items-center justify-center text-2xl mb-2 text-emerald-400">
+          ✓
+        </div>
+        <h3 class="text-2xl font-black text-white tracking-tight">VAULT CRACKED</h3>
+        <p class="text-xs text-zinc-400 mb-4">Monad Sub-Second Cryptographic Execution Proof</p>
+        
+        <div class="w-full max-w-md glow-card p-4 rounded-xl text-left mono text-[11px] mb-5 space-y-1.5 border border-emerald-500/30">
+          <div class="flex justify-between"><span class="text-zinc-500">Receipt ID:</span><span id="rec-id" class="text-white font-bold">CHOG-9A4F2C</span></div>
+          <div class="flex justify-between"><span class="text-zinc-500">Raid Duration:</span><span id="rec-duration" class="text-emerald-400 font-bold">14.32s</span></div>
+          <div class="flex justify-between"><span class="text-zinc-500">Loot Claimed:</span><span id="rec-loot" class="text-[#f093bf] font-bold">200 $CHOG</span></div>
+          <div class="flex justify-between"><span class="text-zinc-500">Monad TX Status:</span><span class="text-emerald-400">FINALIZED (Block #41209)</span></div>
+          <div class="truncate text-zinc-500 pt-1 border-t border-white/5"><span class="text-zinc-400">Hash:</span> <span id="rec-hash" class="text-zinc-300">5a28b9736e193991...</span></div>
+        </div>
+
+        <div class="flex space-x-3">
+          <button onclick="resetRaid()" class="bg-white/10 hover:bg-white/20 text-white font-semibold px-5 py-2.5 rounded-lg text-xs transition-colors">
+            TRY ANOTHER CHOG
+          </button>
+          <button onclick="startRaid()" class="bg-[#e4609d] hover:bg-[#f093bf] text-black font-extrabold px-6 py-2.5 rounded-lg text-xs transition-all">
+            RAID AGAIN
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Touch Area Banner -->
+    <div class="w-full mt-3 p-3 rounded-xl bg-black/40 border border-white/5 flex items-center justify-between text-xs text-zinc-400 mono">
+      <div class="flex items-center space-x-2">
+        <span class="text-[#e4609d]">🎮 CONTROLS:</span>
+        <span>Tap / Spacebar = Jump & Wall-Bounce</span>
+      </div>
+      <div class="text-zinc-500 hidden sm:block">
+        ZeptoLab 1-Thumb Architecture • 60 FPS
+      </div>
+    </div>
+  </main>
+
+  <!-- Sound FX Synthesizer (Web Audio API) -->
+  <script>
+    const AudioEngine = {
+      ctx: null,
+      init() {
+        if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+      },
+      playJump() {
+        this.init();
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.frequency.setValueAtTime(180, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(360, this.ctx.currentTime + 0.12);
+        gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.12);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.12);
+      },
+      playHit() {
+        this.init();
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.frequency.setValueAtTime(90, this.ctx.currentTime);
+        osc.frequency.linearRampToValueAtTime(30, this.ctx.currentTime + 0.2);
+        gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.2);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.2);
+      },
+      playWin() {
+        this.init();
+        [261.63, 329.63, 392.00, 523.25].forEach((freq, i) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.frequency.value = freq;
+          const t = this.ctx.currentTime + (i * 0.08);
+          gain.gain.setValueAtTime(0.2, t);
+          gain.gain.linearRampToValueAtTime(0.01, t + 0.25);
+          osc.start(t);
+          osc.stop(t + 0.25);
+        });
+      }
+    };
+
+    // Chog Cartridges Database (Pre-seeded with local inspected NFTs)
+    const CHOG_CARTRIDGES = {
+      1: {
+        id: 1,
+        name: "Chog #1 (Laser Pirate)",
+        theme: "TOXIC_SEWER",
+        bounty: 100,
+        traits: { background: "Toxic Slime", eyes: "Laser Eyes", mouth: "Smirk", head: "Pirate Hat" },
+        hazards: [
+          { type: 'LASER', x: 100, y: 310, w: 450, h: 6, cycle: 1800 },
+          { type: 'ANCHOR', x: 270, y: 120, w: 20, h: 100, cycle: 2000 },
+          { type: 'SLIME', x: 280, y: 450, w: 220, h: 15, cycle: 0 }
+        ]
+      },
+      5: {
+        id: 5,
+        name: "Chog #5 (Gold Teeth)",
+        theme: "STONE_VAULT",
+        bounty: 200,
+        traits: { background: "Stone", eyes: "Laser", mouth: "Gold Teeth", head: "Pirate Hat" },
+        hazards: [
+          { type: 'LASER', x: 350, y: 210, w: 350, h: 6, cycle: 2200 },
+          { type: 'ELECTRIC', x: 680, y: 110, w: 10, h: 60, cycle: 1400 },
+          { type: 'SAW', x: 420, y: 230, w: 32, h: 32, cycle: 2500 }
+        ]
+      },
+      6: {
+        id: 6,
+        name: "Chog #6 (Void Crown)",
+        theme: "CYBER_VOID",
+        bounty: 150,
+        traits: { background: "Cyber Void", eyes: "VR Goggles", mouth: "Default", head: "Crown" },
+        hazards: [
+          { type: 'SENTRY', x: 630, y: 140, w: 28, h: 28, cycle: 1600 },
+          { type: 'SAW', x: 320, y: 200, w: 36, h: 36, cycle: 3000 }
+        ]
+      }
+    };
+
+    let activeChog = CHOG_CARTRIDGES[1];
+    let isRaiding = false;
+    let raidStartTime = 0;
+    let remainingMs = 30000;
+    let clockInterval = null;
+
+    // Canvas & Physics Engine
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Player State
+    const player = {
+      x: 50,
+      y: 410,
+      w: 24,
+      h: 24,
+      vx: 3.2,
+      vy: 0,
+      isGrounded: false,
+      isAlive: true
+    };
+
+    // Platforms (Static single screen)
+    const platforms = [
+      { x: 0, y: 460, w: 800, h: 40 },          // Floor
+      { x: 0, y: 0, w: 800, h: 20 },            // Ceiling
+      { x: 0, y: 0, w: 20, h: 500 },            // Left wall
+      { x: 780, y: 0, w: 20, h: 500 },          // Right wall
+      { x: 160, y: 350, w: 140, h: 16 },        // Tier 1
+      { x: 380, y: 260, w: 160, h: 16 },        // Tier 2
+      { x: 620, y: 170, w: 140, h: 16 }         // Tier 3 (Vault)
+    ];
+
+    const vaultChest = { x: 720, y: 120, w: 36, h: 36 };
+
+    function selectChog(id) {
+      if (isRaiding) return;
+      activeChog = CHOG_CARTRIDGES[id];
+      document.querySelectorAll('.chog-btn').forEach(btn => {
+        if (btn.dataset.id == id) {
+          btn.className = "chog-btn border border-[#e4609d] bg-[#e4609d]/10 px-3 py-1.5 rounded-xl flex items-center space-x-2 text-xs font-semibold text-white transition-all";
+        } else {
+          btn.className = "chog-btn border border-white/10 bg-black/40 hover:border-white/30 px-3 py-1.5 rounded-xl flex items-center space-x-2 text-xs font-semibold text-zinc-300 transition-all";
+        }
+      });
+      document.getElementById('stat-bounty').innerText = `${activeChog.bounty} $CHOG`;
+      document.getElementById('hud-hazards').innerText = `${activeChog.hazards.length} ACTIVE`;
+      resetPlayer();
+      drawGame();
+    }
+
+    function resetPlayer() {
+      player.x = 50;
+      player.y = 410;
+      player.vx = 3.2;
+      player.vy = 0;
+      player.isGrounded = false;
+      player.isAlive = true;
+      document.getElementById('hud-health').innerText = "100%";
+      document.getElementById('hud-health').className = "text-emerald-400 font-bold";
+    }
+
+    function startRaid() {
+      AudioEngine.init();
+      document.getElementById('overlay-start').classList.add('hidden');
+      document.getElementById('overlay-receipt').classList.add('hidden');
+      resetPlayer();
+      isRaiding = true;
+      raidStartTime = performance.now();
+      remainingMs = 30000;
+
+      if (clockInterval) clearInterval(clockInterval);
+      clockInterval = setInterval(() => {
+        remainingMs -= 50;
+        if (remainingMs <= 0) {
+          remainingMs = 0;
+          gameOver(false, "TIME EXPIRED");
+        }
+        const s = Math.floor(remainingMs / 1000);
+        const ms = Math.floor((remainingMs % 1000) / 10);
+        document.getElementById('stat-clock').innerText = `00:${s.toString().padStart(2, '0')}:${ms.toString().padStart(2, '0')}`;
+      }, 50);
+    }
+
+    function resetRaid() {
+      clearInterval(clockInterval);
+      isRaiding = false;
+      document.getElementById('overlay-receipt').classList.add('hidden');
+      document.getElementById('overlay-start').classList.remove('hidden');
+      document.getElementById('stat-clock').innerText = "00:30:00";
+      resetPlayer();
+      drawGame();
+    }
+
+    // Tap / Jump Trigger
+    function handleJump() {
+      if (!isRaiding) {
+        startRaid();
+        return;
+      }
+      if (player.isGrounded) {
+        player.vy = -10.5;
+        player.isGrounded = false;
+        AudioEngine.playJump();
+      } else if (player.x <= 25 || player.x >= 755) {
+        // Wall Bounce
+        player.vy = -9.5;
+        player.vx *= -1; // Bounce off wall
+        AudioEngine.playJump();
+      }
+    }
+
+    window.addEventListener('keydown', e => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        handleJump();
+      }
+    });
+
+    canvas.addEventListener('pointerdown', e => {
+      e.preventDefault();
+      handleJump();
+    });
+
+    function gameOver(won, reason) {
+      isRaiding = false;
+      clearInterval(clockInterval);
+      if (won) {
+        AudioEngine.playWin();
+        const durationSec = ((performance.now() - raidStartTime) / 1000).toFixed(2);
+        document.getElementById('rec-id').innerText = `CHOG-HEX-${Math.random().toString(16).substring(2, 8).toUpperCase()}`;
+        document.getElementById('rec-duration').innerText = `${durationSec}s`;
+        document.getElementById('rec-loot').innerText = `${activeChog.bounty} $CHOG`;
+        document.getElementById('rec-hash').innerText = `0x${Array.from({length: 40}, () => Math.floor(Math.random()*16).toString(16)).join('')}`;
+        document.getElementById('overlay-receipt').classList.remove('hidden');
+      } else {
+        AudioEngine.playHit();
+        document.getElementById('overlay-title').innerText = reason || "RAID FAILED";
+        document.getElementById('overlay-subtitle').innerText = "The Chog's traps intercepted you. Try again to claim the bounty!";
+        document.getElementById('overlay-start').classList.remove('hidden');
+      }
+    }
+
+    // Main Game Loop
+    function updatePhysics() {
+      if (!isRaiding) return;
+
+      // Gravity & Horizontal Velocity
+      player.vy += 0.48; // Gravity
+      player.x += player.vx;
+      player.y += player.vy;
+
+      // Wall bounce
+      if (player.x <= 20) {
+        player.x = 20;
+        player.vx *= -1;
+      } else if (player.x + player.w >= 780) {
+        player.x = 780 - player.w;
+        player.vx *= -1;
+      }
+
+      // Platform Collisions
+      player.isGrounded = false;
+      for (const p of platforms) {
+        if (
+          player.x + player.w > p.x &&
+          player.x < p.x + p.w &&
+          player.y + player.h >= p.y &&
+          player.y + player.h <= p.y + 16 &&
+          player.vy >= 0
+        ) {
+          player.y = p.y - player.h;
+          player.vy = 0;
+          player.isGrounded = true;
+          break;
+        }
+      }
+
+      // Check Hazard Collisions
+      const now = performance.now();
+      for (const h of activeChog.hazards) {
+        if (h.type === 'LASER') {
+          // Pulse on cycle
+          const phase = (now % h.cycle) / h.cycle;
+          if (phase > 0.4) {
+            // Laser is ON
+            if (
+              player.x + player.w > h.x &&
+              player.x < h.x + h.w &&
+              player.y + player.h > h.y &&
+              player.y < h.y + h.h
+            ) {
+              gameOver(false, "VAPORIZED BY LASER");
+              return;
+            }
+          }
+        } else if (h.type === 'SLIME') {
+          if (
+            player.x + player.w > h.x &&
+            player.x < h.x + h.w &&
+            player.y + player.h >= h.y
+          ) {
+            gameOver(false, "DISSOLVED IN TOXIC SLIME");
+            return;
+          }
+        } else if (h.type === 'ANCHOR' || h.type === 'SAW' || h.type === 'SENTRY') {
+          // Circular collision
+          const cx = h.x + h.w / 2;
+          const cy = h.y + h.h / 2;
+          const px = player.x + player.w / 2;
+          const py = player.y + player.h / 2;
+          const dist = Math.hypot(cx - px, cy - py);
+          if (dist < 22) {
+            gameOver(false, "STRUCK BY TRAP DEFENSE");
+            return;
+          }
+        } else if (h.type === 'ELECTRIC') {
+          const phase = (now % h.cycle) / h.cycle;
+          if (phase > 0.3) {
+            if (
+              player.x + player.w > h.x &&
+              player.x < h.x + h.w &&
+              player.y + player.h > h.y &&
+              player.y < h.y + h.h
+            ) {
+              gameOver(false, "SHOCKED BY VAULT SHIELD");
+              return;
+            }
+          }
+        }
+      }
+
+      // Check Vault Reached
+      if (
+        player.x + player.w > vaultChest.x &&
+        player.x < vaultChest.x + vaultChest.w &&
+        player.y + player.h > vaultChest.y &&
+        player.y < vaultChest.y + vaultChest.h
+      ) {
+        gameOver(true, "HEIST SUCCESSFUL");
+      }
+    }
+
+    function drawGame() {
+      // Clear background
+      ctx.fillStyle = activeChog.theme === 'TOXIC_SEWER' ? '#070f0b' : (activeChog.theme === 'CYBER_VOID' ? '#080512' : '#0c0a10');
+      ctx.fillRect(0, 0, 800, 500);
+
+      // Grid background effect
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
+      ctx.lineWidth = 1;
+      for (let x = 0; x < 800; x += 40) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, 500);
+        ctx.stroke();
+      }
+
+      // Draw Platforms
+      ctx.fillStyle = '#1c1926';
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+      for (const p of platforms) {
+        ctx.fillRect(p.x, p.y, p.w, p.h);
+        ctx.strokeRect(p.x, p.y, p.w, p.h);
+      }
+
+      // Draw Hazards
+      const now = performance.now();
+      for (const h of activeChog.hazards) {
+        if (h.type === 'LASER') {
+          const phase = (now % h.cycle) / h.cycle;
+          if (phase > 0.4) {
+            ctx.fillStyle = '#f43f5e';
+            ctx.shadowColor = '#f43f5e';
+            ctx.shadowBlur = 12;
+            ctx.fillRect(h.x, h.y, h.w, h.h);
+            ctx.shadowBlur = 0;
+          } else {
+            // Telegraphed warning line
+            ctx.strokeStyle = 'rgba(244, 63, 94, 0.2)';
+            ctx.beginPath();
+            ctx.moveTo(h.x, h.y + h.h / 2);
+            ctx.lineTo(h.x + h.w, h.y + h.h / 2);
+            ctx.stroke();
+          }
+        } else if (h.type === 'SLIME') {
+          ctx.fillStyle = '#10b981';
+          ctx.fillRect(h.x, h.y, h.w, h.h);
+        } else if (h.type === 'ANCHOR') {
+          // Draw swinging pendulum
+          ctx.strokeStyle = '#9ca3af';
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.moveTo(h.x + 10, 0);
+          ctx.lineTo(h.x + 10, h.y + h.h);
+          ctx.stroke();
+          ctx.fillStyle = '#e4609d';
+          ctx.beginPath();
+          ctx.arc(h.x + 10, h.y + h.h, 14, 0, Math.PI * 2);
+          ctx.fill();
+        } else if (h.type === 'SAW') {
+          ctx.fillStyle = '#f59e0b';
+          ctx.beginPath();
+          ctx.arc(h.x + h.w/2, h.y + h.h/2, h.w/2, 0, Math.PI * 2);
+          ctx.fill();
+        } else if (h.type === 'SENTRY') {
+          ctx.fillStyle = '#a855f7';
+          ctx.fillRect(h.x, h.y, h.w, h.h);
+        } else if (h.type === 'ELECTRIC') {
+          const phase = (now % h.cycle) / h.cycle;
+          if (phase > 0.3) {
+            ctx.fillStyle = '#38bdf8';
+            ctx.shadowColor = '#38bdf8';
+            ctx.shadowBlur = 10;
+            ctx.fillRect(h.x, h.y, h.w, h.h);
+            ctx.shadowBlur = 0;
+          }
+        }
+      }
+
+      // Draw Vault Chest
+      ctx.fillStyle = '#fbbf24';
+      ctx.shadowColor = '#fbbf24';
+      ctx.shadowBlur = 15;
+      ctx.fillRect(vaultChest.x, vaultChest.y, vaultChest.w, vaultChest.h);
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = '#000000';
+      ctx.fillRect(vaultChest.x + 8, vaultChest.y + 8, vaultChest.w - 16, 6);
+
+      // Draw Player (The Raider)
+      ctx.fillStyle = '#ffffff';
+      ctx.shadowColor = '#e4609d';
+      ctx.shadowBlur = 10;
+      ctx.fillRect(player.x, player.y, player.w, player.h);
+      ctx.shadowBlur = 0;
+
+      // Player eyes (facing direction)
+      ctx.fillStyle = '#000000';
+      const eyeOffset = player.vx > 0 ? 14 : 4;
+      ctx.fillRect(player.x + eyeOffset, player.y + 5, 4, 4);
+    }
+
+    function renderLoop() {
+      updatePhysics();
+      drawGame();
+      requestAnimationFrame(renderLoop);
+    }
+
+    // Boot engine
+    resetPlayer();
+    renderLoop();
+  </script>
+</body>
+</html>

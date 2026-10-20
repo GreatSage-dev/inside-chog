@@ -1221,6 +1221,238 @@
       flex-shrink: 0;
     }
 
+    /* 4 RIVAL-KILLING UPGRADES: TICKER, FAUCET, GUARDIAN, MINT MODAL */
+    .ticker-strip {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 8px 36px;
+      background: var(--surface);
+      overflow: hidden;
+      font-size: var(--step-small);
+      border: 0;
+    }
+    .ticker-label {
+      background: var(--accent);
+      color: var(--bg);
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 10px;
+      padding: 3px 8px;
+      clip-path: var(--motif-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      flex-shrink: 0;
+    }
+    .ticker-marquee {
+      display: flex;
+      gap: 28px;
+      white-space: nowrap;
+      overflow: hidden;
+      width: 100%;
+    }
+    .ticker-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-body);
+      color: var(--ink);
+    }
+    .ticker-tag {
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .balance-pill {
+      background: var(--surface);
+      padding: 8px 12px;
+      clip-path: var(--motif-sm);
+      font-family: var(--font-body);
+      font-size: 12px;
+      color: var(--ink);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-faucet {
+      background: var(--accent);
+      color: var(--bg);
+      border: 0;
+      padding: 8px 12px;
+      clip-path: var(--motif-sm);
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 11px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .btn-faucet:hover {
+      transform: translateY(-1px);
+    }
+    .btn-mint-hero {
+      background: var(--panel-alt);
+      color: var(--ink);
+      border: 0;
+      padding: 8px 12px;
+      clip-path: var(--motif-sm);
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 11px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .btn-mint-hero:hover {
+      background: var(--surface);
+      transform: translateY(-1px);
+    }
+
+    .guardian-box {
+      background: var(--surface);
+      padding: 14px;
+      clip-path: var(--motif-md);
+      margin-top: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      border: 0;
+    }
+    .guardian-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .guardian-identity {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .guardian-thumb {
+      width: 34px;
+      height: 34px;
+      clip-path: var(--motif-sm);
+      object-fit: cover;
+    }
+    .guardian-mood-tag {
+      font-family: var(--font-display);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      clip-path: var(--motif-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .mood-smug {
+      background: var(--panel-alt);
+      color: var(--ink);
+    }
+    .mood-bloodthirsty {
+      background: #e63946;
+      color: #ffffff;
+    }
+    .mood-hyped {
+      background: var(--accent);
+      color: var(--bg);
+    }
+    .mood-woken {
+      background: #4cc9f0;
+      color: #000000;
+    }
+    .guardian-speech {
+      background: var(--panel);
+      padding: 10px 14px;
+      clip-path: var(--motif-sm);
+      font-family: var(--font-body);
+      font-size: 12px;
+      color: var(--ink);
+      line-height: 1.45;
+      border: 0;
+    }
+    .hype-jar-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      background: var(--panel-alt);
+      padding: 8px 12px;
+      clip-path: var(--motif-sm);
+      border: 0;
+    }
+    .btn-hype {
+      background: var(--accent);
+      color: var(--bg);
+      border: 0;
+      padding: 6px 12px;
+      clip-path: var(--motif-sm);
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .btn-hype:hover {
+      transform: translateY(-1px);
+    }
+
+    .mint-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(7, 4, 18, 0.94);
+      z-index: 10000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .mint-modal.open {
+      display: flex;
+    }
+    .mint-card {
+      background: var(--panel);
+      clip-path: var(--motif-lg);
+      padding: 28px;
+      max-width: 520px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      border: 0;
+    }
+    .mint-card h3 {
+      font-family: var(--font-display);
+      font-size: var(--step-h3);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .mint-art-selector {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+    }
+    .mint-art-opt {
+      aspect-ratio: 1;
+      clip-path: var(--motif-sm);
+      cursor: pointer;
+      overflow: hidden;
+      background: var(--surface);
+      border: 0;
+      padding: 0;
+      opacity: 0.6;
+      transition: opacity 0.15s ease, transform 0.15s ease;
+    }
+    .mint-art-opt img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .mint-art-opt.selected {
+      opacity: 1;
+      transform: scale(1.06);
+    }
+
     @media (max-width: 960px) {
       .site-header,
       .hero-section,
@@ -1332,11 +1564,25 @@
         <a href="#yield">Landlord Yield</a>
       </div>
       <div class="wallet-bar" data-ui>
+        <span class="balance-pill" id="userBalanceBadge">5.00 MON (Testnet)</span>
+        <button type="button" class="btn-faucet" id="faucetBtn" onclick="claimFreeSupplies()">+5.00 MON Faucet</button>
+        <button type="button" class="btn-mint-hero" id="mintHeroBtn" onclick="openMintModal()">Mint Free Vault</button>
         <code id="sessionBadge" style="background: var(--surface); padding: 8px 12px; clip-path: var(--motif-sm);">Burner Ready</code>
         <button type="button" class="btn-motif" id="connectWalletBtn" onclick="connectMonadWallet()">Connect Wallet</button>
       </div>
     </nav>
   </header>
+
+  <!-- RETRO ARCADE LIVE ACTIVITY MARQUEE TICKER -->
+  <div class="ticker-strip" data-ui>
+    <div class="ticker-label">TESTNET LIVE</div>
+    <div class="ticker-marquee" id="activityTicker">
+      <div class="ticker-item"><span class="ticker-tag">[FAUCET]</span> 0x48F1...90B2 claimed +5.00 MON Test Supplies</div>
+      <div class="ticker-item"><span class="ticker-tag">[RAID FAIL]</span> 0x8F21... crashed at 74% (+0.025 MON to Pool)</div>
+      <div class="ticker-item"><span class="ticker-tag">[HYPE]</span> Sponsor 0x310D tipped +0.50 MON to Chog #402</div>
+      <div class="ticker-item"><span class="ticker-tag">[MINT]</span> Vault Chog #7731 compiled to Monad Testnet (Chain 10143)</div>
+    </div>
+  </div>
 
   <!-- SECTION 1: HERO (GIANT CROPPED SHAPE) -->
   <section class="hero-section">
@@ -1440,6 +1686,33 @@
                 <span class="metric-val"><code id="dossierMortality">91.4%</code></span>
               </div>
             </div>
+          </div>
+        </div>
+
+        <!-- DYNAMIC VAULT GUARDIAN STATUS & HYPE JAR -->
+        <div class="guardian-box" id="guardianBox" data-ui>
+          <div class="guardian-header">
+            <div class="guardian-identity">
+              <img id="guardianThumb" class="guardian-thumb" src="chog1.jpg" alt="Guardian Chog">
+              <div>
+                <strong id="guardianName" style="font-size: var(--step-small);">Vault Guardian #402</strong>
+                <div style="font-size: 11px; color: var(--ink);">Sentinel &amp; Landlord AI</div>
+              </div>
+            </div>
+            <span class="guardian-mood-tag mood-smug" id="guardianMoodBadge">MOOD: SMUG</span>
+          </div>
+
+          <div class="guardian-speech" id="guardianSpeechBubble">
+            "91.4% of challengers end up as sawdust in my corridors. Go ahead, drop 0.05 MON and try me."
+          </div>
+
+          <div class="hype-jar-bar" data-ui>
+            <div>
+              <span style="font-size: 11px; font-weight: 700;">HYPE JAR:</span>
+              <code id="vaultHypeVal">0.00 MON</code>
+              <span style="font-size: 11px; color: var(--accent); margin-left: 6px;" id="vaultHypeMult">(1.00x Boost)</span>
+            </div>
+            <button type="button" class="btn-hype" onclick="hypeCurrentVault()">Tip +0.50 MON (+25% Boost &amp; 10% Cut)</button>
           </div>
         </div>
 
@@ -1761,6 +2034,55 @@ SOLVER_CHECK = PASS (0.4ms)</pre>
     </div>
   </div>
 
+  <!-- 1-CLICK FREE CHOG MINTER MODAL (MONAD TESTNET) -->
+  <div class="mint-modal" id="mintModal" role="dialog" aria-modal="true" aria-labelledby="mintModalTitle">
+    <div class="mint-card" data-ui>
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h3 id="mintModalTitle" style="margin: 0;">MINT FREE VAULT CARTRIDGE</h3>
+        <button type="button" class="btn-motif-secondary" onclick="closeMintModal()" style="padding: 4px 10px; font-size: 11px;">CLOSE</button>
+      </div>
+      <p style="font-size: var(--step-small); color: var(--ink); margin: 0;">
+        Compile a free Chog NFT on Monad Testnet (Chain ID 10143). Generates an authentic 64-byte ROM cartridge with instant landlord ownership and 40% raid yield.
+      </p>
+
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <label style="font-size: 11px; font-weight: 700; text-transform: uppercase;">Select Chog Artwork</label>
+        <div class="mint-art-selector" id="mintArtSelector">
+          <button type="button" class="mint-art-opt selected" onclick="selectMintArt('chog1.jpg', this)"><img src="chog1.jpg" alt="Chog 1"></button>
+          <button type="button" class="mint-art-opt" onclick="selectMintArt('chognice.jpg', this)"><img src="chognice.jpg" alt="Chog 2"></button>
+          <button type="button" class="mint-art-opt" onclick="selectMintArt('chog5.jpg', this)"><img src="chog5.jpg" alt="Chog 3"></button>
+          <button type="button" class="mint-art-opt" onclick="selectMintArt('chog6.jpg', this)"><img src="chog6.jpg" alt="Chog 4"></button>
+          <button type="button" class="mint-art-opt" onclick="selectMintArt('chogbadge.jpg', this)"><img src="chogbadge.jpg" alt="Chog 5"></button>
+          <button type="button" class="mint-art-opt" onclick="selectMintArt('chogwow.jpg', this)"><img src="chogwow.jpg" alt="Chog 6"></button>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <label for="mintNameInput" style="font-size: 11px; font-weight: 700; text-transform: uppercase;">Vault Title</label>
+          <input type="text" id="mintNameInput" value="Chog #8812 · Neon Sentinel" style="background: var(--surface); color: var(--ink); border: 0; padding: 8px 12px; font-family: var(--font-body); font-size: var(--step-small); clip-path: var(--motif-sm);">
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <label for="mintEngineSelect" style="font-size: 11px; font-weight: 700; text-transform: uppercase;">Signature Game Engine</label>
+          <select id="mintEngineSelect" style="background: var(--surface); color: var(--ink); border: 0; padding: 8px 12px; font-family: var(--font-body); font-size: var(--step-small); clip-path: var(--motif-sm);">
+            <option value="heist">Vault Platform Heist</option>
+            <option value="wave" selected>Chog Dash: Portal Wave</option>
+            <option value="flappy">$100 Parachute Flap</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="background: var(--surface); padding: 10px 14px; clip-path: var(--motif-sm); font-size: 11px; font-family: var(--font-body); color: var(--ink);">
+        Gas Cost: <code>0.00 MON (Testnet Sponsored)</code> · Sub-second Finality: <code>400ms</code> · Landlord Split: <code>40%</code>
+      </div>
+
+      <div style="display: flex; gap: 10px; justify-content: flex-end;">
+        <button type="button" class="btn-motif-secondary" onclick="closeMintModal()">Cancel</button>
+        <button type="button" class="btn-motif" onclick="submitMintChog()">Compile &amp; Mint Free Cartridge</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     // =========================================================================
     // 1. REAL CHOG CARTRIDGE SPECIMENS (6 LOCAL ARTWORKS + SIGNATURE GAMES)
@@ -1889,6 +2211,109 @@ SOLVER_CHECK = PASS (0.4ms)</pre>
     let walletConnected = false;
     let userWalletAddress = "0x48F1...90B2 (Burner)";
     let activeDoubleOrNothing = false;
+    let userBalance = 5.00;
+    let selectedMintArt = "chog1.jpg";
+    let rivalGhosts = [];
+    let graveyardMarkers = [];
+
+    FEATURED_CARTRIDGES.forEach(c => {
+      if (!c.guardianMood) c.guardianMood = "SMUG";
+      if (!c.guardianSpeech) c.guardianSpeech = `${c.mortality} of challengers end up as sawdust in my corridors. Go ahead, drop 0.05 MON and try me.`;
+      if (!c.hypeJar) c.hypeJar = 0.00;
+      if (!c.hypeMult) c.hypeMult = 1.00;
+    });
+
+    function prependTickerEvent(tag, text) {
+      const ticker = document.getElementById("activityTicker");
+      if (!ticker) return;
+      const item = document.createElement("div");
+      item.className = "ticker-item";
+      item.innerHTML = `<span class="ticker-tag">[${tag}]</span> ${text}`;
+      ticker.insertBefore(item, ticker.firstChild);
+      if (ticker.children.length > 8) {
+        ticker.removeChild(ticker.lastChild);
+      }
+    }
+
+    function updateBalanceHud() {
+      const el = document.getElementById("userBalanceBadge");
+      if (el) el.textContent = userBalance.toFixed(2) + " MON (Testnet)";
+    }
+
+    function claimFreeSupplies() {
+      userBalance += 5.00;
+      updateBalanceHud();
+      playTone(880, 0.12, "triangle", 0.08);
+      prependTickerEvent("FAUCET", "0x48F1...90B2 claimed +5.00 MON Test Supplies");
+    }
+
+    function openMintModal() {
+      document.getElementById("mintModal").classList.add("open");
+    }
+
+    function closeMintModal() {
+      document.getElementById("mintModal").classList.remove("open");
+    }
+
+    function selectMintArt(art, btn) {
+      selectedMintArt = art;
+      document.querySelectorAll(".mint-art-opt").forEach(b => b.classList.remove("selected"));
+      btn.classList.add("selected");
+    }
+
+    function submitMintChog() {
+      const title = document.getElementById("mintNameInput").value || "Chog #8812 · Custom Sentinel";
+      const engine = document.getElementById("mintEngineSelect").value || "wave";
+      const newId = Math.floor(1000 + Math.random() * 8999);
+      const seed = hashSeed("MONAD_MINT_" + newId);
+      const hexBase = "0x" + seed.toString(16).padStart(8, "0").toUpperCase();
+
+      const newCart = {
+        tokenId: newId,
+        name: title,
+        image: selectedMintArt,
+        owner: userWalletAddress.split(" ")[0],
+        bounty: 10.00,
+        mortality: "88.6%",
+        defaultMode: engine,
+        lore: "Minted directly to Monad Testnet (Chain ID 10143). 40% of all future challenger tolls route directly to landlord wallet.",
+        speedMult: 1.0,
+        corridorGap: 180,
+        sawCount: 4,
+        guardianMood: "WOKEN",
+        guardianSpeech: "Just compiled on Monad Testnet! My corridors are fresh and waiting for meat.",
+        hypeJar: 0.00,
+        hypeMult: 1.00,
+        traits: [
+          ["Compilation", "Monad Testnet 10143", "Zero-Gas Sub-second Finality", hexBase.slice(0, 8)],
+          ["Engine", getModeDisplayName(engine), "Signature Game ROM", "0xMINT01"],
+          ["Landlord", userWalletAddress.split(" ")[0], "40% Perpetual Toll Rights", "0xLAND40"],
+          ["Solver Check", "Clear-Check Pass", "60FPS Solvability Verified", "0xPASS04MS"]
+        ]
+      };
+
+      FEATURED_CARTRIDGES.unshift(newCart);
+      selectCartridge(0);
+      closeMintModal();
+      playTone(660, 0.15, "square", 0.09);
+      prependTickerEvent("MINT", "Vault " + newCart.name + " compiled to Monad Testnet (Chain 10143)");
+    }
+
+    function hypeCurrentVault() {
+      if (userBalance < 0.50) {
+        claimFreeSupplies();
+      }
+      userBalance = Math.max(0, Number((userBalance - 0.50).toFixed(2)));
+      updateBalanceHud();
+      currentCartridge.hypeJar = Number(((currentCartridge.hypeJar || 0) + 0.50).toFixed(2));
+      currentCartridge.hypeMult = Number(((currentCartridge.hypeMult || 1.0) + 0.25).toFixed(2));
+      currentCartridge.bounty = Number((currentCartridge.bounty + 0.50).toFixed(2));
+      currentCartridge.guardianMood = "HYPED";
+      currentCartridge.guardianSpeech = "Sponsor tip verified! Bounty multiplier pumped to " + currentCartridge.hypeMult.toFixed(2) + "x. I am going to make them bleed for this pool!";
+      renderDossier();
+      playTone(720, 0.14, "triangle", 0.08);
+      prependTickerEvent("HYPE", "Sponsor 0x48F1... tipped +0.50 MON to #" + currentCartridge.tokenId + " (" + currentCartridge.hypeMult.toFixed(2) + "x Boost)");
+    }
 
     function hashSeed(str) {
       let h = 0x811c9dc5;
@@ -1984,6 +2409,26 @@ SOLVER_CHECK = PASS (0.4ms)</pre>
       document.getElementById("dossierHash").textContent = "0x" + hashSeed(String(c.tokenId)).toString(16).padStart(8, "0");
       document.getElementById("dossierBounty").textContent = c.bounty.toFixed(2) + " MON";
       document.getElementById("dossierMortality").textContent = c.mortality;
+
+      // Dynamic Guardian & Hype updates
+      const gThumb = document.getElementById("guardianThumb");
+      if (gThumb) gThumb.src = c.image;
+      const gName = document.getElementById("guardianName");
+      if (gName) gName.textContent = "Vault Guardian #" + c.tokenId;
+      const moodBadge = document.getElementById("guardianMoodBadge");
+      if (moodBadge) {
+        const mood = c.guardianMood || "SMUG";
+        moodBadge.textContent = "MOOD: " + mood;
+        moodBadge.className = "guardian-mood-tag mood-" + mood.toLowerCase();
+      }
+      const gSpeech = document.getElementById("guardianSpeechBubble");
+      if (gSpeech) {
+        gSpeech.textContent = '"' + (c.guardianSpeech || `${c.mortality} of challengers end up as sawdust in my corridors. Go ahead, drop 0.05 MON and try me.`) + '"';
+      }
+      const hypeVal = document.getElementById("vaultHypeVal");
+      if (hypeVal) hypeVal.textContent = (c.hypeJar || 0).toFixed(2) + " MON";
+      const hypeMult = document.getElementById("vaultHypeMult");
+      if (hypeMult) hypeMult.textContent = "(" + (c.hypeMult || 1.0).toFixed(2) + "x Boost)";
 
       const tbody = document.getElementById("traitTableBody");
       tbody.innerHTML = "";
@@ -2619,6 +3064,33 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       document.getElementById("nextStageBtn").style.display = "none";
       document.getElementById("checkpointBtn").style.display = "none";
 
+      if (userBalance < 0.05) {
+        claimFreeSupplies();
+      }
+      userBalance = Math.max(0, Number((userBalance - 0.05).toFixed(2)));
+      updateBalanceHud();
+
+      rivalGhosts = [
+        {
+          name: "0x8F21...B4",
+          color: "#4cc9f0",
+          x: 0,
+          y: 0,
+          wipeoutPct: 44 + ((attemptCount * 17) % 36),
+          alive: true,
+          trail: []
+        },
+        {
+          name: "chog_king.mon",
+          color: "#f77f00",
+          x: 0,
+          y: 0,
+          wipeoutPct: 68 + ((attemptCount * 23) % 24),
+          alive: true,
+          trail: []
+        }
+      ];
+
       const stageMultiplier = Number((1 + (currentStageLevel - 1) * 0.5).toFixed(2));
       const effectiveBounty = (currentCartridge.bounty * stageMultiplier * (activeDoubleOrNothing ? 2 : 1)).toFixed(2);
 
@@ -2831,6 +3303,10 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       if (won) {
         playTone(587.33, 0.14, "square", 0.09);
         setTimeout(() => playTone(880, 0.26, "square", 0.1), 110);
+        currentCartridge.guardianMood = "BLOODTHIRSTY";
+        currentCartridge.guardianSpeech = `Wait... how did you dodge that laser?! Stage ${currentStageLevel + 1} will not be so forgiving.`;
+        prependTickerEvent("CLEARED", `0x48F1... cleared Stage ${currentStageLevel} in Chog #${currentCartridge.tokenId}! (+${payout} MON)`);
+        renderDossier();
         headline.textContent = "STAGE " + currentStageLevel + " CLEARED · " + slotsStr;
         headline.style.color = "var(--acid)";
         subtext.textContent =
@@ -2844,6 +3320,9 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         attemptCount++;
         playTone(130, 0.32, "sawtooth", 0.12);
         currentCartridge.bounty = Number((currentCartridge.bounty + 0.025).toFixed(2));
+        currentCartridge.guardianMood = "SMUG";
+        currentCartridge.guardianSpeech = `Another challenger turned to sawdust at ${Math.floor(progressPct)}%! Appreciate the 0.02 MON landlord toll, rookie.`;
+        prependTickerEvent("RAID FAIL", `0x48F1... failed at ${Math.floor(progressPct)}% in Chog #${currentCartridge.tokenId} (+0.025 MON to Pool)`);
         renderDossier();
         headline.textContent = (deathReason || "VAPORIZED") + " AT " + Math.min(99, Math.floor(progressPct)) + "%";
         headline.style.color = "var(--ink)";
@@ -2858,6 +3337,92 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       setTimeout(() => {
         overlay.classList.add("visible");
       }, 200);
+    }
+
+    // =========================================================================
+    // RIVAL GHOST RAIDERS & GRAVEYARD MARKERS
+    // =========================================================================
+    function updateAndDrawRivalGhosts(playerX, playerY, progress) {
+      rivalGhosts.forEach(g => {
+        if (!g.alive) return;
+
+        const ghostX = playerX + (g.name.length % 2 === 0 ? 34 : -30);
+        const ghostY = playerY + Math.sin(frameTick * 0.12 + g.name.length) * 10;
+        g.x = ghostX;
+        g.y = ghostY;
+
+        g.trail.push({ x: ghostX, y: ghostY });
+        if (g.trail.length > 8) g.trail.shift();
+
+        ctx.save();
+        g.trail.forEach((t, idx) => {
+          ctx.fillStyle = g.color;
+          ctx.globalAlpha = (idx / g.trail.length) * 0.22;
+          ctx.fillRect(t.x + 4, t.y + 4, 18, 18);
+        });
+
+        ctx.globalAlpha = 0.55;
+        ctx.fillStyle = g.color;
+        ctx.beginPath();
+        ctx.rect(ghostX, ghostY, 26, 26);
+        ctx.fill();
+
+        ctx.globalAlpha = 0.9;
+        ctx.fillStyle = g.color;
+        ctx.font = "700 9px 'Libre Franklin', sans-serif";
+        ctx.fillText(g.name, ghostX - 4, ghostY - 6);
+        ctx.restore();
+
+        if (progress >= g.wipeoutPct) {
+          g.alive = false;
+          shockwaves.push({ x: ghostX + 13, y: ghostY + 13, r: 4, maxR: 44, color: g.color });
+          for (let p = 0; p < 12; p++) {
+            const angle = (p / 12) * Math.PI * 2;
+            const spd = 2 + Math.random() * 4;
+            particles.push({
+              x: ghostX + 13,
+              y: ghostY + 13,
+              vx: Math.cos(angle) * spd,
+              vy: Math.sin(angle) * spd,
+              color: g.color,
+              life: 1,
+              decay: 0.035,
+              size: 3
+            });
+          }
+          currentCartridge.bounty = Number((currentCartridge.bounty + 0.025).toFixed(2));
+          const stageMultiplier = Number((1 + (currentStageLevel - 1) * 0.5).toFixed(2));
+          document.getElementById("arenaPool").textContent = (currentCartridge.bounty * stageMultiplier * (activeDoubleOrNothing ? 2 : 1)).toFixed(2) + " MON";
+          floatingTexts.push({
+            x: ghostX,
+            y: ghostY - 14,
+            text: `${g.name} CRASHED AT ${g.wipeoutPct}% (+0.025 MON)`,
+            color: g.color,
+            life: 1,
+            decay: 0.018
+          });
+          graveyardMarkers.push({ x: ghostX, y: ghostY, name: g.name, pct: g.wipeoutPct });
+          prependTickerEvent("RAID FAIL", `${g.name} wiped out at ${g.wipeoutPct}% in #${currentCartridge.tokenId} (+0.025 MON to Pool)`);
+        }
+      });
+
+      graveyardMarkers.forEach(m => {
+        ctx.save();
+        ctx.globalAlpha = 0.75;
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.45)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(m.x, m.y - 10);
+        ctx.lineTo(m.x, m.y + 10);
+        ctx.moveTo(m.x - 7, m.y - 4);
+        ctx.lineTo(m.x + 7, m.y - 4);
+        ctx.stroke();
+
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "700 9px monospace";
+        ctx.fillText(`RIP ${m.name.slice(0, 6)} (${m.pct}%)`, m.x - 24, m.y + 22);
+        ctx.restore();
+      });
     }
 
     // =========================================================================
@@ -3159,6 +3724,8 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       ctx.clip();
       ctx.drawImage(chogSprite, -heistPlayer.radius, -heistPlayer.radius, heistPlayer.radius * 2, heistPlayer.radius * 2);
       ctx.restore();
+
+      updateAndDrawRivalGhosts(heistPlayer.x, heistPlayer.y, progressPct);
 
       const climbPct = Math.max(0, Math.min(98, ((434 - heistPlayer.y) / 345) * 100));
       progressPct = climbPct;
@@ -3541,6 +4108,8 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       ctx.drawImage(chogSprite, -15, -15, 30, 30);
       ctx.restore();
 
+      updateAndDrawRivalGhosts(wavePlayer.x, wavePlayer.y, progressPct);
+
       if (progressPct >= 100) {
         spawnExplosion(wavePlayer.x, wavePlayer.y, "#b8ff65");
         triggerEndState(true);
@@ -3724,6 +4293,8 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       ctx.fillRect(-18, -18, 36, 36);
       ctx.drawImage(chogSprite, -15, -15, 30, 30);
       ctx.restore();
+
+      updateAndDrawRivalGhosts(flappyPlayer.x, flappyPlayer.y, progressPct);
 
       if (progressPct >= 100) {
         spawnExplosion(flappyPlayer.x, flappyPlayer.y, "#b8ff65");

@@ -23,5 +23,9 @@
     "@types/node": "^22.13.9",
     "tsx": "^4.19.3",
     "typescript": "^5.8.2"
+  },
+  "dependencies": {
+    "ethers": "^6.17.0",
+    "solc": "^0.8.37"
   }
 }

@@ -4,4 +4,6 @@ dist/
 Thumbs.db
 .env
 .env.*
+.taste-skill/
+
 

@@ -120,8 +120,9 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 28px 8%;
+      padding: 18px 4%;
       background: var(--bg);
+      gap: 16px;
     }
 
     .brand-mark {
@@ -148,16 +149,17 @@
     .header-nav {
       display: flex;
       align-items: center;
-      gap: 24px;
+      gap: 16px;
     }
 
     .header-links {
       display: flex;
       align-items: center;
-      gap: 24px;
+      gap: 14px;
       font-family: var(--font-serif);
-      font-size: var(--step-body);
+      font-size: 13px;
       color: var(--ink);
+      white-space: nowrap;
     }
 
     .header-links a:hover {
@@ -1265,20 +1267,21 @@
 
     .balance-pill {
       background: var(--surface);
-      padding: 8px 12px;
+      padding: 6px 11px;
       clip-path: var(--motif-sm);
       font-family: var(--font-body);
-      font-size: 12px;
+      font-size: 11px;
       color: var(--ink);
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      white-space: nowrap;
     }
     .btn-faucet {
       background: var(--accent);
       color: var(--bg);
       border: 0;
-      padding: 8px 12px;
+      padding: 6px 11px;
       clip-path: var(--motif-sm);
       font-family: var(--font-display);
       font-weight: 700;
@@ -1286,6 +1289,7 @@
       cursor: pointer;
       text-transform: uppercase;
       letter-spacing: 0.04em;
+      white-space: nowrap;
     }
     .btn-faucet:hover {
       transform: translateY(-1px);
@@ -1643,6 +1647,52 @@
       color: var(--accent);
     }
 
+    /* LIVE HALL OF FAME / LEADERBOARD */
+    .leaderboard-section {
+      padding: 80px 8%;
+      background: var(--surface);
+    }
+    .leaderboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 24px;
+    }
+    .leaderboard-card {
+      background: var(--panel);
+      padding: 20px;
+      clip-path: var(--motif-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      border: 0;
+    }
+    .leaderboard-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: var(--step-small);
+    }
+    .leaderboard-table th,
+    .leaderboard-table td {
+      padding: 8px 10px;
+      text-align: left;
+    }
+    .leaderboard-table th {
+      font-family: var(--font-display);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+      background: var(--surface);
+    }
+    .leaderboard-table tr:nth-child(even) td {
+      background: rgba(255, 255, 255, 0.03);
+    }
+    .balance-pill.streak-hot {
+      background: rgba(255, 77, 109, 0.2);
+      color: #ff4d6d;
+    }
+
     @media (max-width: 960px) {
       .site-header,
       .hero-section,
@@ -1753,6 +1803,7 @@
       <div class="header-links">
         <a href="#cartridges">Cartridges</a>
         <a href="#loadbearing">Load-Bearing Proof</a>
+        <a href="#halloffame">Hall of Fame</a>
         <a href="#architecture">How It Compiles</a>
         <a href="#yield">Landlord Yield</a>
         <a href="https://testnet.monadexplorer.com/address/0x6D8d52462Aa6632041Ffa79B9FEdd1c10B818c36" target="_blank" rel="noopener">Contract ↗</a>
@@ -1760,6 +1811,8 @@
       <div class="wallet-bar" data-ui>
         <span class="balance-pill" id="userBalanceBadge">5.00 MON</span>
         <span class="balance-pill" id="chogBalanceBadge">1,000 $CHOG</span>
+        <span class="balance-pill" id="raiderRankBadge">Novice · Lvl 1 (0 XP)</span>
+        <span class="balance-pill" id="winStreakBadge">Streak: 0</span>
         <button type="button" class="btn-faucet" id="faucetBtn" onclick="claimFreeSupplies()">+5.00 MON</button>
         <button type="button" class="btn-faucet" id="chogFaucetBtn" onclick="claimChogSupplies()">+1,000 $CHOG</button>
         <button type="button" class="btn-mint-hero" id="mintHeroBtn" onclick="openMintModal()">Mint Free Vault</button>
@@ -2145,6 +2198,65 @@ SOLVER_CHECK = PASS (0.4ms)</pre>
             </tr>
           </tbody>
         </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION: LIVE HALL OF FAME / COMPETITIVE TELEMETRY -->
+  <section class="leaderboard-section" id="halloffame">
+    <div class="reveal">
+      <div style="font-family: var(--font-display); font-weight: 700; font-size: 11px; text-transform: uppercase; color: var(--accent); letter-spacing: 0.08em; margin-bottom: 8px;">COMPETITIVE TELEMETRY · HALL OF FAME</div>
+      <h2 style="font-family: var(--font-display); font-size: var(--step-h2); font-weight: 700; letter-spacing: -0.02em; margin-bottom: 12px;">
+        Ranked raiders &amp; deadliest vaults.
+      </h2>
+      <p style="font-size: var(--step-body); color: var(--ink); max-width: 68ch; margin-bottom: 24px;">
+        Inside Chog turns solitary gaming into an active social arena. Track top infiltrators climbing the mastery ranks and inspect the highest-earning landlord vaults on Monad.
+      </p>
+
+      <div class="leaderboard-grid" data-ui>
+        <!-- Column 1: Top Raider Infiltrators -->
+        <div class="leaderboard-card">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <strong style="font-family: var(--font-display); font-size: var(--step-small); text-transform: uppercase;">Top Infiltrator Raiders</strong>
+            <span class="status-pill"><code>PARALLEL EVM RANKS</code></span>
+          </div>
+          <div style="overflow-x: auto;">
+            <table class="leaderboard-table">
+              <thead>
+                <tr>
+                  <th>Rank</th>
+                  <th>Raider</th>
+                  <th>Title</th>
+                  <th>Looted</th>
+                  <th>Streak</th>
+                </tr>
+              </thead>
+              <tbody id="topRaidersTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Column 2: Deadliest Landlord Vaults -->
+        <div class="leaderboard-card">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <strong style="font-family: var(--font-display); font-size: var(--step-small); text-transform: uppercase;">Deadliest Chog Vaults</strong>
+            <span class="status-pill"><code>40% TOLL POOL</code></span>
+          </div>
+          <div style="overflow-x: auto;">
+            <table class="leaderboard-table">
+              <thead>
+                <tr>
+                  <th>Vault</th>
+                  <th>Landlord</th>
+                  <th>Mortality</th>
+                  <th>Pool Bounty</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="deadliestVaultsTableBody"></tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -2682,6 +2794,116 @@ SOLVER_CHECK = PASS (0.4ms)</pre>
     let selectedMintArt = "chog1.jpg";
     let rivalGhosts = [];
     let graveyardMarkers = [];
+
+    // VAV97 Psychological Addiction Mechanics: Progression, Competition, Worlds
+    let raiderXP = 0;
+    let raiderLevel = 1;
+    let raiderStreak = 0;
+    let bestStreak = 0;
+    let totalBountiesLooted = 0;
+
+    const STAGE_WORLDS = {
+      1: { name: "CYBER CYAN SUB-BASEMENT", bg: "#09111e", gridColor: "rgba(76, 201, 240, 0.07)", accent: "#4cc9f0" },
+      2: { name: "TOXIC EMERALD CORE", bg: "#061811", gridColor: "rgba(184, 255, 101, 0.07)", accent: "#b8ff65" },
+      3: { name: "MOLTEN THERMAL REACTOR", bg: "#1c0906", gridColor: "rgba(255, 107, 107, 0.08)", accent: "#ff6b6b" },
+      4: { name: "MONAD PARALLEL NEXUS", bg: "#150528", gridColor: "rgba(224, 170, 255, 0.09)", accent: "#e0aaff" }
+    };
+
+    function getRaiderRankTitle(lvl) {
+      if (lvl >= 10) return "Monad Vault Apex";
+      if (lvl >= 7) return "Master Cyber-Raider";
+      if (lvl >= 5) return "Shadow Phantom";
+      if (lvl >= 3) return "Vault Striker";
+      return "Novice Infiltrator";
+    }
+
+    function calcRaiderLevel(xp) {
+      const thresholds = [0, 100, 250, 450, 700, 1000, 1400, 1900, 2500, 3200];
+      let lvl = 1;
+      for (let i = thresholds.length - 1; i >= 0; i--) {
+        if (xp >= thresholds[i]) {
+          lvl = i + 1;
+          break;
+        }
+      }
+      return lvl;
+    }
+
+    function updateRaiderProgressionHud() {
+      const rankBadge = document.getElementById("raiderRankBadge");
+      const streakBadge = document.getElementById("winStreakBadge");
+      const rankTitle = getRaiderRankTitle(raiderLevel);
+      if (rankBadge) {
+        rankBadge.textContent = "Lvl " + raiderLevel + " · " + rankTitle + " (" + raiderXP + " XP)";
+      }
+      if (streakBadge) {
+        if (raiderStreak >= 2) {
+          streakBadge.classList.add("streak-hot");
+          streakBadge.textContent = "Streak: " + raiderStreak + " (HOT!)";
+        } else {
+          streakBadge.classList.remove("streak-hot");
+          streakBadge.textContent = "Streak: " + raiderStreak;
+        }
+      }
+    }
+
+    function addRaiderXP(amount, reason) {
+      const oldLevel = raiderLevel;
+      raiderXP += amount;
+      raiderLevel = calcRaiderLevel(raiderXP);
+      updateRaiderProgressionHud();
+      if (raiderLevel > oldLevel) {
+        playTone(987.77, 0.22, "triangle", 0.12);
+        const newTitle = getRaiderRankTitle(raiderLevel);
+        spawnFloatingText(550, 180, "RANK UP: " + newTitle.toUpperCase() + "!", "#b8ff65");
+        prependTickerEvent("RANK UP", "0x48F1... promoted to " + newTitle + " (Level " + raiderLevel + ")!");
+      }
+      renderLeaderboards();
+    }
+
+    function renderLeaderboards() {
+      const raiderBody = document.getElementById("topRaidersTableBody");
+      const vaultBody = document.getElementById("deadliestVaultsTableBody");
+
+      if (raiderBody) {
+        const raiders = [
+          { rank: 1, name: "0x8F21...B4", title: "Monad Vault Apex", looted: 48.50, streak: 8, isPlayer: false },
+          { rank: 2, name: "chog_king.mon", title: "Master Cyber-Raider", looted: 34.20, streak: 6, isPlayer: false },
+          { rank: 3, name: userWalletAddress.split(" ")[0] + " (You)", title: getRaiderRankTitle(raiderLevel), looted: Number(totalBountiesLooted.toFixed(2)), streak: raiderStreak, isPlayer: true },
+          { rank: 4, name: "0x7a31...E9", title: "Shadow Phantom", looted: 19.80, streak: 4, isPlayer: false },
+          { rank: 5, name: "byte_bandit", title: "Vault Striker", looted: 12.40, streak: 3, isPlayer: false }
+        ];
+
+        raiders.sort((a, b) => b.looted - a.looted);
+        raiders.forEach((r, idx) => { r.rank = idx + 1; });
+
+        raiderBody.innerHTML = raiders.map(r => `
+          <tr ${r.isPlayer ? 'style="color: var(--accent); font-weight: 700;"' : ''}>
+            <td>#${r.rank}</td>
+            <td><code>${r.name}</code></td>
+            <td>${r.title}</td>
+            <td><code>${r.looted.toFixed(2)} MON</code></td>
+            <td><span class="status-pill ${r.streak >= 3 ? 'streak-hot' : ''}">${r.streak}x</span></td>
+          </tr>
+        `).join("");
+      }
+
+      if (vaultBody) {
+        vaultBody.innerHTML = FEATURED_CARTRIDGES.map((c, idx) => `
+          <tr>
+            <td><strong>Chog #${c.tokenId}</strong></td>
+            <td><code>${c.owner}</code></td>
+            <td><span class="status-pill" style="color: var(--ink);">${c.mortality}</span></td>
+            <td><code>${c.bounty.toFixed(2)} MON</code></td>
+            <td>
+              <button type="button" class="btn-motif-secondary" style="padding: 4px 8px; font-size: 11px;" onclick="selectCartridge(${idx}); openArenaWithCurrent();">
+                Raid Vault
+              </button>
+            </td>
+          </tr>
+        `).join("");
+      }
+    }
 
     FEATURED_CARTRIDGES.forEach(c => {
       if (!c.guardianMood) c.guardianMood = "SMUG";
@@ -3834,9 +4056,18 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
 
     function onSocialHeistVictory() {
       const c = currentCartridge;
-      const reward = Number((c.bounty * 0.50).toFixed(2));
+      raiderStreak++;
+      if (raiderStreak > bestStreak) bestStreak = raiderStreak;
+
+      const streakMult = raiderStreak >= 4 ? 1.3 : raiderStreak === 3 ? 1.2 : raiderStreak === 2 ? 1.1 : 1.0;
+      const baseReward = c.bounty * 0.50;
+      const reward = Number((baseReward * streakMult).toFixed(2));
       userBalance = Number((userBalance + reward).toFixed(2));
+      totalBountiesLooted = Number((totalBountiesLooted + reward).toFixed(2));
       updateBalanceHud();
+
+      const xpAwarded = 180 + (raiderStreak * 20);
+      addRaiderXP(xpAwarded, "Social Heist Infiltrated");
 
       const headline = document.getElementById("overlayHeadline");
       const subtext = document.getElementById("overlaySubtext");
@@ -3850,8 +4081,8 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         headline.style.color = "var(--acid)";
       }
       if (subtext) {
-        subtext.textContent =
-          "Toll Settlement on Monad 10143: 40% routed to Landlord " + c.owner + " · 50% Jackpot (" + reward + " MON) credited to your wallet · 10% burned.";
+        subtext.innerHTML =
+          "Toll Settlement on Monad 10143: 40% routed to Landlord " + c.owner + " · 50% Jackpot (<strong>" + reward + " MON</strong> credited" + (streakMult > 1.0 ? " with " + Math.round((streakMult - 1) * 100) + "% streak bonus" : "") + ") · Gained <strong>+" + xpAwarded + " Raider XP</strong>.";
       }
       if (nextStageBtn) {
         nextStageBtn.style.display = "inline-flex";
@@ -3864,11 +4095,18 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       const overlay = document.getElementById("arenaOverlay");
       if (overlay) overlay.classList.add("visible");
 
-      prependTickerEvent("INFILTRATION", "Social Heist cleared on Chog #" + c.tokenId + "! Raider claimed " + reward + " MON jackpot.");
+      prependTickerEvent("INFILTRATION", "Social Heist cleared on Chog #" + c.tokenId + "! Raider claimed " + reward + " MON jackpot (Streak: " + raiderStreak + "x).");
     }
 
     function onSocialHeistDefeat() {
       const c = currentCartridge;
+      const isNearMiss = socialPersuasion >= 75;
+      raiderStreak = 0;
+      updateRaiderProgressionHud();
+
+      const xpAwarded = isNearMiss ? 35 : 15;
+      addRaiderXP(xpAwarded, isNearMiss ? "Social Near-Miss" : "Social Attempt");
+
       const headline = document.getElementById("overlayHeadline");
       const subtext = document.getElementById("overlaySubtext");
       const nextStageBtn = document.getElementById("nextStageBtn");
@@ -3877,12 +4115,22 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       const doubleBtn = document.getElementById("doubleNothingBtn");
 
       if (headline) {
-        headline.textContent = "INTERCOM LOCKDOWN · 3 ATTEMPTS EXHAUSTED";
-        headline.style.color = "var(--accent)";
+        if (isNearMiss) {
+          headline.textContent = "CRITICAL NEAR-MISS · " + socialPersuasion + "% PERSUADED · SO CLOSE!";
+          headline.style.color = "var(--accent)";
+        } else {
+          headline.textContent = "INTERCOM LOCKDOWN · 3 ATTEMPTS EXHAUSTED";
+          headline.style.color = "var(--accent)";
+        }
       }
       if (subtext) {
-        subtext.textContent =
-          "Sentinel triggered blast barriers. Toll 0.05 MON distributed: 40% to Landlord " + c.owner + ", 50% to Jackpot, 10% burned.";
+        if (isNearMiss) {
+          subtext.innerHTML =
+            "Persuaded Sentinel #" + c.tokenId + " to " + socialPersuasion + "%, but ran out of attempts! Consolation: <strong>+" + xpAwarded + " Raider XP</strong>. Press Retry to strike again!";
+        } else {
+          subtext.innerHTML =
+            "Sentinel triggered blast barriers. Toll 0.05 MON distributed: 40% to Landlord " + c.owner + ", 50% to Jackpot, 10% burned. Consolation: <strong>+" + xpAwarded + " Raider XP</strong>.";
+        }
       }
       if (nextStageBtn) nextStageBtn.style.display = "none";
       if (checkpointBtn) checkpointBtn.style.display = "none";
@@ -3939,8 +4187,9 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       document.getElementById("arenaTitle").textContent =
         "CHOG #" + currentCartridge.tokenId + " · " + getModeDisplayName(selectedMode).toUpperCase();
       document.getElementById("arenaPool").textContent = effectiveBounty + " MON";
+      const world = STAGE_WORLDS[Math.min(4, currentStageLevel)] || STAGE_WORLDS[1];
       document.getElementById("arenaStageBadge").textContent =
-        "STG " + currentStageLevel + " · ATT " + attemptCount;
+        "STG " + currentStageLevel + " · " + world.name + " · ATT " + attemptCount;
 
       coinsCollected = 0;
       coinSlots = [false, false, false];
@@ -4006,8 +4255,9 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       }
       attemptCount++;
       document.getElementById("arenaOverlay").classList.remove("visible");
+      const world = STAGE_WORLDS[Math.min(4, currentStageLevel)] || STAGE_WORLDS[1];
       document.getElementById("arenaStageBadge").textContent =
-        "STG " + currentStageLevel + " · ATT " + attemptCount;
+        "STG " + currentStageLevel + " · " + world.name + " · ATT " + attemptCount;
 
       particles = [];
       shockwaves = [];
@@ -4155,23 +4405,34 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
 
       const stageMultiplier = Number((1 + (currentStageLevel - 1) * 0.5).toFixed(2));
       const coinBonus = (coinsCollected * 1.0).toFixed(2);
-      const payout = (
-        currentCartridge.bounty * stageMultiplier * (activeDoubleOrNothing ? 2 : 1) +
-        coinsCollected * 1.0
-      ).toFixed(2);
+      const basePayout = currentCartridge.bounty * stageMultiplier * (activeDoubleOrNothing ? 2 : 1) + coinsCollected * 1.0;
       const slotsStr = coinSlots.map(c => (c ? "●" : "○")).join(" ");
 
       if (won) {
+        raiderStreak++;
+        if (raiderStreak > bestStreak) bestStreak = raiderStreak;
+
+        const streakMult = raiderStreak >= 4 ? 1.3 : raiderStreak === 3 ? 1.2 : raiderStreak === 2 ? 1.1 : 1.0;
+        const totalPayout = Number((basePayout * streakMult).toFixed(2));
+        userBalance = Number((userBalance + totalPayout).toFixed(2));
+        totalBountiesLooted = Number((totalBountiesLooted + totalPayout).toFixed(2));
+        updateBalanceHud();
+
+        const xpAwarded = 150 + (currentStageLevel * 50) + (coinsCollected * 25);
+        addRaiderXP(xpAwarded, "Stage Cleared");
+
         playTone(587.33, 0.14, "square", 0.09);
         setTimeout(() => playTone(880, 0.26, "square", 0.1), 110);
         currentCartridge.guardianMood = "BLOODTHIRSTY";
         currentCartridge.guardianSpeech = `Wait... how did you dodge that laser?! Stage ${currentStageLevel + 1} will not be so forgiving.`;
-        prependTickerEvent("CLEARED", `0x48F1... cleared Stage ${currentStageLevel} in Chog #${currentCartridge.tokenId}! (+${payout} MON)`);
+        prependTickerEvent("CLEARED", `0x48F1... cleared Stage ${currentStageLevel} in Chog #${currentCartridge.tokenId}! (+${totalPayout} MON, Streak: ${raiderStreak}x)`);
         renderDossier();
-        headline.textContent = "STAGE " + currentStageLevel + " CLEARED · " + slotsStr;
+
+        const bonusPctText = streakMult > 1.0 ? ` · ${Math.round((streakMult - 1) * 100)}% STREAK BONUS` : "";
+        headline.textContent = "STAGE " + currentStageLevel + " CLEARED" + bonusPctText + " · " + slotsStr;
         headline.style.color = "var(--acid)";
-        subtext.textContent =
-          "Payout unlocked: " + payout + " MON (includes +" + coinBonus + " MON from " + coinsCollected + "/3 Secret Coins). Ready for Stage " + (currentStageLevel + 1) + " (Longer & Faster)?";
+        subtext.innerHTML =
+          "Payout: <strong>" + totalPayout + " MON</strong> (+" + coinBonus + " MON coins" + (streakMult > 1.0 ? ", " + Math.round((streakMult - 1) * 100) + "% streak bonus" : "") + "). Gained <strong>+" + xpAwarded + " Raider XP</strong>. Ready for Stage " + (currentStageLevel + 1) + "?";
         nextStageBtn.style.display = "inline-flex";
         nextStageBtn.textContent = "Play Stage " + (currentStageLevel + 1) + " · Longer & Faster (" + (stageMultiplier + 0.5).toFixed(1) + "x Bounty)";
         checkpointBtn.style.display = "none";
@@ -4179,25 +4440,43 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         doubleBtn.style.display = activeDoubleOrNothing ? "none" : "inline-flex";
       } else {
         attemptCount++;
-        playTone(130, 0.32, "sawtooth", 0.12);
+        const isNearMiss = progressPct >= 75;
+        raiderStreak = 0;
+        updateRaiderProgressionHud();
+
+        playTone(isNearMiss ? 220 : 130, 0.35, "sawtooth", 0.12);
         currentCartridge.bounty = Number((currentCartridge.bounty + 0.025).toFixed(2));
-        currentCartridge.guardianMood = "SMUG";
-        currentCartridge.guardianSpeech = `Another challenger turned to sawdust at ${Math.floor(progressPct)}%! Appreciate the 0.02 MON landlord toll, rookie.`;
+        currentCartridge.guardianMood = isNearMiss ? "STUNNED" : "SMUG";
+        currentCartridge.guardianSpeech = isNearMiss
+          ? `WHAT?! You were at ${Math.floor(progressPct)}% before that hazard clipped you! Too close. Stage reset.`
+          : `Another challenger turned to sawdust at ${Math.floor(progressPct)}%! Appreciate the 0.02 MON landlord toll, rookie.`;
         prependTickerEvent("RAID FAIL", `0x48F1... failed at ${Math.floor(progressPct)}% in Chog #${currentCartridge.tokenId} (+0.025 MON to Pool)`);
         renderDossier();
-        headline.textContent = (deathReason || "VAPORIZED") + " AT " + Math.min(99, Math.floor(progressPct)) + "%";
-        headline.style.color = "var(--ink)";
-        subtext.textContent =
-          "Attempt " + (attemptCount - 1) + " halted · Secret Coins: " + slotsStr + ". 0.02 MON to Landlord " + currentCartridge.owner + " · +0.025 MON to Vault Pool (" + currentCartridge.bounty.toFixed(2) + " MON).";
+
+        const xpAwarded = isNearMiss ? 40 : 15;
+        addRaiderXP(xpAwarded, isNearMiss ? "Near-Miss Consolation" : "Raid Attempt");
+
+        if (isNearMiss) {
+          headline.textContent = "CRITICAL NEAR-MISS · " + Math.floor(progressPct) + "% COMPLETE · SO CLOSE!";
+          headline.style.color = "var(--accent)";
+          subtext.innerHTML =
+            "<strong>You fell just " + Math.max(1, 100 - Math.floor(progressPct)) + "% short of the " + basePayout.toFixed(2) + " MON Vault Jackpot!</strong> Fatal hazard: " + (deathReason || "Plasma Grid") + ". Consolation: <strong>+" + xpAwarded + " Raider XP</strong>. Press <kbd>R</kbd> for instant revenge!";
+        } else {
+          headline.textContent = (deathReason || "VAPORIZED") + " AT " + Math.min(99, Math.floor(progressPct)) + "%";
+          headline.style.color = "var(--ink)";
+          subtext.innerHTML =
+            "Attempt " + (attemptCount - 1) + " halted · Secret Coins: " + slotsStr + ". 0.02 MON to Landlord " + currentCartridge.owner + " · +0.025 MON to Pool (" + currentCartridge.bounty.toFixed(2) + " MON). Gained <strong>+" + xpAwarded + " Raider XP</strong>.";
+        }
+
         nextStageBtn.style.display = "none";
         checkpointBtn.style.display = savedCheckpoint ? "inline-flex" : "none";
-        revengeBtn.textContent = "Start Attempt " + attemptCount + " from 0% (0.05 MON)";
+        revengeBtn.textContent = "Instant Revenge · Attempt " + attemptCount + " (0.05 MON) [R]";
         doubleBtn.style.display = "none";
       }
 
       setTimeout(() => {
         overlay.classList.add("visible");
-      }, 200);
+      }, 100);
     }
 
     // =========================================================================
@@ -5170,8 +5449,27 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         ctx.translate((Math.random() - 0.5) * 10, (Math.random() - 0.5) * 10);
       }
 
-      ctx.fillStyle = "#1a0008";
+      const world = STAGE_WORLDS[Math.min(4, currentStageLevel)] || STAGE_WORLDS[1];
+      ctx.fillStyle = world.bg;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Dynamic atmospheric world grid (VAV97 Worlds System)
+      ctx.strokeStyle = world.gridColor;
+      ctx.lineWidth = 1;
+      const gridSpacing = 44;
+      const gridOffset = (frameTick * 0.4) % gridSpacing;
+      for (let x = -gridSpacing + gridOffset; x < canvas.width; x += gridSpacing) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+      }
+      for (let y = 0; y < canvas.height; y += gridSpacing) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+      }
 
       if (gameActive) {
         if (selectedMode === "heist") {
@@ -5342,6 +5640,8 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
     renderDossier();
     updateArchitectureStage(0);
     updateYieldCalculator(180);
+    updateRaiderProgressionHud();
+    renderLeaderboards();
   </script>
 </body>
 </html>

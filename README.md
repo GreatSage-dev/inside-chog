@@ -70,7 +70,32 @@ Inside Chog is not a turn-based mock or a text simulator. It features 4 complete
 
 ---
 
-## 4. Systems Truth: What is On-Chain vs. Simulated
+## 4. The VAV97 Psychological Addiction Engine & Hall of Fame
+
+Inspired by indie game designer VAV97's behavioral research, *Inside Chog* implements all 6 pillars of high-retention, replay-compulsive arcade design:
+
+1. **Persistent Progression & Mastery Ranks:**
+   * Infiltrators earn Raider XP on every attempt (+150 base on clears, +50 per stage tier, +25 per secret coin, +40 near-miss consolation).
+   * Climbs 5 distinct rank titles: `Novice Infiltrator` $\to$ `Vault Striker` $\to$ `Shadow Phantom` $\to$ `Master Cyber-Raider` $\to$ `Monad Vault Apex`.
+2. **Competitive Win Streaks & Jackpot Multipliers:**
+   * Consecutive stage clears trigger cascading jackpot bonuses: `Streak 1x` (1.0x) $\to$ `Streak 2x` (+10%) $\to$ `Streak 3x` (+20%) $\to$ `Streak 4x+` (+30%).
+   * Header telemetry pill displays real-time streak urgency (`Streak: 2 (HOT!)`).
+3. **Atmospheric Strata (The Worlds System):**
+   * Stage advancement shifts visual and acoustic strata:
+     * **Stage 1:** *Cyber Cyan Sub-Basement* (`#09111e` cyan grid).
+     * **Stage 2:** *Toxic Emerald Core* (`#061811` emerald matrix).
+     * **Stage 3:** *Molten Thermal Reactor* (`#1c0906` crimson grid).
+     * **Stage 4+:** *Monad Parallel Nexus* (`#150528` violet hyper-grid).
+4. **The Near-Miss Compulsion Effect:**
+   * Dying at $\ge 75\%$ progress triggers a dramatic `CRITICAL NEAR-MISS · XX% COMPLETE · SO CLOSE!` diagnostic overlay, revealing the fatal hazard, granting consolation XP, and compelling an immediate retry.
+5. **Zero-Latency Frictionless Loop:**
+   * Single-key `[R]` instant retry from death overlay with sub-0.1s turnaround. Checkpoint respawn on `[C]`.
+6. **Live Interactive Hall of Fame:**
+   * Two-column competitive telemetry grid at `#halloffame` ranking top community raiders and deadliest landlord vaults with 1-click `Raid Vault` access.
+
+---
+
+## 5. Systems Truth: What is On-Chain vs. Simulated
 
 To preserve the **Anti-"Beautiful Nonsense" Law** and pass any technical audit:
 
@@ -84,7 +109,7 @@ To preserve the **Anti-"Beautiful Nonsense" Law** and pass any technical audit:
 
 ---
 
-## 5. Judge & Evaluator Testing Instructions
+## 6. Judge & Evaluator Testing Instructions
 
 We have eliminated all onboarding friction with **1-Click Test Faucets**:
 
@@ -103,12 +128,15 @@ We have eliminated all onboarding friction with **1-Click Test Faucets**:
      * Click shortcut **"6. Test Jailbreak"** $\to$ Watch the deterministic governor intercept the prompt injection, refuse access, and sound the alarm.
      * Click shortcut **"1. Tech Audit"** on **Chog #8812** $\to$ Watch the Plasma Visor 2.8x multiplier trigger massive persuasion progress.
      * Toggle **`+100 $CHOG Bribe (ON)`** $\to$ Watch 100 $CHOG burn for a +35% boost to unlock the blast door at 100%!
-5. **Test the Ablation Kill Switch:**
+5. **Test the VAV97 Progression & Hall of Fame:**
+   * Clear stages to build a Win Streak and loot MON bounties.
+   * Scroll to the **Hall of Fame** section (`#halloffame`) to see your raider address rank up dynamically in real time.
+6. **Test the Ablation Kill Switch:**
    * Click **`Eject NFT Cartridge`** $\to$ Watch the system immediately halt with `ERR_EMPTY_CARTRIDGE` and refuse execution until re-inserted.
 
 ---
 
-## 6. Deterministic Verification Receipts
+## 7. Deterministic Verification Receipts
 
 ```bash
 # 1. Run Unit Test Suite

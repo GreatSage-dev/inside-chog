@@ -4,9 +4,9 @@
   "description": "Inside Chog: The Asymmetric On-Chain Vault Heist Protocol on Monad",
   "type": "module",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && node build.js",
     "test": "node --import tsx --test src/**/*.test.ts",
-    "serve": "npx serve ."
+    "serve": "npx serve dist"
   },
   "keywords": [
     "monad",

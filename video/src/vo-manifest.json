@@ -1,0 +1,1283 @@
+{
+  "hook": {
+    "text": "Right now, ninety-five percent of NFTs are sitting dead in cold wallets. You bought a JPEG, and it earns you zero dollars while you wait for a buyer. What if your NFT was an arcade machine that pays you rent every time someone plays it? Welcome to Inside Chog.",
+    "duration": 15.929,
+    "words": [
+      {
+        "text": "Right",
+        "start": 0,
+        "end": 0.279
+      },
+      {
+        "text": "now,",
+        "start": 0.325,
+        "end": 0.557
+      },
+      {
+        "text": "ninety-five",
+        "start": 0.627,
+        "end": 1.126
+      },
+      {
+        "text": "percent",
+        "start": 1.161,
+        "end": 1.416
+      },
+      {
+        "text": "of",
+        "start": 1.451,
+        "end": 1.498
+      },
+      {
+        "text": "NFTs",
+        "start": 1.556,
+        "end": 2.009
+      },
+      {
+        "text": "are",
+        "start": 2.043,
+        "end": 2.148
+      },
+      {
+        "text": "sitting",
+        "start": 2.171,
+        "end": 2.415
+      },
+      {
+        "text": "dead",
+        "start": 2.473,
+        "end": 2.635
+      },
+      {
+        "text": "in",
+        "start": 2.67,
+        "end": 2.717
+      },
+      {
+        "text": "cold",
+        "start": 2.775,
+        "end": 2.972
+      },
+      {
+        "text": "wallets.",
+        "start": 3.019,
+        "end": 3.553
+      },
+      {
+        "text": "You",
+        "start": 3.936,
+        "end": 4.04
+      },
+      {
+        "text": "bought",
+        "start": 4.098,
+        "end": 4.249
+      },
+      {
+        "text": "a",
+        "start": 4.272,
+        "end": 4.296
+      },
+      {
+        "text": "JPEG,",
+        "start": 4.354,
+        "end": 5.039
+      },
+      {
+        "text": "and",
+        "start": 5.074,
+        "end": 5.306
+      },
+      {
+        "text": "it",
+        "start": 5.364,
+        "end": 5.433
+      },
+      {
+        "text": "earns",
+        "start": 5.503,
+        "end": 5.724
+      },
+      {
+        "text": "you",
+        "start": 5.77,
+        "end": 5.863
+      },
+      {
+        "text": "zero",
+        "start": 5.944,
+        "end": 6.281
+      },
+      {
+        "text": "dollars",
+        "start": 6.339,
+        "end": 6.676
+      },
+      {
+        "text": "while",
+        "start": 6.711,
+        "end": 6.873
+      },
+      {
+        "text": "you",
+        "start": 6.896,
+        "end": 6.966
+      },
+      {
+        "text": "wait",
+        "start": 7.012,
+        "end": 7.152
+      },
+      {
+        "text": "for",
+        "start": 7.198,
+        "end": 7.303
+      },
+      {
+        "text": "a",
+        "start": 7.349,
+        "end": 7.372
+      },
+      {
+        "text": "buyer.",
+        "start": 7.419,
+        "end": 7.895
+      },
+      {
+        "text": "What",
+        "start": 8.336,
+        "end": 8.522
+      },
+      {
+        "text": "if",
+        "start": 8.557,
+        "end": 8.626
+      },
+      {
+        "text": "your",
+        "start": 8.673,
+        "end": 8.8
+      },
+      {
+        "text": "NFT",
+        "start": 8.882,
+        "end": 9.276
+      },
+      {
+        "text": "was",
+        "start": 9.451,
+        "end": 9.578
+      },
+      {
+        "text": "an",
+        "start": 9.636,
+        "end": 9.706
+      },
+      {
+        "text": "arcade",
+        "start": 9.787,
+        "end": 10.263
+      },
+      {
+        "text": "machine",
+        "start": 10.286,
+        "end": 10.751
+      },
+      {
+        "text": "that",
+        "start": 10.832,
+        "end": 11.018
+      },
+      {
+        "text": "pays",
+        "start": 11.064,
+        "end": 11.285
+      },
+      {
+        "text": "you",
+        "start": 11.331,
+        "end": 11.413
+      },
+      {
+        "text": "rent",
+        "start": 11.505,
+        "end": 11.738
+      },
+      {
+        "text": "every",
+        "start": 11.854,
+        "end": 12.132
+      },
+      {
+        "text": "time",
+        "start": 12.179,
+        "end": 12.423
+      },
+      {
+        "text": "someone",
+        "start": 12.457,
+        "end": 12.725
+      },
+      {
+        "text": "plays",
+        "start": 12.759,
+        "end": 13.015
+      },
+      {
+        "text": "it?",
+        "start": 13.061,
+        "end": 13.293
+      },
+      {
+        "text": "Welcome",
+        "start": 14.106,
+        "end": 14.466
+      },
+      {
+        "text": "to",
+        "start": 14.489,
+        "end": 14.536
+      },
+      {
+        "text": "Inside",
+        "start": 14.617,
+        "end": 15.105
+      },
+      {
+        "text": "Chog.",
+        "start": 15.139,
+        "end": 15.929
+      }
+    ]
+  },
+  "revenue": {
+    "text": "Every Chog NFT compiles into an executable arcade vault. Challengers pay a zero point zero five MON entry ticket. Half of that ticket goes straight to the jackpot. Ten percent burns forever. And forty percent goes directly into the NFT owner's wallet as instant cash flow.",
+    "duration": 16.579,
+    "words": [
+      {
+        "text": "Every",
+        "start": 0,
+        "end": 0.348
+      },
+      {
+        "text": "Chog",
+        "start": 0.418,
+        "end": 0.766
+      },
+      {
+        "text": "NFT",
+        "start": 0.836,
+        "end": 1.149
+      },
+      {
+        "text": "compiles",
+        "start": 1.3,
+        "end": 1.718
+      },
+      {
+        "text": "into",
+        "start": 1.765,
+        "end": 1.939
+      },
+      {
+        "text": "an",
+        "start": 2.02,
+        "end": 2.078
+      },
+      {
+        "text": "executable",
+        "start": 2.194,
+        "end": 2.798
+      },
+      {
+        "text": "arcade",
+        "start": 2.844,
+        "end": 3.228
+      },
+      {
+        "text": "vault.",
+        "start": 3.262,
+        "end": 3.669
+      },
+      {
+        "text": "Challengers",
+        "start": 4.052,
+        "end": 4.574
+      },
+      {
+        "text": "pay",
+        "start": 4.621,
+        "end": 4.772
+      },
+      {
+        "text": "a",
+        "start": 4.807,
+        "end": 4.83
+      },
+      {
+        "text": "zero",
+        "start": 4.899,
+        "end": 5.213
+      },
+      {
+        "text": "point",
+        "start": 5.259,
+        "end": 5.468
+      },
+      {
+        "text": "zero",
+        "start": 5.503,
+        "end": 5.735
+      },
+      {
+        "text": "five",
+        "start": 5.793,
+        "end": 6.072
+      },
+      {
+        "text": "MON",
+        "start": 6.13,
+        "end": 6.432
+      },
+      {
+        "text": "entry",
+        "start": 6.478,
+        "end": 6.687
+      },
+      {
+        "text": "ticket.",
+        "start": 6.734,
+        "end": 7.14
+      },
+      {
+        "text": "Half",
+        "start": 7.581,
+        "end": 7.825
+      },
+      {
+        "text": "of",
+        "start": 7.883,
+        "end": 7.93
+      },
+      {
+        "text": "that",
+        "start": 7.976,
+        "end": 8.104
+      },
+      {
+        "text": "ticket",
+        "start": 8.15,
+        "end": 8.44
+      },
+      {
+        "text": "goes",
+        "start": 8.487,
+        "end": 8.661
+      },
+      {
+        "text": "straight",
+        "start": 8.696,
+        "end": 8.951
+      },
+      {
+        "text": "to",
+        "start": 8.975,
+        "end": 9.033
+      },
+      {
+        "text": "the",
+        "start": 9.079,
+        "end": 9.149
+      },
+      {
+        "text": "jackpot.",
+        "start": 9.183,
+        "end": 9.787
+      },
+      {
+        "text": "Ten",
+        "start": 10.228,
+        "end": 10.495
+      },
+      {
+        "text": "percent",
+        "start": 10.577,
+        "end": 10.913
+      },
+      {
+        "text": "burns",
+        "start": 10.96,
+        "end": 11.192
+      },
+      {
+        "text": "forever.",
+        "start": 11.25,
+        "end": 11.784
+      },
+      {
+        "text": "And",
+        "start": 12.063,
+        "end": 12.214
+      },
+      {
+        "text": "forty",
+        "start": 12.33,
+        "end": 12.597
+      },
+      {
+        "text": "percent",
+        "start": 12.655,
+        "end": 12.992
+      },
+      {
+        "text": "goes",
+        "start": 13.05,
+        "end": 13.212
+      },
+      {
+        "text": "directly",
+        "start": 13.247,
+        "end": 13.642
+      },
+      {
+        "text": "into",
+        "start": 13.677,
+        "end": 13.781
+      },
+      {
+        "text": "the",
+        "start": 13.839,
+        "end": 13.909
+      },
+      {
+        "text": "NFT",
+        "start": 13.955,
+        "end": 14.257
+      },
+      {
+        "text": "owner's",
+        "start": 14.373,
+        "end": 14.617
+      },
+      {
+        "text": "wallet",
+        "start": 14.687,
+        "end": 15.035
+      },
+      {
+        "text": "as",
+        "start": 15.105,
+        "end": 15.279
+      },
+      {
+        "text": "instant",
+        "start": 15.36,
+        "end": 15.673
+      },
+      {
+        "text": "cash",
+        "start": 15.72,
+        "end": 15.975
+      },
+      {
+        "text": "flow.",
+        "start": 15.999,
+        "end": 16.579
+      }
+    ]
+  },
+  "wave": {
+    "text": "Inside Chog runs four full arcade engines. In the Geometry Dash Wave, we ported the real twenty-two physics standard at two hundred and forty sub-ticks per second. RobTop's sixty percent inner hitboxes give you skin-of-the-teeth near-miss sparks, while procedural EDM drops at two hundred and fifty-six BPM.",
+    "duration": 18.808,
+    "words": [
+      {
+        "text": "Inside",
+        "start": 0,
+        "end": 0.546
+      },
+      {
+        "text": "Chog",
+        "start": 0.592,
+        "end": 0.929
+      },
+      {
+        "text": "runs",
+        "start": 0.998,
+        "end": 1.242
+      },
+      {
+        "text": "four",
+        "start": 1.358,
+        "end": 1.614
+      },
+      {
+        "text": "full",
+        "start": 1.672,
+        "end": 1.869
+      },
+      {
+        "text": "arcade",
+        "start": 1.916,
+        "end": 2.299
+      },
+      {
+        "text": "engines.",
+        "start": 2.334,
+        "end": 2.844
+      },
+      {
+        "text": "In",
+        "start": 3.228,
+        "end": 3.355
+      },
+      {
+        "text": "the",
+        "start": 3.39,
+        "end": 3.46
+      },
+      {
+        "text": "Geometry",
+        "start": 3.506,
+        "end": 4.052
+      },
+      {
+        "text": "Dash",
+        "start": 4.098,
+        "end": 4.377
+      },
+      {
+        "text": "Wave,",
+        "start": 4.458,
+        "end": 4.841
+      },
+      {
+        "text": "we",
+        "start": 4.865,
+        "end": 4.957
+      },
+      {
+        "text": "ported",
+        "start": 5.016,
+        "end": 5.283
+      },
+      {
+        "text": "the",
+        "start": 5.306,
+        "end": 5.375
+      },
+      {
+        "text": "real",
+        "start": 5.445,
+        "end": 5.642
+      },
+      {
+        "text": "twenty-two",
+        "start": 5.689,
+        "end": 6.095
+      },
+      {
+        "text": "physics",
+        "start": 6.165,
+        "end": 6.502
+      },
+      {
+        "text": "standard",
+        "start": 6.525,
+        "end": 6.989
+      },
+      {
+        "text": "at",
+        "start": 7.163,
+        "end": 7.361
+      },
+      {
+        "text": "two",
+        "start": 7.396,
+        "end": 7.558
+      },
+      {
+        "text": "hundred",
+        "start": 7.628,
+        "end": 7.872
+      },
+      {
+        "text": "and",
+        "start": 7.895,
+        "end": 7.964
+      },
+      {
+        "text": "forty",
+        "start": 8.022,
+        "end": 8.266
+      },
+      {
+        "text": "sub-ticks",
+        "start": 8.336,
+        "end": 8.812
+      },
+      {
+        "text": "per",
+        "start": 8.847,
+        "end": 8.963
+      },
+      {
+        "text": "second.",
+        "start": 9.009,
+        "end": 9.416
+      },
+      {
+        "text": "RobTop's",
+        "start": 10.112,
+        "end": 10.693
+      },
+      {
+        "text": "sixty",
+        "start": 10.867,
+        "end": 11.204
+      },
+      {
+        "text": "percent",
+        "start": 11.262,
+        "end": 11.587
+      },
+      {
+        "text": "inner",
+        "start": 11.645,
+        "end": 11.819
+      },
+      {
+        "text": "hitboxes",
+        "start": 11.877,
+        "end": 12.457
+      },
+      {
+        "text": "give",
+        "start": 12.516,
+        "end": 12.678
+      },
+      {
+        "text": "you",
+        "start": 12.713,
+        "end": 12.794
+      },
+      {
+        "text": "skin-of-the-teeth",
+        "start": 12.864,
+        "end": 13.595
+      },
+      {
+        "text": "near-miss",
+        "start": 13.769,
+        "end": 14.21
+      },
+      {
+        "text": "sparks,",
+        "start": 14.234,
+        "end": 14.884
+      },
+      {
+        "text": "while",
+        "start": 15.209,
+        "end": 15.441
+      },
+      {
+        "text": "procedural",
+        "start": 15.476,
+        "end": 15.987
+      },
+      {
+        "text": "EDM",
+        "start": 16.068,
+        "end": 16.463
+      },
+      {
+        "text": "drops",
+        "start": 16.532,
+        "end": 16.823
+      },
+      {
+        "text": "at",
+        "start": 16.857,
+        "end": 16.939
+      },
+      {
+        "text": "two",
+        "start": 16.974,
+        "end": 17.113
+      },
+      {
+        "text": "hundred",
+        "start": 17.171,
+        "end": 17.38
+      },
+      {
+        "text": "and",
+        "start": 17.403,
+        "end": 17.473
+      },
+      {
+        "text": "fifty-six",
+        "start": 17.519,
+        "end": 17.96
+      },
+      {
+        "text": "BPM.",
+        "start": 18.018,
+        "end": 18.808
+      }
+    ]
+  },
+  "social": {
+    "text": "Or play the Social Infiltration Heist. AI understands your pitch, but deterministic code decides who wins. Complimenting a Sentinel's Royal Crown triggers a two point four times flattery weakness. And prompt injections are stopped dead by the governor.",
+    "duration": 14.954,
+    "words": [
+      {
+        "text": "Or",
+        "start": 0,
+        "end": 0.174
+      },
+      {
+        "text": "play",
+        "start": 0.267,
+        "end": 0.522
+      },
+      {
+        "text": "the",
+        "start": 0.592,
+        "end": 0.662
+      },
+      {
+        "text": "Social",
+        "start": 0.731,
+        "end": 1.115
+      },
+      {
+        "text": "Infiltration",
+        "start": 1.184,
+        "end": 1.858
+      },
+      {
+        "text": "Heist.",
+        "start": 1.927,
+        "end": 2.38
+      },
+      {
+        "text": "AI",
+        "start": 2.821,
+        "end": 3.17
+      },
+      {
+        "text": "understands",
+        "start": 3.239,
+        "end": 3.68
+      },
+      {
+        "text": "your",
+        "start": 3.704,
+        "end": 3.808
+      },
+      {
+        "text": "pitch,",
+        "start": 3.843,
+        "end": 4.214
+      },
+      {
+        "text": "but",
+        "start": 4.54,
+        "end": 4.702
+      },
+      {
+        "text": "deterministic",
+        "start": 4.748,
+        "end": 5.526
+      },
+      {
+        "text": "code",
+        "start": 5.584,
+        "end": 5.933
+      },
+      {
+        "text": "decides",
+        "start": 5.979,
+        "end": 6.374
+      },
+      {
+        "text": "who",
+        "start": 6.397,
+        "end": 6.502
+      },
+      {
+        "text": "wins.",
+        "start": 6.56,
+        "end": 7.047
+      },
+      {
+        "text": "Complimenting",
+        "start": 7.558,
+        "end": 8.266
+      },
+      {
+        "text": "a",
+        "start": 8.313,
+        "end": 8.336
+      },
+      {
+        "text": "Sentinel's",
+        "start": 8.417,
+        "end": 8.812
+      },
+      {
+        "text": "Royal",
+        "start": 8.858,
+        "end": 9.079
+      },
+      {
+        "text": "Crown",
+        "start": 9.137,
+        "end": 9.416
+      },
+      {
+        "text": "triggers",
+        "start": 9.474,
+        "end": 9.822
+      },
+      {
+        "text": "a",
+        "start": 9.868,
+        "end": 9.903
+      },
+      {
+        "text": "two",
+        "start": 9.973,
+        "end": 10.159
+      },
+      {
+        "text": "point",
+        "start": 10.24,
+        "end": 10.472
+      },
+      {
+        "text": "four",
+        "start": 10.53,
+        "end": 10.728
+      },
+      {
+        "text": "times",
+        "start": 10.786,
+        "end": 11.088
+      },
+      {
+        "text": "flattery",
+        "start": 11.146,
+        "end": 11.494
+      },
+      {
+        "text": "weakness.",
+        "start": 11.552,
+        "end": 12.086
+      },
+      {
+        "text": "And",
+        "start": 12.411,
+        "end": 12.55
+      },
+      {
+        "text": "prompt",
+        "start": 12.608,
+        "end": 12.887
+      },
+      {
+        "text": "injections",
+        "start": 12.922,
+        "end": 13.444
+      },
+      {
+        "text": "are",
+        "start": 13.479,
+        "end": 13.572
+      },
+      {
+        "text": "stopped",
+        "start": 13.595,
+        "end": 13.874
+      },
+      {
+        "text": "dead",
+        "start": 13.897,
+        "end": 14.036
+      },
+      {
+        "text": "by",
+        "start": 14.071,
+        "end": 14.153
+      },
+      {
+        "text": "the",
+        "start": 14.187,
+        "end": 14.257
+      },
+      {
+        "text": "governor.",
+        "start": 14.292,
+        "end": 14.954
+      }
+    ]
+  },
+  "ablation": {
+    "text": "Now the ultimate test. Watch what happens when we eject the cartridge. The entire engine immediately halts. No map can generate, no vault can load, and no game can start. The Chog NFT isn't cosmetic. It is the load-bearing hardware engine.",
+    "duration": 16.115,
+    "words": [
+      {
+        "text": "Now",
+        "start": 0,
+        "end": 0.174
+      },
+      {
+        "text": "the",
+        "start": 0.221,
+        "end": 0.29
+      },
+      {
+        "text": "ultimate",
+        "start": 0.348,
+        "end": 0.697
+      },
+      {
+        "text": "test.",
+        "start": 0.72,
+        "end": 1.184
+      },
+      {
+        "text": "Watch",
+        "start": 1.625,
+        "end": 1.904
+      },
+      {
+        "text": "what",
+        "start": 1.939,
+        "end": 2.055
+      },
+      {
+        "text": "happens",
+        "start": 2.113,
+        "end": 2.426
+      },
+      {
+        "text": "when",
+        "start": 2.45,
+        "end": 2.566
+      },
+      {
+        "text": "we",
+        "start": 2.601,
+        "end": 2.682
+      },
+      {
+        "text": "eject",
+        "start": 2.717,
+        "end": 2.995
+      },
+      {
+        "text": "the",
+        "start": 3.03,
+        "end": 3.1
+      },
+      {
+        "text": "cartridge.",
+        "start": 3.135,
+        "end": 3.669
+      },
+      {
+        "text": "The",
+        "start": 4.052,
+        "end": 4.18
+      },
+      {
+        "text": "entire",
+        "start": 4.238,
+        "end": 4.69
+      },
+      {
+        "text": "engine",
+        "start": 4.748,
+        "end": 5.074
+      },
+      {
+        "text": "immediately",
+        "start": 5.097,
+        "end": 5.526
+      },
+      {
+        "text": "halts.",
+        "start": 5.596,
+        "end": 6.118
+      },
+      {
+        "text": "No",
+        "start": 6.444,
+        "end": 6.606
+      },
+      {
+        "text": "map",
+        "start": 6.687,
+        "end": 6.861
+      },
+      {
+        "text": "can",
+        "start": 6.931,
+        "end": 7.047
+      },
+      {
+        "text": "generate,",
+        "start": 7.117,
+        "end": 7.697
+      },
+      {
+        "text": "no",
+        "start": 7.906,
+        "end": 8.057
+      },
+      {
+        "text": "vault",
+        "start": 8.15,
+        "end": 8.382
+      },
+      {
+        "text": "can",
+        "start": 8.429,
+        "end": 8.557
+      },
+      {
+        "text": "load,",
+        "start": 8.626,
+        "end": 9.091
+      },
+      {
+        "text": "and",
+        "start": 9.3,
+        "end": 9.451
+      },
+      {
+        "text": "no",
+        "start": 9.52,
+        "end": 9.648
+      },
+      {
+        "text": "game",
+        "start": 9.729,
+        "end": 9.95
+      },
+      {
+        "text": "can",
+        "start": 9.985,
+        "end": 10.101
+      },
+      {
+        "text": "start.",
+        "start": 10.147,
+        "end": 10.612
+      },
+      {
+        "text": "The",
+        "start": 11.122,
+        "end": 11.262
+      },
+      {
+        "text": "Chog",
+        "start": 11.331,
+        "end": 11.714
+      },
+      {
+        "text": "NFT",
+        "start": 11.796,
+        "end": 12.249
+      },
+      {
+        "text": "isn't",
+        "start": 12.527,
+        "end": 12.759
+      },
+      {
+        "text": "cosmetic.",
+        "start": 12.806,
+        "end": 13.56
+      },
+      {
+        "text": "It",
+        "start": 13.886,
+        "end": 14.013
+      },
+      {
+        "text": "is",
+        "start": 14.06,
+        "end": 14.141
+      },
+      {
+        "text": "the",
+        "start": 14.199,
+        "end": 14.269
+      },
+      {
+        "text": "load-bearing",
+        "start": 14.362,
+        "end": 14.954
+      },
+      {
+        "text": "hardware",
+        "start": 15.035,
+        "end": 15.418
+      },
+      {
+        "text": "engine.",
+        "start": 15.464,
+        "end": 16.115
+      }
+    ]
+  },
+  "outro": {
+    "text": "Inside Chog is live right now on Monad Testnet at inside-chog.vercel.app. Verified contracts. Zero mocks. Stop letting your JPEGs sleep. Turn them into cash-flowing arcade vaults. Thank you.",
+    "duration": 15.418,
+    "words": [
+      {
+        "text": "Inside",
+        "start": 0,
+        "end": 0.58
+      },
+      {
+        "text": "Chog",
+        "start": 0.627,
+        "end": 0.94
+      },
+      {
+        "text": "is",
+        "start": 0.998,
+        "end": 1.08
+      },
+      {
+        "text": "live",
+        "start": 1.173,
+        "end": 1.451
+      },
+      {
+        "text": "right",
+        "start": 1.486,
+        "end": 1.649
+      },
+      {
+        "text": "now",
+        "start": 1.695,
+        "end": 1.811
+      },
+      {
+        "text": "on",
+        "start": 1.881,
+        "end": 1.962
+      },
+      {
+        "text": "Monad",
+        "start": 2.02,
+        "end": 2.334
+      },
+      {
+        "text": "Testnet",
+        "start": 2.368,
+        "end": 2.868
+      },
+      {
+        "text": "at",
+        "start": 2.937,
+        "end": 3.077
+      },
+      {
+        "text": "inside-chog.vercel.app.",
+        "start": 3.17,
+        "end": 6.118
+      },
+      {
+        "text": "Verified",
+        "start": 6.502,
+        "end": 7.012
+      },
+      {
+        "text": "contracts.",
+        "start": 7.059,
+        "end": 7.825
+      },
+      {
+        "text": "Zero",
+        "start": 8.208,
+        "end": 8.603
+      },
+      {
+        "text": "mocks.",
+        "start": 8.684,
+        "end": 9.253
+      },
+      {
+        "text": "Stop",
+        "start": 9.694,
+        "end": 10.054
+      },
+      {
+        "text": "letting",
+        "start": 10.136,
+        "end": 10.368
+      },
+      {
+        "text": "your",
+        "start": 10.403,
+        "end": 10.507
+      },
+      {
+        "text": "JPEGs",
+        "start": 10.577,
+        "end": 11.029
+      },
+      {
+        "text": "sleep.",
+        "start": 11.053,
+        "end": 11.517
+      },
+      {
+        "text": "Turn",
+        "start": 11.842,
+        "end": 12.098
+      },
+      {
+        "text": "them",
+        "start": 12.144,
+        "end": 12.26
+      },
+      {
+        "text": "into",
+        "start": 12.307,
+        "end": 12.446
+      },
+      {
+        "text": "cash-flowing",
+        "start": 12.516,
+        "end": 13.189
+      },
+      {
+        "text": "arcade",
+        "start": 13.247,
+        "end": 13.618
+      },
+      {
+        "text": "vaults.",
+        "start": 13.653,
+        "end": 14.141
+      },
+      {
+        "text": "Thank",
+        "start": 14.582,
+        "end": 14.838
+      },
+      {
+        "text": "you.",
+        "start": 14.884,
+        "end": 15.418
+      }
+    ]
+  }
+}

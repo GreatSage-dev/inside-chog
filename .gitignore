@@ -4,5 +4,8 @@ Thumbs.db
 .env
 .env.*
 .taste-skill/
+video/node_modules/
+video/out/
+*.mp4
 
 

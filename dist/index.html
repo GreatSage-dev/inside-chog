@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>INSIDE CHOG · Executable NFT Arcade Vaults on Monad</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
@@ -3401,16 +3402,49 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
     requestAnimationFrame(animateMiniWave);
 
     // =========================================================================
-    // 6. WEB AUDIO SYNTHESIZER FOR TACTILE ARCADE FEEDBACK
+    // 6. MULTI-CHANNEL ROBTOP-INSPIRED PROCEDURAL EDM SYNTHESIZER
+    //    100% Procedural Web Audio API — Zero Copyright, Zero Assets, Real EDM!
     // =========================================================================
     let audioCtx = null;
+    let edmMasterGain = null;
+    let edmFilter = null;
+    let edmNoiseBuffer = null;
+    let edmSequencerActive = false;
+    let edmStep = 0;
+    let edmNextTime = 0;
+    let edmIntervalId = null;
+    let edmBpm = 132;
+    let beatPulse = 0; // 0..1 audio-reactive visual pulse on kick drum hits
+
+    function initAudioContext() {
+      if (!audioCtx) {
+        const AudioClass = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioClass();
+
+        edmMasterGain = audioCtx.createGain();
+        edmMasterGain.gain.setValueAtTime(0.24, audioCtx.currentTime);
+
+        edmFilter = audioCtx.createBiquadFilter();
+        edmFilter.type = "lowpass";
+        edmFilter.frequency.setValueAtTime(2600, audioCtx.currentTime);
+        edmFilter.Q.setValueAtTime(3.2, audioCtx.currentTime);
+
+        edmFilter.connect(edmMasterGain);
+        edmMasterGain.connect(audioCtx.destination);
+
+        const sampleRate = audioCtx.sampleRate;
+        edmNoiseBuffer = audioCtx.createBuffer(1, sampleRate, sampleRate);
+        const data = edmNoiseBuffer.getChannelData(0);
+        for (let i = 0; i < sampleRate; i++) {
+          data[i] = Math.random() * 2 - 1;
+        }
+      }
+      if (audioCtx.state === "suspended") audioCtx.resume();
+    }
+
     function playTone(freq, duration, type = "sawtooth", gainVal = 0.07) {
       try {
-        if (!audioCtx) {
-          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-          audioCtx = new AudioContextClass();
-        }
-        if (audioCtx.state === "suspended") audioCtx.resume();
+        initAudioContext();
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.type = type;
@@ -3424,12 +3458,200 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       } catch (e) {}
     }
 
+    function triggerKickDrum(time) {
+      if (!audioCtx || !beatEnabled) return;
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(165, time);
+        osc.frequency.exponentialRampToValueAtTime(38, time + 0.08);
+
+        gain.gain.setValueAtTime(0.38, time);
+        gain.gain.exponentialRampToValueAtTime(0.001, time + 0.12);
+
+        osc.connect(gain);
+        gain.connect(edmMasterGain);
+        osc.start(time);
+        osc.stop(time + 0.13);
+        beatPulse = 1.0;
+      } catch (e) {}
+    }
+
+    function triggerSnareDrum(time) {
+      if (!audioCtx || !beatEnabled || !edmNoiseBuffer) return;
+      try {
+        const noise = audioCtx.createBufferSource();
+        noise.buffer = edmNoiseBuffer;
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = "bandpass";
+        filter.frequency.setValueAtTime(1400, time);
+        filter.Q.setValueAtTime(1.8, time);
+
+        const gain = audioCtx.createGain();
+        gain.gain.setValueAtTime(0.22, time);
+        gain.gain.exponentialRampToValueAtTime(0.001, time + 0.14);
+
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(edmMasterGain);
+        noise.start(time);
+        noise.stop(time + 0.15);
+
+        const osc = audioCtx.createOscillator();
+        const oscGain = audioCtx.createGain();
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(220, time);
+        osc.frequency.exponentialRampToValueAtTime(90, time + 0.07);
+        oscGain.gain.setValueAtTime(0.16, time);
+        oscGain.gain.exponentialRampToValueAtTime(0.001, time + 0.08);
+        osc.connect(oscGain);
+        oscGain.connect(edmMasterGain);
+        osc.start(time);
+        osc.stop(time + 0.09);
+      } catch (e) {}
+    }
+
+    function triggerHiHat(time, open = false) {
+      if (!audioCtx || !beatEnabled || !edmNoiseBuffer) return;
+      try {
+        const noise = audioCtx.createBufferSource();
+        noise.buffer = edmNoiseBuffer;
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = "highpass";
+        filter.frequency.setValueAtTime(7500, time);
+
+        const gain = audioCtx.createGain();
+        const dur = open ? 0.09 : 0.035;
+        gain.gain.setValueAtTime(open ? 0.13 : 0.08, time);
+        gain.gain.exponentialRampToValueAtTime(0.001, time + dur);
+
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(edmMasterGain);
+        noise.start(time);
+        noise.stop(time + dur + 0.01);
+      } catch (e) {}
+    }
+
+    function triggerBassNote(time, freq, dur = 0.12) {
+      if (!audioCtx || !beatEnabled) return;
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "sawtooth";
+        osc.frequency.setValueAtTime(freq, time);
+
+        gain.gain.setValueAtTime(0.20, time);
+        gain.gain.exponentialRampToValueAtTime(0.001, time + dur);
+
+        osc.connect(edmFilter);
+        gain.connect(edmMasterGain);
+        osc.connect(gain);
+        osc.start(time);
+        osc.stop(time + dur + 0.02);
+      } catch (e) {}
+    }
+
+    function triggerLeadArp(time, freq, dur = 0.09) {
+      if (!audioCtx || !beatEnabled) return;
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "square";
+        osc.frequency.setValueAtTime(freq, time);
+
+        gain.gain.setValueAtTime(0.11, time);
+        gain.gain.exponentialRampToValueAtTime(0.001, time + dur);
+
+        osc.connect(gain);
+        gain.connect(edmMasterGain);
+        osc.start(time);
+        osc.stop(time + dur + 0.01);
+      } catch (e) {}
+    }
+
+    // Melodic Arpeggio & Bass notes in D minor (The quintessential GD Chiptune key!)
+    const EDM_BASS_SCALE = [73.42, 73.42, 87.31, 73.42, 98.00, 73.42, 110.00, 65.41]; // D2, F2, G2, A2, C2
+    const EDM_LEAD_SCALE = [293.66, 349.23, 440.00, 523.25, 587.33, 698.46, 587.33, 440.00]; // D4, F4, A4, C5, D5, F5
+
+    function scheduleEdmStep() {
+      if (!edmSequencerActive || !audioCtx) return;
+      const stepDuration = (60 / edmBpm) / 4; // 16th-note step duration
+
+      while (edmNextTime < audioCtx.currentTime + 0.12) {
+        const step16 = edmStep % 16;
+        const isOverdrive = progressPct >= 70;
+
+        if (isOverdrive) {
+          edmBpm = 256;
+          if (edmFilter) edmFilter.frequency.setValueAtTime(4200, edmNextTime);
+        } else if (progressPct >= 40) {
+          edmBpm = 146;
+          if (edmFilter) edmFilter.frequency.setValueAtTime(3200, edmNextTime);
+        } else {
+          edmBpm = 132;
+          if (edmFilter) edmFilter.frequency.setValueAtTime(2600, edmNextTime);
+        }
+
+        // Kick Drum: 4-on-the-floor, doubled in Overdrive!
+        if (isOverdrive) {
+          if (step16 % 2 === 0) triggerKickDrum(edmNextTime);
+        } else {
+          if (step16 % 4 === 0) triggerKickDrum(edmNextTime);
+        }
+
+        // Snare on 4 and 12
+        if (step16 === 4 || step16 === 12) {
+          triggerSnareDrum(edmNextTime);
+        }
+
+        // Hi-Hats on offbeat 16ths
+        if (step16 % 2 === 1) {
+          triggerHiHat(edmNextTime, step16 === 14);
+        }
+
+        // Rolling Cyber Bass
+        const bassNote = EDM_BASS_SCALE[(Math.floor(edmStep / 2)) % EDM_BASS_SCALE.length];
+        if (step16 % 2 === 0 || isOverdrive) {
+          triggerBassNote(edmNextTime, bassNote, stepDuration * 0.9);
+        }
+
+        // Soaring Lead Arp
+        const leadNote = EDM_LEAD_SCALE[edmStep % EDM_LEAD_SCALE.length];
+        if (step16 % 2 === 1 || isOverdrive) {
+          triggerLeadArp(edmNextTime, leadNote, stepDuration * 0.7);
+        }
+
+        edmNextTime += stepDuration;
+        edmStep++;
+      }
+    }
+
+    function startEdmSequencer() {
+      initAudioContext();
+      edmSequencerActive = true;
+      edmStep = 0;
+      edmNextTime = audioCtx.currentTime + 0.05;
+      if (edmIntervalId) clearInterval(edmIntervalId);
+      edmIntervalId = setInterval(scheduleEdmStep, 25);
+    }
+
+    function stopEdmSequencer() {
+      edmSequencerActive = false;
+      if (edmIntervalId) {
+        clearInterval(edmIntervalId);
+        edmIntervalId = null;
+      }
+      beatPulse = 0;
+    }
+
     // =========================================================================
-    // 7. STAGE 3: 60FPS 3-GAME ARCADE ENGINE (GD 37-LEVEL + SUBZERO UPGRADE)
-    //    - Jump Pads (Auto-Launch) + Mid-Air Jump Orbs/Rings (Tap to Boost)
-    //    - 3-Phase GD Level Flow in Game 2 (Cube -> Ship Portal -> 45° Wave Portal)
-    //    - Animated Chomp Monster Jaws + Beat-Pulse Background Equalizer
-    //    - 3 Spinning Secret Coin Routes ([● ● ○] HUD) + Green Diamond Checkpoints
+    // 7. STAGE 3: 240 TPS PHYSICS ENGINE (GEOMETRY DASH 2.2 STANDARD)
+    //    - Fixed-step sub-stepping accumulator (SUB_STEP_MS = 1000/240)
+    //    - RobTop 60% Inner Hitbox Standard on all deadly hazards
+    //    - Jump input buffer timer + 90-degree landing rotation snap
+    //    - Jump Pads, Mid-Air Orbs, 3-Phase Portals & 3 Secret Coins
     // =========================================================================
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
@@ -3441,6 +3663,7 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
     let animFrameId = null;
     let gameActive = false;
     let holdingInput = false;
+    let jumpBufferTimer = 0; // Cocos2d-x jump input buffering
     let progressPct = 0;
     let shakeFrames = 0;
     let particles = [];
@@ -3452,6 +3675,12 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
     let attemptCount = 1;
     let savedCheckpoint = null;
     let beatEnabled = true;
+
+    // 240 TPS Physics Accumulator Constants
+    let lastFrameTimestamp = performance.now();
+    let physicsAccumulator = 0;
+    const SUB_STEP_MS = 1000 / 240; // 4.1667 ms
+    const SUB_STEP_RATIO = 0.25;    // Exactly 0.25 of a 60fps tick
 
     // -------------------------------------------------------------------------
     // GAME 1 STATE: ORIGINAL 0a7bbcb VAULT PLATFORM HEIST (WITH PADS & ORBS!)
@@ -3666,6 +3895,7 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
 
     function closeArena() {
       gameActive = false;
+      stopEdmSequencer();
       if (animFrameId) cancelAnimationFrame(animFrameId);
       document.getElementById("arenaModal").classList.remove("open");
       const socialConsole = document.getElementById("socialConsole");
@@ -4512,7 +4742,10 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       }
 
       playTone(440, 0.12, "triangle", 0.08);
+      if (beatEnabled) startEdmSequencer();
       gameActive = true;
+      lastFrameTimestamp = performance.now();
+      physicsAccumulator = 0;
       if (animFrameId) cancelAnimationFrame(animFrameId);
       animFrameId = requestAnimationFrame(gameLoop);
     }
@@ -4564,7 +4797,10 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
 
       spawnFloatingText(320, 220, "CHECKPOINT RESPAWN!", "#b8ff65");
       playTone(587.33, 0.12, "triangle", 0.08);
+      if (beatEnabled) startEdmSequencer();
       gameActive = true;
+      lastFrameTimestamp = performance.now();
+      physicsAccumulator = 0;
       if (animFrameId) cancelAnimationFrame(animFrameId);
       animFrameId = requestAnimationFrame(gameLoop);
     }
@@ -4672,6 +4908,7 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
 
     function triggerEndState(won, deathReason) {
       gameActive = false;
+      stopEdmSequencer();
       shakeFrames = 14;
       const overlay = document.getElementById("arenaOverlay");
       const headline = document.getElementById("overlayHeadline");
@@ -4846,56 +5083,31 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
     }
 
     // =========================================================================
-    // ENGINE 1: 10-TIER VERTICAL VAULT TOWER HEIST (3 STRUCTURAL ARCHETYPES)
+    // ENGINE 1: 10-TIER VERTICAL VAULT TOWER HEIST (240 TPS + 60% INNER HITBOXES)
     //           With Smooth Vertical Camera, Moving/Crumbling Ledges & Overdrive!
     // =========================================================================
-    function updateAndDrawHeist() {
-      frameTick++;
+    function updateAndDrawHeist(subStepRatio = 1.0, isDrawPass = true) {
+      if (isDrawPass) frameTick++;
       const totalClimb = Math.max(300, 434 - (heistVaultChest.y + 18));
       const climbPct = Math.max(0, Math.min(99, ((434 - heistPlayer.y) / totalClimb) * 100));
       progressPct = climbPct;
       const phase = getIntensityPhase(progressPct);
 
-      drawBeatEqualizerAndAttempt(Math.abs(heistCameraY), "#ff99d3");
-
       // Smooth vertical camera tracking up the 10-tier tower
       const targetCamY = Math.min(0, Math.max(heistTopY - 85, heistPlayer.y - 310));
-      heistCameraY += (targetCamY - heistCameraY) * 0.14;
-
-      // Draw Vault Background Grid & Walls (scrolling with camera)
-      ctx.strokeStyle = "rgba(255, 153, 211, 0.07)";
-      ctx.lineWidth = 1;
-      for (let gx = 0; gx < canvas.width; gx += 55) {
-        ctx.beginPath();
-        ctx.moveTo(gx, 0);
-        ctx.lineTo(gx, canvas.height);
-        ctx.stroke();
-      }
-      const gridOffsetY = ((-heistCameraY) % 55 + 55) % 55;
-      for (let gy = gridOffsetY; gy < canvas.height; gy += 55) {
-        ctx.beginPath();
-        ctx.moveTo(0, gy);
-        ctx.lineTo(canvas.width, gy);
-        ctx.stroke();
-      }
+      heistCameraY += (targetCamY - heistCameraY) * 0.14 * (isDrawPass ? 1.0 : subStepRatio);
 
       const leftWall = 28;
       const rightWall = canvas.width - 28;
-      ctx.fillStyle = "#3d0012";
-      ctx.fillRect(0, 0, leftWall, canvas.height);
-      ctx.fillRect(rightWall, 0, leftWall, canvas.height);
-      ctx.strokeStyle = phase.idx === 3 ? "#ff4d6d" : "#ff99d3";
-      ctx.lineWidth = 3;
-      ctx.strokeRect(leftWall, 12, rightWall - leftWall, canvas.height - 24);
 
-      // Update Player Physics with Intensity Speed Multiplier
+      // Update Player Physics with Intensity Speed Multiplier (240 TPS sub-step)
       const dirSign = heistPlayer.vx >= 0 ? 1 : -1;
       const baseVx = (3.4 + (currentStageLevel - 1) * 0.32) * currentCartridge.speedMult * (activeDoubleOrNothing ? 1.15 : 1);
       heistPlayer.vx = dirSign * baseVx * phase.speedMult;
 
-      heistPlayer.vy += 0.52;
-      heistPlayer.x += heistPlayer.vx;
-      heistPlayer.y += heistPlayer.vy;
+      heistPlayer.vy += 0.52 * subStepRatio;
+      heistPlayer.x += heistPlayer.vx * subStepRatio;
+      heistPlayer.y += heistPlayer.vy * subStepRatio;
 
       if (!heistPlayer.hasJumpedOnce && heistPlayer.x > 250) {
         heistPlayer.x = 250;
@@ -4917,12 +5129,12 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       for (let i = 0; i < heistPlatforms.length; i++) {
         const p = heistPlatforms[i];
         if (p.vx) {
-          p.x += p.vx * phase.speedMult;
+          p.x += p.vx * phase.speedMult * subStepRatio;
           if (p.x < p.minX) { p.x = p.minX; p.vx = Math.abs(p.vx); }
           if (p.x + p.w > p.maxX) { p.x = p.maxX - p.w; p.vx = -Math.abs(p.vx); }
         }
         if (p.collapsedFrames > 0) {
-          p.collapsedFrames--;
+          p.collapsedFrames -= subStepRatio;
           continue;
         }
         if (
@@ -4936,11 +5148,18 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
           heistPlayer.vy = 0;
           heistPlayer.isGrounded = true;
           heistPlayer.jumpsLeft = 2;
+          if (jumpBufferTimer > 0) {
+            heistPlayer.vy = -12.4;
+            heistPlayer.isGrounded = false;
+            heistPlayer.jumpsLeft--;
+            jumpBufferTimer = 0;
+            playTone(520, 0.08, "sine", 0.07);
+          }
           if (p.vx) {
-            heistPlayer.x += p.vx * phase.speedMult * 0.6;
+            heistPlayer.x += p.vx * phase.speedMult * subStepRatio * 0.6;
           }
           if (p.crumble) {
-            p.crumbleTimer = (p.crumbleTimer || 0) + 1;
+            p.crumbleTimer = (p.crumbleTimer || 0) + 1 * subStepRatio;
             if (p.crumbleTimer > 28) {
               p.collapsedFrames = 95;
               p.crumbleTimer = 0;
@@ -4955,7 +5174,7 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
             spawnFloatingText(heistPlayer.x, heistPlayer.y - heistCameraY - 26, "TOWER CHECKPOINT SAVED!", "#b8ff65");
           }
         } else if (p.crumble && p.crumbleTimer > 0) {
-          p.crumbleTimer = Math.max(0, p.crumbleTimer - 0.4);
+          p.crumbleTimer = Math.max(0, p.crumbleTimer - 0.4 * subStepRatio);
         }
       }
 
@@ -4965,6 +5184,149 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         triggerEndState(false, "FELL FROM TOWER");
         return;
       }
+
+      // Check Auto-Jump Pads
+      for (let j = 0; j < heistPads.length; j++) {
+        const pad = heistPads[j];
+        if (
+          frameTick - (pad.lastTrig || -99) > 22 &&
+          heistPlayer.x + 14 > pad.x &&
+          heistPlayer.x - 14 < pad.x + pad.w &&
+          Math.abs(heistPlayer.y + heistPlayer.radius - pad.y) < 16 &&
+          heistPlayer.vy >= -2
+        ) {
+          pad.lastTrig = frameTick;
+          heistPlayer.vy = pad.boostVy;
+          heistPlayer.isGrounded = false;
+          heistPlayer.jumpsLeft = 2;
+          playTone(698.46, 0.11, "triangle", 0.09);
+          spawnShockwave(pad.x + pad.w / 2, pad.y - heistCameraY, pad.color);
+          spawnFloatingText(pad.x, pad.y - heistCameraY - 24, "JUMP PAD BOOST!", pad.color);
+        }
+      }
+
+      // Check Floating Jump Orbs / Rings
+      for (let o = 0; o < heistOrbs.length; o++) {
+        const orb = heistOrbs[o];
+        const dist = Math.hypot(heistPlayer.x - orb.x, heistPlayer.y - orb.y);
+        if (dist > orb.r + 28) orb.triggered = false;
+        if (!orb.triggered && (holdingInput || jumpBufferTimer > 0) && dist < orb.r + heistPlayer.radius + 12) {
+          orb.triggered = true;
+          jumpBufferTimer = 0;
+          heistPlayer.vy = orb.boostVy;
+          heistPlayer.jumpsLeft = 2;
+          playTone(784, 0.1, "sine", 0.09);
+          spawnShockwave(orb.x, orb.y - heistCameraY, orb.color);
+          spawnFloatingText(orb.x, orb.y - heistCameraY - 22, "ORB RING JUMP!", orb.color);
+        }
+      }
+
+      // Check 3 Spinning RobTop Secret Coins
+      for (let c = 0; c < heistCoins.length; c++) {
+        const coin = heistCoins[c];
+        if (coin.collected) continue;
+        const bob = Math.sin(frameTick * 0.08 + c) * 4;
+        if (Math.hypot(heistPlayer.x - coin.x, heistPlayer.y - (coin.y + bob)) < heistPlayer.radius + coin.r) {
+          coin.collected = true;
+          coinSlots[coin.slot] = true;
+          coinsCollected = coinSlots.filter(Boolean).length;
+          updateCoinsHud();
+          playTone(880, 0.12, "sine", 0.1);
+          spawnShockwave(coin.x, coin.y - heistCameraY, "#ffd166");
+          spawnFloatingText(coin.x, coin.y - heistCameraY, "SECRET COIN " + (coin.slot + 1) + "/3 (+1.00 MON)", "#ffd166");
+        }
+      }
+
+      // Check Hazards with RobTop 60% Inner Hitbox Standard
+      for (let i = 0; i < heistHazards.length; i++) {
+        const hz = heistHazards[i];
+        if (hz.type === "SLIME") {
+          // Fair hazard depth: only triggers if sunk 10px into the basin
+          if (heistPlayer.x + 12 > hz.x && heistPlayer.x - 12 < hz.x + hz.w && heistPlayer.y + heistPlayer.radius > hz.y + 10) {
+            spawnExplosion(heistPlayer.x, heistPlayer.y - heistCameraY, "#b8ff65");
+            triggerEndState(false, "DISSOLVED IN SLIME");
+            return;
+          }
+        } else if (hz.type === "LASER") {
+          hz.phase += hz.speed * phase.speedMult * subStepRatio;
+          const isFiring = Math.sin(hz.phase) > 0.42;
+          if (isFiring) {
+            // 60% Inner Hitbox margin for lasers
+            if (
+              Math.abs(heistPlayer.x - hz.x) < (heistPlayer.radius - 2) * 0.65 &&
+              heistPlayer.y + heistPlayer.radius > hz.y &&
+              heistPlayer.y - heistPlayer.radius < hz.y + hz.h
+            ) {
+              spawnExplosion(heistPlayer.x, heistPlayer.y - heistCameraY, "#ff4d6d");
+              triggerEndState(false, "SLICED BY LASER");
+              return;
+            }
+          }
+        } else if (hz.type === "ANCHOR") {
+          hz.angle = Math.sin(frameTick * hz.speed * phase.speedMult) * 1.05;
+          const bobX = hz.pivotX + Math.sin(hz.angle) * hz.length;
+          const bobY = hz.pivotY + Math.cos(hz.angle) * hz.length;
+          // 60% Inner Hitbox margin for pendulums
+          if (Math.hypot(heistPlayer.x - bobX, heistPlayer.y - bobY) < (heistPlayer.radius + 15) * 0.62) {
+            spawnExplosion(heistPlayer.x, heistPlayer.y - heistCameraY, "#ff4d6d");
+            triggerEndState(false, "CRUSHED BY PENDULUM");
+            return;
+          }
+        } else if (hz.type === "ELECTRIC") {
+          // 60% Inner Hitbox margin for shields
+          if (Math.hypot(heistPlayer.x - hz.x, heistPlayer.y - hz.y) < (heistPlayer.radius + hz.r - 4) * 0.60) {
+            spawnExplosion(heistPlayer.x, heistPlayer.y - heistCameraY, "#ffd166");
+            triggerEndState(false, "SHOCKED BY SHIELD");
+            return;
+          }
+        }
+      }
+
+      // Check Vault Sanctuary Chest Reached
+      const vc = heistVaultChest;
+      if (
+        heistPlayer.x + heistPlayer.radius > vc.x &&
+        heistPlayer.x - heistPlayer.radius < vc.x + vc.w &&
+        heistPlayer.y + heistPlayer.radius > vc.y &&
+        heistPlayer.y - heistPlayer.radius < vc.y + vc.h
+      ) {
+        progressPct = 100;
+        document.getElementById("arenaPercent").textContent = "100%";
+        document.getElementById("arenaProgressFill").style.width = "100%";
+        spawnExplosion(vc.x + vc.w / 2, vc.y - heistCameraY + vc.h / 2, "#b8ff65");
+        triggerEndState(true);
+        return;
+      }
+
+      // If this is a physics-only sub-step, stop here before drawing to canvas!
+      if (!isDrawPass) return;
+
+      drawBeatEqualizerAndAttempt(Math.abs(heistCameraY), "#ff99d3");
+
+      // Draw Vault Background Grid & Walls (scrolling with camera)
+      const pulseAlpha = Math.min(0.24, 0.07 + beatPulse * 0.17);
+      ctx.strokeStyle = phase.idx === 3 ? "rgba(255, 77, 109, " + pulseAlpha.toFixed(2) + ")" : "rgba(255, 153, 211, " + pulseAlpha.toFixed(2) + ")";
+      ctx.lineWidth = 1;
+      for (let gx = 0; gx < canvas.width; gx += 55) {
+        ctx.beginPath();
+        ctx.moveTo(gx, 0);
+        ctx.lineTo(gx, canvas.height);
+        ctx.stroke();
+      }
+      const gridOffsetY = ((-heistCameraY) % 55 + 55) % 55;
+      for (let gy = gridOffsetY; gy < canvas.height; gy += 55) {
+        ctx.beginPath();
+        ctx.moveTo(0, gy);
+        ctx.lineTo(canvas.width, gy);
+        ctx.stroke();
+      }
+
+      ctx.fillStyle = "#3d0012";
+      ctx.fillRect(0, 0, leftWall, canvas.height);
+      ctx.fillRect(rightWall, 0, leftWall, canvas.height);
+      ctx.strokeStyle = phase.idx === 3 ? "#ff4d6d" : "#ff99d3";
+      ctx.lineWidth = 3;
+      ctx.strokeRect(leftWall, 12, rightWall - leftWall, canvas.height - 24);
 
       // Begin World-Space Rendering (Translated by -heistCameraY)
       ctx.save();
@@ -4994,7 +5356,7 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         ctx.fillText(p.label, p.x + shakeX + 8, p.y + 13);
       }
 
-      // Draw & Trigger Yellow/Pink Auto-Jump Pads
+      // Draw Yellow/Pink Auto-Jump Pads
       for (let j = 0; j < heistPads.length; j++) {
         const pad = heistPads[j];
         ctx.fillStyle = pad.color;
@@ -5004,25 +5366,9 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         ctx.fillStyle = "#fff0f6";
         ctx.font = "700 9px 'Libre Franklin', sans-serif";
         ctx.fillText(pad.label, pad.x - 2, pad.y - 14);
-
-        if (
-          frameTick - (pad.lastTrig || -99) > 22 &&
-          heistPlayer.x + 14 > pad.x &&
-          heistPlayer.x - 14 < pad.x + pad.w &&
-          Math.abs(heistPlayer.y + heistPlayer.radius - pad.y) < 16 &&
-          heistPlayer.vy >= -2
-        ) {
-          pad.lastTrig = frameTick;
-          heistPlayer.vy = pad.boostVy;
-          heistPlayer.isGrounded = false;
-          heistPlayer.jumpsLeft = 2;
-          playTone(698.46, 0.11, "triangle", 0.09);
-          spawnShockwave(pad.x + pad.w / 2, pad.y - heistCameraY, pad.color);
-          spawnFloatingText(pad.x, pad.y - heistCameraY - 24, "JUMP PAD BOOST!", pad.color);
-        }
       }
 
-      // Draw & Trigger Floating Jump Orbs / Rings
+      // Draw Floating Jump Orbs / Rings
       for (let o = 0; o < heistOrbs.length; o++) {
         const orb = heistOrbs[o];
         const pulse = Math.sin(frameTick * 0.14 + o) * 3;
@@ -5036,17 +5382,6 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         ctx.beginPath();
         ctx.arc(orb.x, orb.y, orb.r * 0.55, 0, Math.PI * 2);
         ctx.fill();
-
-        const dist = Math.hypot(heistPlayer.x - orb.x, heistPlayer.y - orb.y);
-        if (dist > orb.r + 28) orb.triggered = false;
-        if (!orb.triggered && holdingInput && dist < orb.r + heistPlayer.radius + 10) {
-          orb.triggered = true;
-          heistPlayer.vy = orb.boostVy;
-          heistPlayer.jumpsLeft = 2;
-          playTone(784, 0.1, "sine", 0.09);
-          spawnShockwave(orb.x, orb.y - heistCameraY, orb.color);
-          spawnFloatingText(orb.x, orb.y - heistCameraY - 22, "ORB RING JUMP!", orb.color);
-        }
       }
 
       if (!heistPlayer.hasJumpedOnce) {
@@ -5056,7 +5391,6 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       }
 
       // Draw Golden Vault Chest at Top Sanctuary
-      const vc = heistVaultChest;
       ctx.fillStyle = "#ffd166";
       ctx.fillRect(vc.x, vc.y, vc.w, vc.h);
       ctx.fillStyle = "#3d0012";
@@ -5067,25 +5401,15 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       ctx.font = "700 13px 'Libre Franklin', sans-serif";
       ctx.fillText("VAULT CHEST (100%)", vc.x - 24, vc.y - 8);
 
-      // Draw & Check 3 Spinning RobTop Secret Coins
+      // Draw 3 Spinning RobTop Secret Coins
       for (let c = 0; c < heistCoins.length; c++) {
         const coin = heistCoins[c];
         if (coin.collected) continue;
         const bob = Math.sin(frameTick * 0.08 + c) * 4;
         drawSecretCoin(coin.x, coin.y + bob, coin.r, coin.slot, coin.hint);
-
-        if (Math.hypot(heistPlayer.x - coin.x, heistPlayer.y - (coin.y + bob)) < heistPlayer.radius + coin.r) {
-          coin.collected = true;
-          coinSlots[coin.slot] = true;
-          coinsCollected = coinSlots.filter(Boolean).length;
-          updateCoinsHud();
-          playTone(880, 0.12, "sine", 0.1);
-          spawnShockwave(coin.x, coin.y - heistCameraY, "#ffd166");
-          spawnFloatingText(coin.x, coin.y - heistCameraY, "SECRET COIN " + (coin.slot + 1) + "/3 (+1.00 MON)", "#ffd166");
-        }
       }
 
-      // Draw & Check Hazards
+      // Draw Hazards
       for (let i = 0; i < heistHazards.length; i++) {
         const hz = heistHazards[i];
         if (hz.type === "SLIME") {
@@ -5094,15 +5418,7 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
           ctx.fillStyle = "#3d0012";
           ctx.font = "700 12px 'Libre Franklin', sans-serif";
           ctx.fillText("TOXIC ACID BASIN · USE ORBS OR PADS TO CLEAR", hz.x + 105, hz.y + 23);
-
-          if (heistPlayer.x + 12 > hz.x && heistPlayer.x - 12 < hz.x + hz.w && heistPlayer.y + heistPlayer.radius > hz.y + 4) {
-            ctx.restore();
-            spawnExplosion(heistPlayer.x, heistPlayer.y - heistCameraY, "#b8ff65");
-            triggerEndState(false, "DISSOLVED IN SLIME");
-            return;
-          }
         } else if (hz.type === "LASER") {
-          hz.phase += hz.speed * phase.speedMult;
           const isFiring = Math.sin(hz.phase) > 0.42;
           const isWarmingUp = Math.sin(hz.phase) > 0.1 && !isFiring;
 
@@ -5117,17 +5433,6 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
             ctx.moveTo(hz.x, hz.y);
             ctx.lineTo(hz.x, hz.y + hz.h);
             ctx.stroke();
-
-            if (
-              Math.abs(heistPlayer.x - hz.x) < heistPlayer.radius - 2 &&
-              heistPlayer.y + heistPlayer.radius > hz.y &&
-              heistPlayer.y - heistPlayer.radius < hz.y + hz.h
-            ) {
-              ctx.restore();
-              spawnExplosion(heistPlayer.x, heistPlayer.y - heistCameraY, "#ff4d6d");
-              triggerEndState(false, "SLICED BY LASER");
-              return;
-            }
           } else {
             ctx.strokeStyle = isWarmingUp ? "#ffd166" : "rgba(255, 153, 211, 0.28)";
             ctx.lineWidth = isWarmingUp ? 3 : 2;
@@ -5139,7 +5444,6 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
             ctx.setLineDash([]);
           }
         } else if (hz.type === "ANCHOR") {
-          hz.angle = Math.sin(frameTick * hz.speed * phase.speedMult) * 1.05;
           const bobX = hz.pivotX + Math.sin(hz.angle) * hz.length;
           const bobY = hz.pivotY + Math.cos(hz.angle) * hz.length;
 
@@ -5158,13 +5462,6 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
           ctx.beginPath();
           ctx.arc(bobX, bobY, 7, 0, Math.PI * 2);
           ctx.fill();
-
-          if (Math.hypot(heistPlayer.x - bobX, heistPlayer.y - bobY) < heistPlayer.radius + 15) {
-            ctx.restore();
-            spawnExplosion(heistPlayer.x, heistPlayer.y - heistCameraY, "#ff4d6d");
-            triggerEndState(false, "CRUSHED BY PENDULUM");
-            return;
-          }
         } else if (hz.type === "ELECTRIC") {
           const pulse = Math.sin(frameTick * 0.2) * 3;
           ctx.strokeStyle = "#ffd166";
@@ -5177,13 +5474,6 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
           ctx.beginPath();
           ctx.arc(hz.x, hz.y, hz.r, 0, Math.PI * 2);
           ctx.fill();
-
-          if (Math.hypot(heistPlayer.x - hz.x, heistPlayer.y - hz.y) < heistPlayer.radius + hz.r - 4) {
-            ctx.restore();
-            spawnExplosion(heistPlayer.x, heistPlayer.y - heistCameraY, "#ffd166");
-            triggerEndState(false, "SHOCKED BY SHIELD");
-            return;
-          }
         }
       }
 
@@ -5224,27 +5514,14 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
 
       document.getElementById("arenaPercent").textContent = Math.floor(progressPct) + "%";
       document.getElementById("arenaProgressFill").style.width = progressPct + "%";
-
-      if (
-        heistPlayer.x + heistPlayer.radius > vc.x &&
-        heistPlayer.x - heistPlayer.radius < vc.x + vc.w &&
-        heistPlayer.y + heistPlayer.radius > vc.y &&
-        heistPlayer.y - heistPlayer.radius < vc.y + vc.h
-      ) {
-        progressPct = 100;
-        document.getElementById("arenaPercent").textContent = "100%";
-        document.getElementById("arenaProgressFill").style.width = "100%";
-        spawnExplosion(vc.x + vc.w / 2, vc.y - heistCameraY + vc.h / 2, "#b8ff65");
-        triggerEndState(true);
-      }
     }
 
     // =========================================================================
-    // ENGINE 2: 3-PHASE GEOMETRY DASH LEVEL + 4 SCULPTED TERRAIN ARCHETYPES
+    // ENGINE 2: 3-PHASE GEOMETRY DASH LEVEL (240 TPS + 60% INNER HITBOXES)
     //           With Rollercoaster Slopes, Clubstep Ramps & Overdrive Climax!
     // =========================================================================
-    function updateAndDrawWave() {
-      frameTick++;
+    function updateAndDrawWave(subStepRatio = 1.0, isDrawPass = true) {
+      if (isDrawPass) frameTick++;
 
       progressPct = Math.min(100, (waveCameraX / (levelLengthPx - 260)) * 100);
       const phase = getIntensityPhase(progressPct);
@@ -5263,20 +5540,18 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         wavePlayer.form === "cube" ? "#ff99d3" :
         wavePlayer.form === "jetpack" ? "#5ce1e6" : "#ffd166";
 
-      drawBeatEqualizerAndAttempt(waveCameraX, themeColor);
-
       if (!wavePlayer.hasLaunched) {
-        if (waveCameraX < 95) waveCameraX += speed;
+        if (waveCameraX < 95) waveCameraX += speed * subStepRatio;
         wavePlayer.y = localBotWall - 18;
         wavePlayer.vy = 0;
         wavePlayer.isGrounded = true;
       } else {
-        waveCameraX += speed;
+        waveCameraX += speed * subStepRatio;
 
         if (wavePlayer.form === "cube") {
           // PHASE 1: STEREO MADNESS / POLARGEIST CUBE PHYSICS (90-degree jump rotation + auto-jump when holding!)
-          wavePlayer.vy += 0.56;
-          wavePlayer.y += wavePlayer.vy;
+          wavePlayer.vy += 0.56 * subStepRatio;
+          wavePlayer.y += wavePlayer.vy * subStepRatio;
           wavePlayer.isGrounded = false;
 
           // Sculpted Floor Landing
@@ -5288,12 +5563,11 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
           }
 
           // Stepping-stone block landings
-          const worldX = waveCameraX + wavePlayer.x;
           for (let b = 0; b < waveBlocks.length; b++) {
             const blk = waveBlocks[b];
             if (
-              worldX + 14 > blk.x &&
-              worldX - 14 < blk.x + blk.w &&
+              playerWorldX + 14 > blk.x &&
+              playerWorldX - 14 < blk.x + blk.w &&
               wavePlayer.y + 18 >= blk.y &&
               wavePlayer.y + 18 <= blk.y + blk.h + 12 &&
               wavePlayer.vy >= 0
@@ -5306,23 +5580,24 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
           }
 
           if (!wavePlayer.isGrounded) {
-            wavePlayer.cubeAngle += 0.11;
-          } else if (holdingInput) {
-            // Auto-hop while holding SPACE/Click just like real Geometry Dash Cube!
+            wavePlayer.cubeAngle += 0.11 * subStepRatio;
+          } else if (holdingInput || jumpBufferTimer > 0) {
+            // Auto-hop while holding SPACE/Click or from input buffer!
             wavePlayer.vy = -10.4;
             wavePlayer.isGrounded = false;
+            jumpBufferTimer = 0;
             playTone(493.88, 0.07, "square", 0.05);
           }
         } else if (wavePlayer.form === "jetpack") {
           // PHASE 2: SHIP / JETPACK SMOOTH FLIGHT
-          if (holdingInput) wavePlayer.vy -= 0.48;
-          else wavePlayer.vy += 0.42;
+          if (holdingInput) wavePlayer.vy -= 0.48 * subStepRatio;
+          else wavePlayer.vy += 0.42 * subStepRatio;
           wavePlayer.vy = Math.max(-5.2, Math.min(5.2, wavePlayer.vy));
-          wavePlayer.y += wavePlayer.vy;
+          wavePlayer.y += wavePlayer.vy * subStepRatio;
         } else {
           // PHASE 3: 45-DEGREE GEOMETRY WAVE
           wavePlayer.vy = holdingInput ? -speed * 0.74 : speed * 0.74;
-          wavePlayer.y += wavePlayer.vy;
+          wavePlayer.y += wavePlayer.vy * subStepRatio;
         }
       }
 
@@ -5339,10 +5614,128 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         if (wavePlayer.form === "cube") wavePlayer.isGrounded = true;
       }
 
-      wavePlayer.trail.push({ x: waveCameraX + wavePlayer.x, y: wavePlayer.y, form: wavePlayer.form });
-      if (wavePlayer.trail.length > 45) wavePlayer.trail.shift();
+      if (isDrawPass) {
+        wavePlayer.trail.push({ x: waveCameraX + wavePlayer.x, y: wavePlayer.y, form: wavePlayer.form });
+        if (wavePlayer.trail.length > 45) wavePlayer.trail.shift();
+      }
 
-      progressPct = Math.min(100, (waveCameraX / (levelLengthPx - 260)) * 100);
+      // Check Auto-Jump Pads
+      for (let j = 0; j < wavePads.length; j++) {
+        const pad = wavePads[j];
+        if (
+          wavePlayer.hasLaunched &&
+          frameTick - (pad.lastTrig || -99) > 22 &&
+          playerWorldX + 14 > pad.x &&
+          playerWorldX - 14 < pad.x + pad.w &&
+          Math.abs(wavePlayer.y + 18 - pad.y) < 18 &&
+          wavePlayer.vy >= -1
+        ) {
+          pad.lastTrig = frameTick;
+          wavePlayer.vy = pad.boostVy;
+          wavePlayer.isGrounded = false;
+          playTone(698.46, 0.1, "triangle", 0.08);
+          spawnShockwave(wavePlayer.x, pad.y, pad.color);
+          spawnFloatingText(wavePlayer.x, wavePlayer.y - 26, "AUTO JUMP PAD!", pad.color);
+        }
+      }
+
+      // Check Mid-Air Jump Orbs (Rings)
+      for (let o = 0; o < waveOrbs.length; o++) {
+        const orb = waveOrbs[o];
+        const sx = orb.x - waveCameraX;
+        if (!orb.triggered && (holdingInput || jumpBufferTimer > 0) && Math.hypot(wavePlayer.x - sx, wavePlayer.y - orb.y) < orb.r + 22) {
+          orb.triggered = true;
+          jumpBufferTimer = 0;
+          wavePlayer.vy = orb.boostVy;
+          wavePlayer.isGrounded = false;
+          playTone(784, 0.1, "sine", 0.09);
+          spawnShockwave(sx, orb.y, orb.color);
+          spawnFloatingText(wavePlayer.x, wavePlayer.y - 24, "ORB BOOST!", orb.color);
+        }
+      }
+
+      // Check Transformation Portals + Green Diamond Checkpoints!
+      for (let p = 0; p < wavePortals.length; p++) {
+        const portal = wavePortals[p];
+        if (!portal.triggered && playerWorldX >= portal.x) {
+          portal.triggered = true;
+          wavePlayer.form = portal.targetForm;
+          savedCheckpoint = { mode: "wave", cameraX: portal.x - wavePlayer.x, form: portal.targetForm };
+          playTone(660, 0.14, "triangle", 0.09);
+          spawnShockwave(wavePlayer.x, wavePlayer.y, portal.color);
+          spawnFloatingText(wavePlayer.x, wavePlayer.y - 30, portal.label + " + CHECKPOINT!", portal.color);
+        }
+      }
+
+      // Check 3 Spinning Secret Coins
+      for (let c = 0; c < waveCoins.length; c++) {
+        const coin = waveCoins[c];
+        if (coin.collected) continue;
+        const sx = coin.x - waveCameraX;
+        if (Math.hypot(wavePlayer.x - sx, wavePlayer.y - coin.y) < coin.r + 20) {
+          coin.collected = true;
+          coinSlots[coin.slot] = true;
+          coinsCollected = coinSlots.filter(Boolean).length;
+          updateCoinsHud();
+          playTone(880, 0.12, "sine", 0.1);
+          spawnShockwave(sx, coin.y, "#ffd166");
+          spawnFloatingText(wavePlayer.x, wavePlayer.y - 22, "SECRET COIN " + (coin.slot + 1) + "/3 (+1.00 MON)", "#ffd166");
+        }
+      }
+
+      // Check SubZero / Deadlocked Chomp Monster Jaws with 60% Inner Hitbox
+      for (let m = 0; m < waveMonsters.length; m++) {
+        const mon = waveMonsters[m];
+        const sx = mon.x - waveCameraX;
+        if (sx < -80 || sx > canvas.width + 80) continue;
+        if (Math.hypot(wavePlayer.x - sx, wavePlayer.y - mon.y) < (mon.r + 8) * 0.62) {
+          spawnExplosion(wavePlayer.x, wavePlayer.y, "#5ce1e6");
+          triggerEndState(false, "CHOMPED BY GUARDIAN");
+          return;
+        }
+      }
+
+      // Check Spinning Sawblades with RobTop 60% Inner Hitbox Standard
+      for (let i = 0; i < waveObstacles.length; i++) {
+        const ob = waveObstacles[i];
+        ob.angle += 0.06 * phase.speedMult * subStepRatio;
+        const sx = ob.x - waveCameraX;
+        if (sx < -100 || sx > canvas.width + 100) continue;
+
+        const sawDist = Math.hypot(wavePlayer.x - sx, wavePlayer.y - ob.y);
+        const sawHitbox = (ob.r + 10) * 0.60; // 60% inner fatal core!
+        if (sawDist < sawHitbox) {
+          spawnExplosion(wavePlayer.x, wavePlayer.y, "#ff4d6d");
+          triggerEndState(false, "CLIPPED SAWBLADE");
+          return;
+        } else if (sawDist < ob.r + 10) {
+          // RobTop Fair Hitbox "Near Miss" brush spark!
+          if (Math.random() < 0.25) {
+            particles.push({
+              x: wavePlayer.x + (Math.random() - 0.5) * 8,
+              y: wavePlayer.y + (Math.random() - 0.5) * 8,
+              vx: (Math.random() - 0.5) * 4,
+              vy: (Math.random() - 0.5) * 4,
+              color: "#ffd166",
+              life: 0.6,
+              decay: 0.08,
+              size: 2
+            });
+          }
+        }
+      }
+
+      if (progressPct >= 100) {
+        spawnExplosion(wavePlayer.x, wavePlayer.y, "#b8ff65");
+        triggerEndState(true);
+        return;
+      }
+
+      // If physics-only sub-step, stop before drawing
+      if (!isDrawPass) return;
+
+      drawBeatEqualizerAndAttempt(waveCameraX, themeColor);
+
       document.getElementById("arenaPercent").textContent = Math.floor(progressPct) + "%";
       document.getElementById("arenaProgressFill").style.width = progressPct + "%";
 
@@ -5404,7 +5797,7 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         ctx.fillText(blk.label, sx + 8, blk.y + 15);
       }
 
-      // Draw & Trigger Auto-Jump Pads
+      // Draw Auto-Jump Pads
       for (let j = 0; j < wavePads.length; j++) {
         const pad = wavePads[j];
         const sx = pad.x - waveCameraX;
@@ -5417,24 +5810,9 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
           ctx.font = "700 10px 'Libre Franklin', sans-serif";
           ctx.fillText(pad.label, sx - 2, pad.y - 14);
         }
-        if (
-          wavePlayer.hasLaunched &&
-          frameTick - (pad.lastTrig || -99) > 22 &&
-          playerWorldX + 14 > pad.x &&
-          playerWorldX - 14 < pad.x + pad.w &&
-          Math.abs(wavePlayer.y + 18 - pad.y) < 18 &&
-          wavePlayer.vy >= -1
-        ) {
-          pad.lastTrig = frameTick;
-          wavePlayer.vy = pad.boostVy;
-          wavePlayer.isGrounded = false;
-          playTone(698.46, 0.1, "triangle", 0.08);
-          spawnShockwave(wavePlayer.x, pad.y, pad.color);
-          spawnFloatingText(wavePlayer.x, wavePlayer.y - 26, "AUTO JUMP PAD!", pad.color);
-        }
       }
 
-      // Draw & Trigger Mid-Air Jump Orbs (Rings)
+      // Draw Mid-Air Jump Orbs (Rings)
       for (let o = 0; o < waveOrbs.length; o++) {
         const orb = waveOrbs[o];
         const sx = orb.x - waveCameraX;
@@ -5455,14 +5833,6 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
           ctx.font = "700 10px 'Libre Franklin', sans-serif";
           ctx.fillText(orb.label, sx - 26, orb.y - orb.r - 8);
         }
-        if (!orb.triggered && holdingInput && Math.hypot(wavePlayer.x - sx, wavePlayer.y - orb.y) < orb.r + 22) {
-          orb.triggered = true;
-          wavePlayer.vy = orb.boostVy;
-          wavePlayer.isGrounded = false;
-          playTone(784, 0.1, "sine", 0.09);
-          spawnShockwave(sx, orb.y, orb.color);
-          spawnFloatingText(wavePlayer.x, wavePlayer.y - 24, "ORB BOOST!", orb.color);
-        }
       }
 
       // Draw Transformation Portals + Green Diamond Checkpoints!
@@ -5478,7 +5848,6 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
           ctx.font = "700 11px 'Libre Franklin', sans-serif";
           ctx.fillText(portal.label, sx - 64, pb.top + 24);
 
-          // Draw Green Practice Checkpoint Diamond at each Portal!
           const midY = (pb.top + pb.bot) / 2;
           ctx.fillStyle = "#b8ff65";
           ctx.beginPath();
@@ -5489,37 +5858,18 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
           ctx.closePath();
           ctx.fill();
         }
-        if (!portal.triggered && playerWorldX >= portal.x) {
-          portal.triggered = true;
-          wavePlayer.form = portal.targetForm;
-          savedCheckpoint = { mode: "wave", cameraX: portal.x - wavePlayer.x, form: portal.targetForm };
-          playTone(660, 0.14, "triangle", 0.09);
-          spawnShockwave(wavePlayer.x, wavePlayer.y, portal.color);
-          spawnFloatingText(wavePlayer.x, wavePlayer.y - 30, portal.label + " + CHECKPOINT!", portal.color);
-        }
       }
 
-      // Draw & Check 3 Spinning Secret Coins
+      // Draw 3 Spinning Secret Coins
       for (let c = 0; c < waveCoins.length; c++) {
         const coin = waveCoins[c];
         if (coin.collected) continue;
         const sx = coin.x - waveCameraX;
         if (sx < -60 || sx > canvas.width + 60) continue;
-
         drawSecretCoin(sx, coin.y, coin.r, coin.slot, coin.hint);
-
-        if (Math.hypot(wavePlayer.x - sx, wavePlayer.y - coin.y) < coin.r + 20) {
-          coin.collected = true;
-          coinSlots[coin.slot] = true;
-          coinsCollected = coinSlots.filter(Boolean).length;
-          updateCoinsHud();
-          playTone(880, 0.12, "sine", 0.1);
-          spawnShockwave(sx, coin.y, "#ffd166");
-          spawnFloatingText(wavePlayer.x, wavePlayer.y - 22, "SECRET COIN " + (coin.slot + 1) + "/3 (+1.00 MON)", "#ffd166");
-        }
       }
 
-      // Draw & Check SubZero / Deadlocked Chomp Monster Jaws in Phase 2!
+      // Draw SubZero / Deadlocked Chomp Monster Jaws
       for (let m = 0; m < waveMonsters.length; m++) {
         const mon = waveMonsters[m];
         const sx = mon.x - waveCameraX;
@@ -5528,7 +5878,6 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         const chomp = Math.abs(Math.sin(frameTick * 0.09 * phase.speedMult + mon.jawPhase)) * 12;
         ctx.save();
         ctx.translate(sx, mon.y);
-        // Monster Outer Frame
         ctx.fillStyle = "#610922";
         ctx.fillRect(-mon.r, -mon.r - chomp, mon.r * 2, mon.r);
         ctx.fillRect(-mon.r, chomp, mon.r * 2, mon.r);
@@ -5537,7 +5886,6 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         ctx.strokeRect(-mon.r, -mon.r - chomp, mon.r * 2, mon.r);
         ctx.strokeRect(-mon.r, chomp, mon.r * 2, mon.r);
 
-        // Glowing Monster Eyes & Teeth
         ctx.fillStyle = "#b8ff65";
         ctx.fillRect(-16, -mon.r - chomp + 8, 8, 8);
         ctx.fillRect(8, -mon.r - chomp + 8, 8, 8);
@@ -5547,12 +5895,6 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
           ctx.fillRect(t, chomp - 2, 6, 6);
         }
         ctx.restore();
-
-        if (Math.hypot(wavePlayer.x - sx, wavePlayer.y - mon.y) < mon.r + 8) {
-          spawnExplosion(wavePlayer.x, wavePlayer.y, "#5ce1e6");
-          triggerEndState(false, "CHOMPED BY GUARDIAN");
-          return;
-        }
       }
 
       // Draw Neon Trail
@@ -5569,10 +5911,9 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         ctx.stroke();
       }
 
-      // Draw & Check Spinning Sawblades
+      // Draw Spinning Sawblades
       for (let i = 0; i < waveObstacles.length; i++) {
         const ob = waveObstacles[i];
-        ob.angle += 0.06 * phase.speedMult;
         const sx = ob.x - waveCameraX;
         if (sx < -100 || sx > canvas.width + 100) continue;
 
@@ -5596,12 +5937,6 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         ctx.arc(0, 0, ob.r * 0.35, 0, Math.PI * 2);
         ctx.fill();
         ctx.restore();
-
-        if (Math.hypot(wavePlayer.x - sx, wavePlayer.y - ob.y) < ob.r + 10) {
-          spawnExplosion(wavePlayer.x, wavePlayer.y, "#ff4d6d");
-          triggerEndState(false, "CLIPPED SAWBLADE");
-          return;
-        }
       }
 
       // Goal Gate at 100%
@@ -5637,19 +5972,14 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       updateAndDrawRivalGhosts(wavePlayer.x, wavePlayer.y, progressPct);
 
       checkAndDrawPhaseOverlay(progressPct);
-
-      if (progressPct >= 100) {
-        spawnExplosion(wavePlayer.x, wavePlayer.y, "#b8ff65");
-        triggerEndState(true);
-      }
     }
 
     // =========================================================================
-    // ENGINE 3: FLAPPY $100 PARACHUTE + 3 AIRSPACE ARCHETYPES & OVERDRIVE
+    // ENGINE 3: FLAPPY $100 PARACHUTE (240 TPS + 60% INNER HITBOXES)
     //           With Wind Geysers, Scissor Moving Gates & Multi-Tier Bulls!
     // =========================================================================
-    function updateAndDrawFlappy() {
-      frameTick++;
+    function updateAndDrawFlappy(subStepRatio = 1.0, isDrawPass = true) {
+      if (isDrawPass) frameTick++;
 
       progressPct = Math.min(100, (flappyCameraX / (flappyLengthPx - 250)) * 100);
       const phase = getIntensityPhase(progressPct);
@@ -5657,28 +5987,175 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       const stageSpeedMult = 1 + (currentStageLevel - 1) * 0.18;
       const speed = 2.4 * currentCartridge.speedMult * stageSpeedMult * (activeDoubleOrNothing ? 1.25 : 1) * phase.speedMult;
 
-      drawBeatEqualizerAndAttempt(flappyCameraX, phase.idx === 3 ? "#ff4d6d" : "#b8ff65");
-
       if (!flappyPlayer.hasFlappedOnce) {
-        if (flappyCameraX < 120) flappyCameraX += speed;
+        if (flappyCameraX < 120) flappyCameraX += speed * subStepRatio;
         flappyPlayer.y = 225 + Math.sin(frameTick * 0.08) * 14;
         flappyPlayer.vy = 0;
       } else {
-        flappyCameraX += speed;
-        flappyPlayer.vy += 0.25;
+        flappyCameraX += speed * subStepRatio;
+        flappyPlayer.vy += 0.25 * subStepRatio;
         if (flappyPlayer.vy > 4.2) flappyPlayer.vy = 4.2;
-        flappyPlayer.y += flappyPlayer.vy;
+        flappyPlayer.y += flappyPlayer.vy * subStepRatio;
 
         if (progressPct >= 45 && (!savedCheckpoint || savedCheckpoint.mode !== "flappy")) {
           savedCheckpoint = { mode: "flappy", cameraX: flappyCameraX };
-          spawnFloatingText(flappyPlayer.x, flappyPlayer.y - 30, "MIDWAY CHECKPOINT SAVED!", "#b8ff65");
+          if (isDrawPass) spawnFloatingText(flappyPlayer.x, flappyPlayer.y - 30, "MIDWAY CHECKPOINT SAVED!", "#b8ff65");
         }
       }
 
       const topCeiling = 46;
       const groundY = 485;
 
-      // Draw & Apply Updraft Geysers & Vacuum Downdraft Vents
+      // Apply Updraft Geysers & Vacuum Downdraft Vents
+      for (let v = 0; v < flappyVents.length; v++) {
+        const vent = flappyVents[v];
+        const sx = vent.x - flappyCameraX;
+        if (
+          flappyPlayer.hasFlappedOnce &&
+          flappyPlayer.x + 14 > sx &&
+          flappyPlayer.x - 14 < sx + vent.w
+        ) {
+          flappyPlayer.vy = Math.max(-6.2, Math.min(4.8, flappyPlayer.vy + (vent.force || 0) * subStepRatio));
+        }
+      }
+
+      if (flappyPlayer.y < topCeiling + 20) {
+        flappyPlayer.y = topCeiling + 20;
+        flappyPlayer.vy = 0;
+      }
+      if (flappyPlayer.y > groundY - 20) {
+        flappyPlayer.y = groundY - 20;
+        flappyPlayer.vy = -5.4;
+      }
+
+      progressPct = Math.min(100, (flappyCameraX / (flappyLengthPx - 250)) * 100);
+
+      // Check Floating Updraft Orbs
+      for (let o = 0; o < flappyOrbs.length; o++) {
+        const orb = flappyOrbs[o];
+        const sx = orb.x - flappyCameraX;
+        if (!orb.triggered && Math.hypot(flappyPlayer.x - sx, flappyPlayer.y - orb.y) < orb.r + 20) {
+          orb.triggered = true;
+          flappyPlayer.vy = orb.boostVy;
+          playTone(740, 0.09, "sine", 0.08);
+          spawnShockwave(sx, orb.y, orb.color);
+          spawnFloatingText(flappyPlayer.x, flappyPlayer.y - 24, "UPDRAFT ORB!", orb.color);
+        }
+      }
+
+      // Check Laser Security Gates (RobTop 60% Inner Hitbox Standard & Near-Miss Sparks)
+      for (let i = 0; i < flappyGates.length; i++) {
+        const g = flappyGates[i];
+        if (g.oscAmp > 0) {
+          g.gapY = g.baseGapY + Math.sin(frameTick * g.oscSpeed * phase.speedMult + g.oscPhase) * g.oscAmp;
+        }
+        const sx = g.x - flappyCameraX;
+        const topH = Math.max(12, g.gapY - g.gapH / 2 - topCeiling);
+        const botY = g.gapY + g.gapH / 2;
+
+        const innerTopH = topH - 6;
+        const innerBotY = botY + 6;
+        const gateLeft = sx + 5;
+        const gateRight = sx + g.w - 5;
+
+        if (flappyPlayer.x + 10 > gateLeft && flappyPlayer.x - 10 < gateRight) {
+          if (flappyPlayer.y - 10 < topCeiling + innerTopH || flappyPlayer.y + 10 > innerBotY) {
+            spawnExplosion(flappyPlayer.x, flappyPlayer.y, "#ff4d6d");
+            triggerEndState(false, "HIT SECURITY GATE");
+            return;
+          } else {
+            // Near-miss brush sparks!
+            if (Math.abs(flappyPlayer.y - (topCeiling + topH)) < 12 || Math.abs(flappyPlayer.y - botY) < 12) {
+              if (Math.random() < 0.35) {
+                particles.push({
+                  x: flappyPlayer.x + (Math.random() - 0.5) * 8,
+                  y: flappyPlayer.y + (Math.random() - 0.5) * 8,
+                  vx: (Math.random() - 0.5) * 4,
+                  vy: (Math.random() - 0.5) * 4,
+                  color: "#ffd166",
+                  life: 0.6,
+                  decay: 0.08,
+                  size: 2
+                });
+              }
+            }
+          }
+        }
+      }
+
+      // Check 3 Spinning RobTop Secret Coins
+      for (let c = 0; c < flappyCoins.length; c++) {
+        const coin = flappyCoins[c];
+        if (coin.collected) continue;
+        const sx = coin.x - flappyCameraX;
+        if (Math.hypot(flappyPlayer.x - sx, flappyPlayer.y - coin.y) < coin.r + 20) {
+          coin.collected = true;
+          coinSlots[coin.slot] = true;
+          coinsCollected = coinSlots.filter(Boolean).length;
+          updateCoinsHud();
+          playTone(880, 0.12, "sine", 0.1);
+          spawnShockwave(sx, coin.y, "#ffd166");
+          spawnFloatingText(flappyPlayer.x, flappyPlayer.y - 20, "SECRET COIN " + (coin.slot + 1) + "/3 (+1.00 MON)", "#ffd166");
+        }
+      }
+
+      // Update & Check Charging Ground & Elevated Terrace Bulls (RobTop 60% Inner Hitbox)
+      for (let b = 0; b < flappyBulls.length; b++) {
+        const bull = flappyBulls[b];
+        if (flappyPlayer.hasFlappedOnce) bull.x -= bull.vx * phase.speedMult * subStepRatio;
+        const sx = bull.x - flappyCameraX;
+
+        const bullDist = Math.hypot(flappyPlayer.x - sx, flappyPlayer.y - bull.y);
+        if (bullDist < 18.6) {
+          spawnExplosion(flappyPlayer.x, flappyPlayer.y, "#b8ff65");
+          triggerEndState(false, "TRAMPLED BY BULL");
+          return;
+        } else if (bullDist < 30) {
+          // Near miss skin-of-the-teeth brush
+          if (Math.random() < 0.3) {
+            particles.push({
+              x: flappyPlayer.x + (Math.random() - 0.5) * 8,
+              y: flappyPlayer.y + (Math.random() - 0.5) * 8,
+              vx: (Math.random() - 0.5) * 4,
+              vy: (Math.random() - 0.5) * 4,
+              color: "#ffd166",
+              life: 0.6,
+              decay: 0.08,
+              size: 2
+            });
+          }
+        }
+      }
+
+      if (progressPct >= 100) {
+        spawnExplosion(flappyPlayer.x, flappyPlayer.y, "#b8ff65");
+        triggerEndState(true);
+        return;
+      }
+
+      // Stop before drawing if physics-only sub-step
+      if (!isDrawPass) return;
+
+      drawBeatEqualizerAndAttempt(flappyCameraX, phase.idx === 3 ? "#ff4d6d" : "#b8ff65");
+
+      document.getElementById("arenaPercent").textContent = Math.floor(progressPct) + "%";
+      document.getElementById("arenaProgressFill").style.width = progressPct + "%";
+
+      ctx.fillStyle = "#3d0012";
+      ctx.fillRect(0, 0, canvas.width, topCeiling);
+      ctx.fillRect(0, groundY, canvas.width, canvas.height - groundY);
+      ctx.strokeStyle = phase.idx === 3 ? "#ff4d6d" : "#b8ff65";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(0, groundY);
+      ctx.lineTo(canvas.width, groundY);
+      ctx.stroke();
+
+      ctx.fillStyle = "#b8ff65";
+      ctx.font = "700 10px 'Libre Franklin', sans-serif";
+      ctx.fillText("AIRSPACE: " + flappyStructureName + " · ENDURANCE RUN (" + flappyLengthPx + "PX)", 24, 28);
+
+      // Draw Updraft Geysers & Vacuum Downdraft Vents
       for (let v = 0; v < flappyVents.length; v++) {
         const vent = flappyVents[v];
         const sx = vent.x - flappyCameraX;
@@ -5706,42 +6183,7 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         ctx.font = "700 9px 'Libre Franklin', sans-serif";
         ctx.fillText(vent.label, sx - 6, isUp ? groundY - 10 : topCeiling + 16);
         ctx.restore();
-
-        if (
-          flappyPlayer.hasFlappedOnce &&
-          flappyPlayer.x + 14 > sx &&
-          flappyPlayer.x - 14 < sx + vent.w
-        ) {
-          flappyPlayer.vy = Math.max(-6.2, Math.min(4.8, flappyPlayer.vy + (vent.force || 0)));
-        }
       }
-
-      if (flappyPlayer.y < topCeiling + 20) {
-        flappyPlayer.y = topCeiling + 20;
-        flappyPlayer.vy = 0;
-      }
-      if (flappyPlayer.y > groundY - 20) {
-        flappyPlayer.y = groundY - 20;
-        flappyPlayer.vy = -5.4;
-      }
-
-      progressPct = Math.min(100, (flappyCameraX / (flappyLengthPx - 250)) * 100);
-      document.getElementById("arenaPercent").textContent = Math.floor(progressPct) + "%";
-      document.getElementById("arenaProgressFill").style.width = progressPct + "%";
-
-      ctx.fillStyle = "#3d0012";
-      ctx.fillRect(0, 0, canvas.width, topCeiling);
-      ctx.fillRect(0, groundY, canvas.width, canvas.height - groundY);
-      ctx.strokeStyle = phase.idx === 3 ? "#ff4d6d" : "#b8ff65";
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.moveTo(0, groundY);
-      ctx.lineTo(canvas.width, groundY);
-      ctx.stroke();
-
-      ctx.fillStyle = "#b8ff65";
-      ctx.font = "700 10px 'Libre Franklin', sans-serif";
-      ctx.fillText("AIRSPACE: " + flappyStructureName + " · ENDURANCE RUN (" + flappyLengthPx + "PX)", 24, 28);
 
       // Draw Floating Cyan Updraft Orbs
       for (let o = 0; o < flappyOrbs.length; o++) {
@@ -5759,22 +6201,11 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         ctx.beginPath();
         ctx.arc(sx, orb.y, orb.r * 0.5, 0, Math.PI * 2);
         ctx.fill();
-
-        if (!orb.triggered && Math.hypot(flappyPlayer.x - sx, flappyPlayer.y - orb.y) < orb.r + 20) {
-          orb.triggered = true;
-          flappyPlayer.vy = orb.boostVy;
-          playTone(740, 0.09, "sine", 0.08);
-          spawnShockwave(sx, orb.y, orb.color);
-          spawnFloatingText(flappyPlayer.x, flappyPlayer.y - 24, "UPDRAFT ORB!", orb.color);
-        }
       }
 
       // Draw Static & Oscillating Scissor Laser Security Gates
       for (let i = 0; i < flappyGates.length; i++) {
         const g = flappyGates[i];
-        if (g.oscAmp > 0) {
-          g.gapY = g.baseGapY + Math.sin(frameTick * g.oscSpeed * phase.speedMult + g.oscPhase) * g.oscAmp;
-        }
         const sx = g.x - flappyCameraX;
         if (sx < -80 || sx > canvas.width + 80) continue;
 
@@ -5790,40 +6221,20 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         ctx.lineWidth = 3;
         ctx.strokeRect(sx, topCeiling, g.w, topH);
         ctx.strokeRect(sx, botY, g.w, botH);
-
-        if (flappyPlayer.x + 14 > sx && flappyPlayer.x - 14 < sx + g.w) {
-          if (flappyPlayer.y - 14 < topCeiling + topH || flappyPlayer.y + 14 > botY) {
-            spawnExplosion(flappyPlayer.x, flappyPlayer.y, "#ff4d6d");
-            triggerEndState(false, "HIT SECURITY GATE");
-            return;
-          }
-        }
       }
 
-      // Draw & Check 3 Spinning Secret Coins
+      // Draw 3 Spinning Secret Coins
       for (let c = 0; c < flappyCoins.length; c++) {
         const coin = flappyCoins[c];
         if (coin.collected) continue;
         const sx = coin.x - flappyCameraX;
         if (sx < -50 || sx > canvas.width + 50) continue;
-
         drawSecretCoin(sx, coin.y, coin.r, coin.slot, coin.hint);
-
-        if (Math.hypot(flappyPlayer.x - sx, flappyPlayer.y - coin.y) < coin.r + 20) {
-          coin.collected = true;
-          coinSlots[coin.slot] = true;
-          coinsCollected = coinSlots.filter(Boolean).length;
-          updateCoinsHud();
-          playTone(880, 0.12, "sine", 0.1);
-          spawnShockwave(sx, coin.y, "#ffd166");
-          spawnFloatingText(flappyPlayer.x, flappyPlayer.y - 20, "SECRET COIN " + (coin.slot + 1) + "/3 (+1.00 MON)", "#ffd166");
-        }
       }
 
       // Draw Charging Ground & Elevated Terrace Bulls
       for (let b = 0; b < flappyBulls.length; b++) {
         const bull = flappyBulls[b];
-        if (flappyPlayer.hasFlappedOnce) bull.x -= bull.vx * phase.speedMult;
         const sx = bull.x - flappyCameraX;
         if (sx < -80 || sx > canvas.width + 80) continue;
 
@@ -5839,12 +6250,6 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         ctx.fillStyle = bull.elevated ? "#ffd166" : "#b8ff65";
         ctx.fillRect(sx - 20, bull.y - 20, 40, 40);
         ctx.drawImage(bullSprite, sx - 18, bull.y - 18, 36, 36);
-
-        if (Math.hypot(flappyPlayer.x - sx, flappyPlayer.y - bull.y) < 30) {
-          spawnExplosion(flappyPlayer.x, flappyPlayer.y, "#b8ff65");
-          triggerEndState(false, "TRAMPLED BY BULL");
-          return;
-        }
       }
 
       const goalX = flappyLengthPx - 120 - flappyCameraX;
@@ -5884,14 +6289,42 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       updateAndDrawRivalGhosts(flappyPlayer.x, flappyPlayer.y, progressPct);
 
       checkAndDrawPhaseOverlay(progressPct);
-
-      if (progressPct >= 100) {
-        spawnExplosion(flappyPlayer.x, flappyPlayer.y, "#b8ff65");
-        triggerEndState(true);
-      }
     }
 
-    function gameLoop() {
+    function gameLoop(timestamp = 0) {
+      if (!lastFrameTimestamp) lastFrameTimestamp = timestamp;
+      const elapsedMs = Math.min(80, timestamp - lastFrameTimestamp);
+      lastFrameTimestamp = timestamp;
+
+      // 240 TPS fixed physics sub-stepping (Geometry Dash 2.2 / Open-GD standard)
+      if (gameActive) {
+        physicsAccumulator += elapsedMs;
+        let subSteps = 0;
+        while (physicsAccumulator >= SUB_STEP_MS && subSteps < 8) {
+          physicsAccumulator -= SUB_STEP_MS;
+          subSteps++;
+
+          if (jumpBufferTimer > 0) {
+            jumpBufferTimer -= SUB_STEP_RATIO;
+          }
+
+          if (selectedMode === "heist") {
+            updateAndDrawHeist(SUB_STEP_RATIO, false);
+          } else if (selectedMode === "wave") {
+            updateAndDrawWave(SUB_STEP_RATIO, false);
+          } else {
+            updateAndDrawFlappy(SUB_STEP_RATIO, false);
+          }
+          if (!gameActive) break;
+        }
+        if (physicsAccumulator > SUB_STEP_MS * 4) {
+          physicsAccumulator = 0;
+        }
+      }
+
+      // Audio beat pulse decay
+      beatPulse = Math.max(0, beatPulse - 0.05);
+
       ctx.save();
       if (shakeFrames > 0) {
         shakeFrames--;
@@ -5902,9 +6335,9 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       ctx.fillStyle = world.bg;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Dynamic atmospheric world grid (VAV97 Worlds System)
+      // Dynamic atmospheric world grid pulsing with EDM kick drum beatPulse
       ctx.strokeStyle = world.gridColor;
-      ctx.lineWidth = 1;
+      ctx.lineWidth = 1 + beatPulse * 1.5;
       const gridSpacing = 44;
       const gridOffset = (frameTick * 0.4) % gridSpacing;
       for (let x = -gridSpacing + gridOffset; x < canvas.width; x += gridSpacing) {
@@ -5922,11 +6355,11 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
 
       if (gameActive) {
         if (selectedMode === "heist") {
-          updateAndDrawHeist();
+          updateAndDrawHeist(1.0, true);
         } else if (selectedMode === "wave") {
-          updateAndDrawWave();
+          updateAndDrawWave(1.0, true);
         } else {
-          updateAndDrawFlappy();
+          updateAndDrawFlappy(1.0, true);
         }
       }
 
@@ -5953,14 +6386,14 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         const p = particles[i];
         p.x += p.vx;
         p.y += p.vy;
-        p.life -= 0.03;
+        p.life -= (p.decay || 0.03);
         if (p.life <= 0) {
           particles.splice(i, 1);
           continue;
         }
         ctx.fillStyle = p.color;
         ctx.globalAlpha = p.life;
-        ctx.fillRect(p.x, p.y, 6, 6);
+        ctx.fillRect(p.x, p.y, p.size || 6, p.size || 6);
         ctx.globalAlpha = 1;
       }
 
@@ -5988,6 +6421,7 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
 
     function handlePressStart() {
       holdingInput = true;
+      jumpBufferTimer = 6; // 100ms Cocos2d-x jump input buffer
       if (!gameActive) return;
 
       if (selectedMode === "heist") {
@@ -6071,6 +6505,9 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       } else if (e.code === "KeyB") {
         e.preventDefault();
         beatEnabled = !beatEnabled;
+        if (beatEnabled && gameActive) startEdmSequencer();
+        else stopEdmSequencer();
+        spawnFloatingText(canvas.width / 2, 120, beatEnabled ? "CHIPTUNE EDM: ON" : "CHIPTUNE EDM: MUTED", "#ffd166");
       } else if (e.code === "KeyM") {
         e.preventDefault();
         switchArenaModeInPlace();

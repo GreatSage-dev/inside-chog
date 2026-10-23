@@ -1182,7 +1182,8 @@
     .arena-overlay-card {
       position: absolute;
       inset: 0;
-      background: rgba(45, 0, 14, 0.9);
+      background: rgba(20, 0, 7, 0.68);
+      backdrop-filter: blur(6px);
       display: none;
       flex-direction: column;
       align-items: center;
@@ -2781,7 +2782,7 @@ SOLVER_CHECK = PASS (0.4ms)</pre>
     ];
 
     let currentCartridge = FEATURED_CARTRIDGES[0];
-    let selectedMode = "heist"; // Defaults to "that first one" remastered!
+    let selectedMode = "wave"; // Defaults to the flagship Geometry Dash 2.2 Portal Wave & Cube Gauntlet!
     let currentStageLevel = 1;  // Starts slow on Stage 1, gets longer & faster as you win!
     let cartridgeEjected = false;
     let walletConnected = false;
@@ -3728,6 +3729,7 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
     let waveOrbs = [];
     let waveMonsters = [];
     let waveObstacles = [];
+    let waveSpikes = [];
     let wavePortals = [];
     let waveCoins = [];
     let waveCameraX = 0;
@@ -4504,6 +4506,8 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       }
       attemptCount = 1;
       savedCheckpoint = null;
+      selectedMode = "wave"; // Ensure flagship Geometry Dash Wave & Cube arcade engine is active!
+      selectGameMode("wave");
       chogSprite.src = currentCartridge.image;
       document.getElementById("arenaThumb").src = currentCartridge.image;
       document.getElementById("arenaModal").classList.add("open");
@@ -4526,7 +4530,7 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
     }
 
     function switchArenaModeInPlace() {
-      const order = ["heist", "wave", "flappy", "social"];
+      const order = ["wave", "heist", "flappy", "social"];
       const nextIdx = (order.indexOf(selectedMode) + 1) % order.length;
       selectedMode = order[nextIdx];
       attemptCount = 1;
@@ -4664,7 +4668,8 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
     }
 
     // -------------------------------------------------------------------------
-    // BUILD GAME 2: LONG 3-PHASE GD LEVEL + 4 SCULPTED TERRAINS + OVERDRIVE CLIMAX
+    // BUILD GAME 2: 1-MINUTE+ "LONG" GD 2.2 GAUNTLET (9,600PX / 65-75 SECONDS)
+    // Structured across 4 Movements: Cube -> Ship -> Wave -> 256 BPM Boss Climax
     // -------------------------------------------------------------------------
     function buildWaveLevel(cart, stage, isDouble) {
       waveBlocks = [];
@@ -4672,6 +4677,7 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       waveOrbs = [];
       waveMonsters = [];
       waveObstacles = [];
+      waveSpikes = [];
       wavePortals = [];
       waveCoins = [];
 
@@ -4685,126 +4691,215 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       ];
       waveTerrainName = terrainNames[waveTerrainType];
 
-      // Over 2x Longer Endurance Journey (3400px on Stage 1, 4300px on Stage 2, 5200px+ on Stage 3!)
-      levelLengthPx = 3400 + (stage - 1) * 900 + (isDouble ? 650 : 0);
+      // Incidius 1-Minute Mandate ("Long" Classification Standard: 9,600px ~ 65-75s)
+      levelLengthPx = 9600 + (stage - 1) * 1800 + (isDouble ? 1200 : 0);
 
-      const shipPortalX = Math.floor(levelLengthPx * 0.34);
-      const wavePortalX = Math.floor(levelLengthPx * 0.66);
+      const shipPortalX = Math.floor(levelLengthPx * 0.28);  // ~2688px (Cube -> Ship)
+      const wavePortalX = Math.floor(levelLengthPx * 0.58);  // ~5568px (Ship -> 45° Wave)
+      const overdriveX = Math.floor(levelLengthPx * 0.77);   // ~7392px (Wave -> Boss Climax)
 
       wavePortals = [
-        { x: shipPortalX, targetForm: "jetpack", label: "SHIP / JETPACK PORTAL", color: "#5ce1e6", triggered: false },
-        { x: wavePortalX, targetForm: "wave", label: "OVERDRIVE 45° WAVE PORTAL", color: "#ffd166", triggered: false }
+        { x: shipPortalX, targetForm: "jetpack", color: "#5ce1e6", triggered: false },
+        { x: wavePortalX, targetForm: "wave", color: "#ffd166", triggered: false }
       ];
 
-      // PHASE 1 (0% to 34%): SCULPTED CUBE INFILTRATION + STEPPING BLOCKS + PADS + ORBS
-      const cubeSteps = 4;
-      const cubeSpan = shipPortalX - 420;
-      for (let i = 0; i < cubeSteps; i++) {
-        const bx = 380 + Math.floor(i * (cubeSpan / cubeSteps));
+      // =======================================================================
+      // MOVEMENT 1 (0% to 28% / 0px - 2688px): CUBE GAUNTLET & 3D PLATFORMS
+      // =======================================================================
+      const cubeSpan = shipPortalX - 400;
+      const stepCount = 7;
+      for (let i = 0; i < stepCount; i++) {
+        const bx = 380 + Math.floor(i * (cubeSpan / stepCount));
         const bounds = getWaveBoundsAt(bx);
-        const by = bounds.bot - 78 - ((i % 2) * 48);
+        const elevation = ((i * 3 + (seed % 3)) % 4) * 36;
+        const by = bounds.bot - 70 - elevation;
+
+        // 3D Beveled Platform (Clean, zero debug text)
         waveBlocks.push({
           x: bx,
           y: by,
-          w: 120,
-          h: 22,
-          label: i === 1 ? "COIN 1 UPPER DECK" : "TERRAIN STEP " + (i + 1)
+          w: 130,
+          h: 22
         });
 
-        // Auto-jump pad before each step block
-        const padBounds = getWaveBoundsAt(bx - 55);
-        wavePads.push({
-          x: bx - 55,
-          y: padBounds.bot - 2,
-          w: 44,
-          boostVy: -11.6,
-          color: i % 2 === 0 ? "#ffd166" : "#ff99d3",
-          label: i % 2 === 0 ? "AUTO-PAD" : "PINK PAD",
-          lastTrig: -99
-        });
+        // Jump pad before alternate steps
+        if (i % 2 === 0) {
+          const padBounds = getWaveBoundsAt(bx - 55);
+          wavePads.push({
+            x: bx - 55,
+            y: padBounds.bot - 2,
+            w: 42,
+            boostVy: -11.6,
+            color: i % 4 === 0 ? "#ffd166" : "#ff99d3",
+            lastTrig: -99
+          });
+        }
 
-        // Floor saw under the step block bridge
-        waveObstacles.push({
-          x: bx + 55,
-          y: bounds.bot - 14,
-          r: 21,
-          angle: 0
+        // Triangular spikes on the floor between platforms
+        waveSpikes.push({
+          x: bx + 70,
+          y: bounds.bot,
+          w: 28,
+          h: 34,
+          isCeiling: false
         });
       }
 
-      // Floating Jump Orbs across Phase 1, Phase 2 Escalation, and Phase 3 Overdrive
-      waveOrbs = [
-        { x: 520, y: 235, r: 19, boostVy: -10.8, color: "#ffd166", triggered: false, label: "COIN 1 ORB" },
-        { x: Math.floor(shipPortalX * 0.78), y: 255, r: 19, boostVy: -10.5, color: "#5ce1e6", triggered: false, label: "DASH ORB" },
-        { x: Math.floor((shipPortalX + wavePortalX) * 0.46), y: 245, r: 19, boostVy: -6.5, color: "#5ce1e6", triggered: false, label: "ESCALATION ORB" },
-        { x: Math.floor((shipPortalX + wavePortalX) * 0.78), y: 235, r: 19, boostVy: -6.8, color: "#ffd166", triggered: false, label: "JET BOOST ORB" },
-        { x: Math.floor(wavePortalX + (levelLengthPx - wavePortalX) * 0.35), y: 245, r: 19, boostVy: -7.5, color: "#ff4d6d", triggered: false, label: "OVERDRIVE ORB" },
-        { x: Math.floor(wavePortalX + (levelLengthPx - wavePortalX) * 0.68), y: 235, r: 19, boostVy: -7.5, color: "#b8ff65", triggered: false, label: "CLIMAX ORB" }
-      ];
+      // Authentic Geometry Dash Triangular Spikes in Movement 1 (Single, Double, Triple!)
+      // Single Spike Jump (Fair sightreading runway, 2+ seconds before first obstacle)
+      waveSpikes.push({ x: 540, y: getWaveBoundsAt(540).bot, w: 28, h: 34, isCeiling: false });
+      // Double Spike Jump
+      waveSpikes.push({ x: 740, y: getWaveBoundsAt(740).bot, w: 28, h: 34, isCeiling: false });
+      waveSpikes.push({ x: 770, y: getWaveBoundsAt(770).bot, w: 28, h: 34, isCeiling: false });
+      // Triple Spike Jump (The Legendary RobTop Challenge!)
+      waveSpikes.push({ x: 1480, y: getWaveBoundsAt(1480).bot, w: 28, h: 34, isCeiling: false });
+      waveSpikes.push({ x: 1510, y: getWaveBoundsAt(1510).bot, w: 28, h: 34, isCeiling: false });
+      waveSpikes.push({ x: 1540, y: getWaveBoundsAt(1540).bot, w: 28, h: 34, isCeiling: false });
+      // Late Movement 1 Spikes
+      waveSpikes.push({ x: 2120, y: getWaveBoundsAt(2120).bot, w: 28, h: 34, isCeiling: false });
+      waveSpikes.push({ x: 2150, y: getWaveBoundsAt(2150).bot, w: 28, h: 34, isCeiling: false });
 
-      // PHASE 2 (34% to 66%): ESCALATION SHIP CORRIDOR + CHOMP MONSTERS + FLOATING DIVIDERS
-      const monsterCount = 4 + Math.min(3, stage - 1);
-      const phase2Span = wavePortalX - shipPortalX - 220;
+      // Jump Orbs (Rings) with Pulsing Cores
+      waveOrbs.push({ x: 590, y: 245, r: 18, boostVy: -10.8, color: "#ffd166", triggered: false });
+      waveOrbs.push({ x: 1080, y: 220, r: 18, boostVy: -11.2, color: "#ffd166", triggered: false }); // Boosts to Coin 1!
+      waveOrbs.push({ x: 1860, y: 235, r: 18, boostVy: -10.5, color: "#5ce1e6", triggered: false });
+      waveOrbs.push({ x: 2420, y: 225, r: 18, boostVy: -10.8, color: "#ff99d3", triggered: false });
+
+      // =======================================================================
+      // MOVEMENT 2 (28% to 58% / 2688px - 5568px): SHIP / ROCKET TUNNEL
+      // =======================================================================
+      const phase2Span = wavePortalX - shipPortalX - 250;
+      const monsterCount = 5 + Math.min(3, stage - 1);
       for (let m = 0; m < monsterCount; m++) {
-        const mx = shipPortalX + 130 + Math.floor(m * (phase2Span / monsterCount));
+        const mx = shipPortalX + 160 + Math.floor(m * (phase2Span / monsterCount));
         const bounds = getWaveBoundsAt(mx);
         const midY = (bounds.top + bounds.bot) * 0.5;
-        const offset = (m % 2 === 0 ? 52 : -52);
+        const offset = (m % 2 === 0 ? 54 : -54);
+
+        // Chomp Monsters with pulsating jaws
         waveMonsters.push({
           x: mx,
           y: Math.max(bounds.top + 48, Math.min(bounds.bot - 48, midY + offset)),
-          r: 30,
+          r: 28,
           jawPhase: m * 1.3
         });
 
-        // Add floating central divider block on alternate gaps in Twin-Fork / Escalation
+        // Hanging Ceiling Spikes
+        waveSpikes.push({
+          x: mx - 60,
+          y: bounds.top,
+          w: 30,
+          h: 36,
+          isCeiling: true
+        });
+
+        // Floor Spikes
+        waveSpikes.push({
+          x: mx + 60,
+          y: bounds.bot,
+          w: 30,
+          h: 36,
+          isCeiling: false
+        });
+
+        // 3D Splitter Island platforms on alternating gaps
         if (m % 2 === 1) {
           waveBlocks.push({
             x: mx + Math.floor((phase2Span / monsterCount) * 0.45),
-            y: midY - 14,
-            w: 96,
-            h: 24,
-            label: "SPLITTER ISLAND"
+            y: midY - 12,
+            w: 110,
+            h: 24
           });
         }
       }
 
-      // PHASE 3 (66% to 96%): OVERDRIVE CLIMAX 45° WAVE GAUNTLET!
-      const waveSawCount = 5 + stage * 2 + (isDouble ? 2 : 0);
-      const phase3Start = wavePortalX + 150;
-      const phase3Span = levelLengthPx - 300 - phase3Start;
+      // Mid-Air Jet Booster Orbs in Movement 2
+      waveOrbs.push({ x: Math.floor(shipPortalX + phase2Span * 0.35), y: 250, r: 18, boostVy: -6.5, color: "#5ce1e6", triggered: false });
+      waveOrbs.push({ x: Math.floor(shipPortalX + phase2Span * 0.72), y: 235, r: 18, boostVy: -6.8, color: "#ffd166", triggered: false });
+
+      // =======================================================================
+      // MOVEMENT 3 (58% to 77% / 5568px - 7392px): 45° WAVE ZIG-ZAG CORRIDOR
+      // =======================================================================
+      const phase3Span = overdriveX - wavePortalX - 200;
+      const waveSawCount = 7 + stage * 2;
       for (let s = 0; s < waveSawCount; s++) {
-        const sx = phase3Start + Math.floor(s * (phase3Span / waveSawCount));
+        const sx = wavePortalX + 140 + Math.floor(s * (phase3Span / waveSawCount));
         const bounds = getWaveBoundsAt(sx);
         const usableH = bounds.bot - bounds.top;
         const lane = (s + stage + (seed % 3)) % 3;
         const sy =
           lane === 0
-            ? bounds.bot - usableH * 0.24
+            ? bounds.bot - usableH * 0.25
             : lane === 1
-            ? bounds.top + usableH * 0.24
-            : (bounds.top + bounds.bot) * 0.5 + (((seed + s * 37) % 36) - 18);
+            ? bounds.top + usableH * 0.25
+            : (bounds.top + bounds.bot) * 0.5 + (((seed + s * 37) % 32) - 16);
+
+        // 12-Tooth Sawblades
+        waveObstacles.push({
+          x: sx,
+          y: sy,
+          r: 26 + Math.min(8, (stage - 1) * 2),
+          angle: 0
+        });
+
+        // Alternating Ceiling & Floor Spikes on sawtooth corners
+        waveSpikes.push({
+          x: sx + 45,
+          y: lane === 1 ? bounds.bot : bounds.top,
+          w: 26,
+          h: 32,
+          isCeiling: lane !== 1
+        });
+      }
+
+      // Speed Rush Orb before Overdrive
+      waveOrbs.push({ x: Math.floor(wavePortalX + phase3Span * 0.5), y: 245, r: 18, boostVy: -7.5, color: "#ff4d6d", triggered: false });
+
+      // =======================================================================
+      // MOVEMENT 4 (77% to 100% / 7392px - 9600px): 256 BPM BOSS CLIMAX GAUNTLET
+      // =======================================================================
+      const bossSpan = levelLengthPx - 320 - overdriveX;
+      const bossSawCount = 6 + stage * 2;
+      for (let s = 0; s < bossSawCount; s++) {
+        const sx = overdriveX + 160 + Math.floor(s * (bossSpan / bossSawCount));
+        const bounds = getWaveBoundsAt(sx);
+        const usableH = bounds.bot - bounds.top;
+        const lane = s % 2;
+        const sy = lane === 0 ? bounds.top + usableH * 0.28 : bounds.bot - usableH * 0.28;
 
         waveObstacles.push({
           x: sx,
           y: sy,
-          r: 26 + Math.min(10, (stage - 1) * 2),
+          r: 28,
           angle: 0
+        });
+
+        waveSpikes.push({
+          x: sx - 40,
+          y: lane === 0 ? bounds.bot : bounds.top,
+          w: 28,
+          h: 34,
+          isCeiling: lane === 0
         });
       }
 
-      // 3 Spinning Secret Coins (1 in Phase 1 Upper Route, 1 in Phase 2 Escalation, 1 in Phase 3 Overdrive Climax)
-      const coin1X = 380 + Math.floor(cubeSpan / cubeSteps) + 55;
+      // =======================================================================
+      // 3 ROBTOP SECRET COINS (High Risk, Pure Skill Routes)
+      // =======================================================================
+      // Coin 1: Movement 1 elevated upper route (requires hitting Orb at 1080px!)
+      const coin1X = 1320;
       const coin1Bounds = getWaveBoundsAt(coin1X);
-      const coin2X = Math.floor((shipPortalX + wavePortalX) * 0.56);
+      // Coin 2: Movement 2 low trench under chomp monster
+      const coin2X = Math.floor(shipPortalX + phase2Span * 0.52);
       const coin2Bounds = getWaveBoundsAt(coin2X);
-      const coin3X = Math.floor(wavePortalX + (levelLengthPx - wavePortalX) * 0.58);
+      // Coin 3: Movement 4 Overdrive Boss Arena
+      const coin3X = Math.floor(overdriveX + bossSpan * 0.48);
       const coin3Bounds = getWaveBoundsAt(coin3X);
 
       waveCoins = [
-        { x: coin1X, y: Math.max(coin1Bounds.top + 36, coin1Bounds.bot - 175), r: 19, slot: 0, collected: false, hint: "COIN 1/3 (UPPER ROUTE)" },
-        { x: coin2X, y: coin2Bounds.top + 48, r: 19, slot: 1, collected: false, hint: "COIN 2/3 (ESCALATION)" },
-        { x: coin3X, y: coin3Bounds.top + 52, r: 19, slot: 2, collected: false, hint: "COIN 3/3 (OVERDRIVE)" }
+        { x: coin1X, y: coin1Bounds.top + 38, r: 18, slot: 0, collected: false },
+        { x: coin2X, y: coin2Bounds.bot - 42, r: 18, slot: 1, collected: false },
+        { x: coin3X, y: coin3Bounds.top + 52, r: 18, slot: 2, collected: false }
       ];
 
       const startBounds = getWaveBoundsAt(190);
@@ -6358,6 +6453,35 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         }
       }
 
+      // Check Triangular Spikes (RobTop 60% Inner Hitbox Standard)
+      for (let s = 0; s < waveSpikes.length; s++) {
+        const sp = waveSpikes[s];
+        const sx = sp.x - waveCameraX;
+        if (sx < -40 || sx > canvas.width + 40) continue;
+
+        const spikeApexY = sp.isCeiling ? sp.y + sp.h : sp.y - sp.h;
+        const spikeCenterY = (sp.y + spikeApexY) * 0.5;
+        const spikeDist = Math.hypot(wavePlayer.x - sx, wavePlayer.y - spikeCenterY);
+        if (spikeDist < 16.5) {
+          spawnExplosion(wavePlayer.x, wavePlayer.y, "#ff4d6d");
+          triggerEndState(false, "SPIKED BY TRAP");
+          return;
+        } else if (spikeDist < 26) {
+          if (Math.random() < 0.25) {
+            particles.push({
+              x: wavePlayer.x + (Math.random() - 0.5) * 8,
+              y: wavePlayer.y + (Math.random() - 0.5) * 8,
+              vx: (Math.random() - 0.5) * 4,
+              vy: (Math.random() - 0.5) * 4,
+              color: "#ffd166",
+              life: 0.5,
+              decay: 0.08,
+              size: 2
+            });
+          }
+        }
+      }
+
       if (progressPct >= 100) {
         spawnExplosion(wavePlayer.x, wavePlayer.y, "#b8ff65");
         triggerEndState(true);
@@ -6372,11 +6496,15 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       document.getElementById("arenaPercent").textContent = Math.floor(progressPct) + "%";
       document.getElementById("arenaProgressFill").style.width = progressPct + "%";
 
-      // Draw Sculpted Top Ceiling & Bottom Floor Terrain Polygons
-      ctx.fillStyle = "#3d0012";
+      // 1. Draw Solid Top Ceiling Terrain with Tech Blockwork & Glowing Neon Edge
+      ctx.save();
+      const ceilGrad = ctx.createLinearGradient(0, 0, 0, 180);
+      ceilGrad.addColorStop(0, "#0e0004");
+      ceilGrad.addColorStop(1, phase.isOverdrive ? "#32010d" : "#1a0109");
+      ctx.fillStyle = ceilGrad;
       ctx.beginPath();
       ctx.moveTo(0, 0);
-      for (let sx = 0; sx <= canvas.width; sx += 16) {
+      for (let sx = 0; sx <= canvas.width; sx += 14) {
         const b = getWaveBoundsAt(waveCameraX + sx);
         ctx.lineTo(sx, b.top);
       }
@@ -6384,9 +6512,56 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       ctx.closePath();
       ctx.fill();
 
+      // Ceiling 32px repeating tech grid overlay
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      for (let sx = 0; sx <= canvas.width; sx += 14) {
+        const b = getWaveBoundsAt(waveCameraX + sx);
+        ctx.lineTo(sx, b.top);
+      }
+      ctx.lineTo(canvas.width, 0);
+      ctx.closePath();
+      ctx.clip();
+      ctx.strokeStyle = "rgba(255, 153, 211, 0.07)";
+      ctx.lineWidth = 1;
+      const ceilGridOffset = (-waveCameraX * 0.5 % 32 + 32) % 32;
+      for (let gx = ceilGridOffset; gx < canvas.width; gx += 32) {
+        ctx.beginPath();
+        ctx.moveTo(gx, 0);
+        ctx.lineTo(gx, 250);
+        ctx.stroke();
+      }
+      for (let gy = 0; gy < 250; gy += 32) {
+        ctx.beginPath();
+        ctx.moveTo(0, gy);
+        ctx.lineTo(canvas.width, gy);
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      // Glowing Neon Top Boundary Rail
+      ctx.strokeStyle = themeColor;
+      ctx.lineWidth = 3.5 + beatPulse * 2.0;
+      ctx.shadowColor = themeColor;
+      ctx.shadowBlur = 10 + beatPulse * 8;
+      ctx.beginPath();
+      for (let sx = 0; sx <= canvas.width; sx += 14) {
+        const b = getWaveBoundsAt(waveCameraX + sx);
+        if (sx === 0) ctx.moveTo(sx, b.top);
+        else ctx.lineTo(sx, b.top);
+      }
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      // 2. Draw Solid Bottom Floor Terrain with Tech Blockwork & Glowing Neon Edge
+      const floorGrad = ctx.createLinearGradient(0, 360, 0, canvas.height);
+      floorGrad.addColorStop(0, phase.isOverdrive ? "#32010d" : "#1a0109");
+      floorGrad.addColorStop(1, "#0e0004");
+      ctx.fillStyle = floorGrad;
       ctx.beginPath();
       ctx.moveTo(0, canvas.height);
-      for (let sx = 0; sx <= canvas.width; sx += 16) {
+      for (let sx = 0; sx <= canvas.width; sx += 14) {
         const b = getWaveBoundsAt(waveCameraX + sx);
         ctx.lineTo(sx, b.bot);
       }
@@ -6394,51 +6569,87 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       ctx.closePath();
       ctx.fill();
 
-      // Draw Sculpted Neon Ridge Outlines
-      ctx.strokeStyle = themeColor;
-      ctx.lineWidth = 4;
+      // Floor 32px repeating tech grid overlay
+      ctx.save();
       ctx.beginPath();
-      for (let sx = 0; sx <= canvas.width; sx += 16) {
+      ctx.moveTo(0, canvas.height);
+      for (let sx = 0; sx <= canvas.width; sx += 14) {
         const b = getWaveBoundsAt(waveCameraX + sx);
-        if (sx === 0) ctx.moveTo(sx, b.top);
-        else ctx.lineTo(sx, b.top);
+        ctx.lineTo(sx, b.bot);
       }
-      for (let sx = 0; sx <= canvas.width; sx += 16) {
+      ctx.lineTo(canvas.width, canvas.height);
+      ctx.closePath();
+      ctx.clip();
+      ctx.strokeStyle = "rgba(255, 153, 211, 0.07)";
+      ctx.lineWidth = 1;
+      for (let gx = ceilGridOffset; gx < canvas.width; gx += 32) {
+        ctx.beginPath();
+        ctx.moveTo(gx, 300);
+        ctx.lineTo(gx, canvas.height);
+        ctx.stroke();
+      }
+      for (let gy = 300; gy < canvas.height; gy += 32) {
+        ctx.beginPath();
+        ctx.moveTo(0, gy);
+        ctx.lineTo(canvas.width, gy);
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      // Glowing Neon Ground Boundary Rail
+      ctx.strokeStyle = themeColor;
+      ctx.lineWidth = 3.5 + beatPulse * 2.0;
+      ctx.shadowColor = themeColor;
+      ctx.shadowBlur = 10 + beatPulse * 8;
+      ctx.beginPath();
+      for (let sx = 0; sx <= canvas.width; sx += 14) {
         const b = getWaveBoundsAt(waveCameraX + sx);
         if (sx === 0) ctx.moveTo(sx, b.bot);
         else ctx.lineTo(sx, b.bot);
       }
       ctx.stroke();
+      ctx.shadowBlur = 0;
+      ctx.restore();
 
-      ctx.fillStyle = themeColor;
-      ctx.font = "700 10px 'Libre Franklin', sans-serif";
-      ctx.fillText("TERRAIN: " + waveTerrainName + " · VEHICLE: " + wavePlayer.form.toUpperCase(), 24, 24);
-      ctx.fillText("ENDURANCE GAUNTLET (" + levelLengthPx + "PX) · STAGE " + currentStageLevel + " · CUBE -> SHIP -> WAVE", 24, canvas.height - 14);
-
-      // Draw Stepping-Stone Block Platforms in Phase 1
+      // 3. Draw Stepping-Stone Block Platforms (Incidius 3D Bevels, Zero Text)
       for (let b = 0; b < waveBlocks.length; b++) {
         const blk = waveBlocks[b];
         const sx = blk.x - waveCameraX;
         if (sx < -160 || sx > canvas.width + 160) continue;
-        drawIncidiusBlock(ctx, sx, blk.y, blk.w, blk.h, blk.label, "#4d0519", "#ff99d3", false, 0);
+        drawIncidiusBlock(ctx, sx, blk.y, blk.w, blk.h, null, "#360210", themeColor, false, 0);
       }
 
-      // Draw Auto-Jump Pads
+      // 4. Draw Auto-Jump Pads (Clean Half-Ovals with Glowing Trajectory Arcs)
       for (let j = 0; j < wavePads.length; j++) {
         const pad = wavePads[j];
         const sx = pad.x - waveCameraX;
         if (sx > -60 && sx < canvas.width + 60) {
+          // Dotted Parabolic Trajectory Arc
+          ctx.save();
+          ctx.strokeStyle = "rgba(255, 209, 102, 0.35)";
+          ctx.lineWidth = 1.5;
+          ctx.setLineDash([4, 6]);
+          ctx.beginPath();
+          ctx.moveTo(sx + pad.w / 2, pad.y);
+          ctx.quadraticCurveTo(sx + pad.w / 2, pad.y - 120, sx + pad.w / 2 + 80, pad.y - 90);
+          ctx.stroke();
+          ctx.restore();
+
+          // Pad Base
           ctx.fillStyle = pad.color;
           ctx.beginPath();
           ctx.arc(sx + pad.w / 2, pad.y, pad.w / 2, Math.PI, 0);
           ctx.fill();
-          ctx.fillStyle = pad.color;
-          ctx.font = "700 10px 'Libre Franklin', sans-serif";
-          ctx.fillText(pad.label, sx - 2, pad.y - 14);
+
+          // Inner glowing core
+          ctx.fillStyle = "#ffffff";
+          ctx.beginPath();
+          ctx.arc(sx + pad.w / 2, pad.y - 2, pad.w * 0.25, Math.PI, 0);
+          ctx.fill();
         }
       }
 
-      // Draw Mid-Air Jump Orbs (Rings)
+      // 5. Draw Mid-Air Jump Orbs (Rings) with Pulsing Inner Cores
       for (let o = 0; o < waveOrbs.length; o++) {
         const orb = waveOrbs[o];
         const sx = orb.x - waveCameraX;
@@ -6446,41 +6657,45 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
           const pulse = Math.sin(frameTick * 0.15 + o) * 3;
           ctx.strokeStyle = orb.color;
           ctx.lineWidth = 3;
+          ctx.shadowColor = orb.color;
+          ctx.shadowBlur = 8;
           ctx.beginPath();
           ctx.arc(sx, orb.y, orb.r + pulse, 0, Math.PI * 2);
           ctx.stroke();
+          ctx.shadowBlur = 0;
 
           ctx.fillStyle = orb.color;
           ctx.beginPath();
           ctx.arc(sx, orb.y, orb.r * 0.55, 0, Math.PI * 2);
           ctx.fill();
 
-          ctx.fillStyle = orb.color;
-          ctx.font = "700 10px 'Libre Franklin', sans-serif";
-          ctx.fillText(orb.label, sx - 26, orb.y - orb.r - 8);
+          ctx.fillStyle = "#ffffff";
+          ctx.beginPath();
+          ctx.arc(sx, orb.y, 3, 0, Math.PI * 2);
+          ctx.fill();
         }
       }
 
-      // Draw Transformation Portals + Green Diamond Checkpoints!
+      // 6. Draw Transformation Portals (Concentric Rotating Neon Rings)
       for (let p = 0; p < wavePortals.length; p++) {
         const portal = wavePortals[p];
         const sx = portal.x - waveCameraX;
         if (sx > -80 && sx < canvas.width + 80) {
           const pb = getWaveBoundsAt(portal.x);
-          drawIncidiusPortal(ctx, sx, pb.top + 8, pb.bot - 8, portal.label, portal.color, portal.targetForm);
+          drawIncidiusPortal(ctx, sx, pb.top + 8, pb.bot - 8, null, portal.color, portal.targetForm);
         }
       }
 
-      // Draw 3 Spinning Secret Coins
+      // 7. Draw 3 Spinning RobTop Secret Coins
       for (let c = 0; c < waveCoins.length; c++) {
         const coin = waveCoins[c];
         if (coin.collected) continue;
         const sx = coin.x - waveCameraX;
         if (sx < -60 || sx > canvas.width + 60) continue;
-        drawSecretCoin(sx, coin.y, coin.r, coin.slot, coin.hint);
+        drawSecretCoin(sx, coin.y, coin.r, coin.slot, null);
       }
 
-      // Draw SubZero / Deadlocked Chomp Monster Jaws
+      // 8. Draw SubZero / Deadlocked Chomp Monster Jaws
       for (let m = 0; m < waveMonsters.length; m++) {
         const mon = waveMonsters[m];
         const sx = mon.x - waveCameraX;
@@ -6489,7 +6704,7 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         const chomp = Math.abs(Math.sin(frameTick * 0.09 * phase.speedMult + mon.jawPhase)) * 12;
         ctx.save();
         ctx.translate(sx, mon.y);
-        ctx.fillStyle = "#610922";
+        ctx.fillStyle = "#500617";
         ctx.fillRect(-mon.r, -mon.r - chomp, mon.r * 2, mon.r);
         ctx.fillRect(-mon.r, chomp, mon.r * 2, mon.r);
         ctx.strokeStyle = "#5ce1e6";
@@ -6508,7 +6723,15 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         ctx.restore();
       }
 
-      // Draw Incidius Tapered Wave Ribbon Trail
+      // 9. Draw Authentic Geometry Dash Triangular Spikes!
+      for (let s = 0; s < waveSpikes.length; s++) {
+        const sp = waveSpikes[s];
+        const sx = sp.x - waveCameraX;
+        if (sx < -40 || sx > canvas.width + 40) continue;
+        drawGeometryDashSpike(ctx, sx, sp.y, sp.w, sp.h, sp.isCeiling, phase.isOverdrive ? "#ff4d6d" : themeColor);
+      }
+
+      // 10. Draw Incidius Tapered Wave Ribbon Trail
       if (wavePlayer.trail.length > 1) {
         ctx.save();
         for (let i = 1; i < wavePlayer.trail.length; i++) {
@@ -6544,7 +6767,7 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         });
       }
 
-      // Draw Spinning Sawblades with Incidius 12-Tooth & Gear Design
+      // 11. Draw Spinning Sawblades with Incidius 12-Tooth & Gear Design
       for (let i = 0; i < waveObstacles.length; i++) {
         const ob = waveObstacles[i];
         const sx = ob.x - waveCameraX;
@@ -6552,7 +6775,7 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         drawIncidiusSawblade(ctx, sx, ob.y, ob.r, ob.angle, phase.isOverdrive ? "#ff4d6d" : themeColor);
       }
 
-      // Goal Gate at 100%
+      // 12. Goal Gate at 100%
       const goalScreenX = levelLengthPx - 120 - waveCameraX;
       if (goalScreenX < canvas.width) {
         const gb = getWaveBoundsAt(levelLengthPx - 120);
@@ -6563,11 +6786,49 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         ctx.fillText("100%", goalScreenX + 2, (gb.top + gb.bot) / 2);
       }
 
+      // 13. Centered Pulsing Arcade Launch Prompt
       if (!wavePlayer.hasLaunched) {
-        ctx.fillStyle = "#b8ff65";
-        ctx.font = "700 13px 'Libre Franklin', sans-serif";
-        ctx.fillText("TERRAIN: " + waveTerrainName + " · PRESS SPACE OR CLICK TO LAUNCH!", 140, 215);
+        ctx.save();
+        ctx.fillStyle = "rgba(255, 255, 255, " + (0.7 + Math.sin(frameTick * 0.1) * 0.3).toFixed(2) + ")";
+        ctx.font = "700 15px 'Libre Franklin', sans-serif";
+        ctx.textAlign = "center";
+        ctx.shadowColor = themeColor;
+        ctx.shadowBlur = 12;
+        ctx.fillText("TAP SPACE OR CLICK TO LAUNCH", canvas.width / 2, 270);
+        ctx.restore();
       }
+
+      // 14. Sleek Authentic Geometry Dash HUD Bar
+      ctx.save();
+      const hudW = 280;
+      const hudH = 18;
+      const hudX = (canvas.width - hudW) / 2;
+      const hudY = 16;
+      ctx.fillStyle = "rgba(18, 0, 6, 0.75)";
+      ctx.strokeStyle = "rgba(255, 153, 211, 0.35)";
+      ctx.lineWidth = 1.5;
+      ctx.fillRect(hudX, hudY, hudW, hudH);
+      ctx.strokeRect(hudX, hudY, hudW, hudH);
+
+      ctx.fillStyle = themeColor;
+      ctx.fillRect(hudX + 2, hudY + 2, (hudW - 4) * (progressPct / 100), hudH - 4);
+
+      ctx.fillStyle = "#fff0f6";
+      ctx.font = "700 11px 'Libre Franklin', sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(Math.floor(progressPct) + "%", canvas.width / 2, hudY + 13);
+
+      ctx.textAlign = "left";
+      ctx.fillStyle = "rgba(255, 240, 246, 0.75)";
+      ctx.font = "700 12px 'Libre Franklin', sans-serif";
+      ctx.fillText("ATTEMPT " + attemptCount, 26, 30);
+
+      ctx.textAlign = "right";
+      const coinStr = coinSlots.map(c => c ? "●" : "○").join(" ");
+      ctx.fillStyle = coinSlots.some(Boolean) ? "#ffd166" : "rgba(255, 240, 246, 0.55)";
+      ctx.font = "700 15px monospace";
+      ctx.fillText(coinStr, canvas.width - 26, 31);
+      ctx.restore();
 
       // Jetpack propulsion flames in Ship/Jetpack form
       if (wavePlayer.form === "jetpack" && wavePlayer.hasLaunched) {
@@ -6974,7 +7235,7 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       const themeColor = getModeThemeColor();
       drawIncidiusParallaxBackground(activeScrollX, activeScrollY, world, themeColor);
 
-      if (gameActive) {
+      if (gameActive || particles.length > 0 || tvStaticFrames > 0) {
         if (selectedMode === "heist") {
           updateAndDrawHeist(1.0, true);
         } else if (selectedMode === "wave") {

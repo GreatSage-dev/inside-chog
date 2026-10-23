@@ -3945,14 +3945,14 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       ctx.fillRect(0, canvas.height - 75, canvas.width, 75);
     }
 
-    // Incidius Block Anatomy: Outer Bevel + Inner Tech Grid + Corner Rivets + Top Neon Edge
+    // Incidius Block Anatomy: Outer Bevel + 3D Highlights + Inner Tech Grid + Corner Rivets + Top Neon Edge
     function drawIncidiusBlock(ctx, x, y, w, h, label, mainColor, accentColor, isCrumble, crumbleTimer) {
       ctx.save();
       const shakeX = isCrumble && crumbleTimer > 5 ? (Math.random() - 0.5) * 6 : 0;
       const bx = x + shakeX;
 
       // Dark carbon interior
-      ctx.fillStyle = isCrumble ? "#540d1c" : (mainColor || "#3d0012");
+      ctx.fillStyle = isCrumble ? "#540d1c" : (mainColor || "#26020c");
       ctx.fillRect(bx, y, w, h);
 
       // Inner diagonal tech hash pattern (Incidius texture rule)
@@ -3969,6 +3969,23 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         ctx.stroke();
       }
       ctx.restore();
+
+      // 3D Isometric Bevel: Highlight top/left, Shadow bottom/right (Geometry Dash block standard)
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.45)";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(bx + 1, y + h - 1);
+      ctx.lineTo(bx + 1, y + 1);
+      ctx.lineTo(bx + w - 1, y + 1);
+      ctx.stroke();
+
+      ctx.strokeStyle = "rgba(0, 0, 0, 0.65)";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(bx + w - 1, y + 1);
+      ctx.lineTo(bx + w - 1, y + h - 1);
+      ctx.lineTo(bx + 1, y + h - 1);
+      ctx.stroke();
 
       // Outer chamfered border with emissive glow
       ctx.strokeStyle = accentColor || "#ff99d3";
@@ -3999,13 +4016,63 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         ctx.lineTo(bx + w * 0.7, y + h - 2);
         ctx.stroke();
       }
+      ctx.restore();
+    }
 
-      // Block Label
-      if (label) {
-        ctx.fillStyle = "rgba(255, 240, 246, 0.82)";
-        ctx.font = "700 10px 'Libre Franklin', sans-serif";
-        ctx.fillText(label, bx + 10, y + Math.min(14, h - 4));
-      }
+    // Authentic Geometry Dash Triangular Spikes (Dark Core + Glowing Neon Border + Apex Highlight)
+    function drawGeometryDashSpike(ctx, sx, sy, w, h, isCeiling, color) {
+      ctx.save();
+      ctx.translate(sx, sy);
+      const apexY = isCeiling ? h : -h;
+      const baseY = 0;
+
+      // 1. Dark Solid Body
+      ctx.fillStyle = "#120005";
+      ctx.beginPath();
+      ctx.moveTo(-w / 2, baseY);
+      ctx.lineTo(0, apexY);
+      ctx.lineTo(w / 2, baseY);
+      ctx.closePath();
+      ctx.fill();
+
+      // 2. Inner danger gradient
+      const grad = ctx.createLinearGradient(0, baseY, 0, apexY);
+      grad.addColorStop(0, "rgba(255, 77, 109, 0.08)");
+      grad.addColorStop(1, color || "#ff4d6d");
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.moveTo(-w * 0.32, baseY);
+      ctx.lineTo(0, apexY);
+      ctx.lineTo(w * 0.32, baseY);
+      ctx.closePath();
+      ctx.fill();
+
+      // 3. Crisp Neon Outer Border with Shadow Glow
+      ctx.strokeStyle = color || "#ff4d6d";
+      ctx.lineWidth = 2.5;
+      ctx.shadowColor = color || "#ff4d6d";
+      ctx.shadowBlur = 8;
+      ctx.beginPath();
+      ctx.moveTo(-w / 2, baseY);
+      ctx.lineTo(0, apexY);
+      ctx.lineTo(w / 2, baseY);
+      ctx.stroke();
+
+      // 4. Center Spine Highlight
+      ctx.strokeStyle = "#fff0f6";
+      ctx.lineWidth = 1.2;
+      ctx.shadowBlur = 0;
+      ctx.beginPath();
+      ctx.moveTo(0, baseY);
+      ctx.lineTo(0, apexY);
+      ctx.stroke();
+
+      // 5. Bright Tip Apex Dot
+      ctx.fillStyle = "#ffffff";
+      ctx.beginPath();
+      ctx.arc(0, apexY, 2, 0, Math.PI * 2);
+      ctx.fill();
+
       ctx.restore();
     }
 
@@ -4104,11 +4171,6 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       ctx.lineTo(sx - 10 - pulse * 0.5, midY);
       ctx.closePath();
       ctx.fill();
-
-      // Label Banner
-      ctx.fillStyle = color;
-      ctx.font = "700 11px 'Libre Franklin', sans-serif";
-      ctx.fillText(label, sx - 64, yTop + 22);
 
       ctx.restore();
     }
@@ -5420,13 +5482,9 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       const textX = 85 - scrollX * 0.65;
       if (textX > -420) {
         ctx.save();
-        ctx.fillStyle = "rgba(255, 240, 246, 0.16)";
-        ctx.font = "700 44px 'Spline Sans', sans-serif";
+        ctx.fillStyle = "rgba(255, 240, 246, 0.22)";
+        ctx.font = "700 40px 'Libre Franklin', sans-serif";
         ctx.fillText("ATTEMPT " + attemptCount, textX, 135);
-        ctx.font = "700 15px 'Libre Franklin', sans-serif";
-        ctx.fillStyle = "rgba(184, 255, 101, 0.48)";
-        const structLabel = selectedMode === "wave" ? waveTerrainName : (selectedMode === "heist" ? heistStructureName : flappyStructureName);
-        ctx.fillText("STAGE " + currentStageLevel + " · " + structLabel + " · OVERDRIVE AT 70%", textX, 162);
         ctx.restore();
       }
     }
@@ -5469,12 +5527,6 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       ctx.closePath();
       ctx.fill();
       ctx.restore();
-
-      if (hintText) {
-        ctx.fillStyle = "#ffd166";
-        ctx.font = "700 10px 'Libre Franklin', sans-serif";
-        ctx.fillText(hintText, x - 34, y - r - 10);
-      }
     }
 
     function triggerEndState(won, deathReason) {
@@ -5595,11 +5647,6 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         ctx.beginPath();
         ctx.rect(ghostX, ghostY, 26, 26);
         ctx.fill();
-
-        ctx.globalAlpha = 0.9;
-        ctx.fillStyle = g.color;
-        ctx.font = "700 9px 'Libre Franklin', sans-serif";
-        ctx.fillText(g.name, ghostX - 4, ghostY - 6);
         ctx.restore();
 
         if (progress >= g.wipeoutPct) {

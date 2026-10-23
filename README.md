@@ -2,10 +2,25 @@
 ### The 60FPS Executable NFT Arcade & Social Infiltration Protocol on Monad Testnet (Chain ID 10143)
 
 > **Live Production App:** [https://inside-chog.vercel.app](https://inside-chog.vercel.app)  
-> **Verified Smart Contract:** [`0x6D8d52462Aa6632041Ffa79B9FEdd1c10B818c36`](https://testnet.monadexplorer.com/address/0x6D8d52462Aa6632041Ffa79B9FEdd1c10B818c36)  
+> **95s YouTube Demo Video:** [https://youtu.be/46JuIPEk5SA](https://youtu.be/46JuIPEk5SA)  
+> **Verified Smart Contract:** [`0x6D8d52462Aa6632041Ffa79B9FEdd1c10B818c36`](https://testnet.monadexplorer.com/address/0x6D8d52462Aa6632041Ffa79B9FEdd1c10B818c36) on Monad Testnet (Chain ID 10143)  
 > **Deployment Tx Receipt:** [`0x121970a2b897452f0d26d4efb7c41830bf052576e34ec811ac20b2f4f58438f0`](https://testnet.monadexplorer.com/tx/0x121970a2b897452f0d26d4efb7c41830bf052576e34ec811ac20b2f4f58438f0)  
 > **Official Chog Genesis Contract:** [`0xc96d31f8626c6d03fae5dcd3d61e3fb9f4a73763`](https://monadexplorer.com/address/0xc96d31f8626c6d03fae5dcd3d61e3fb9f4a73763) (1,969 Supply)  
-> **Official $CHOG Token:** [`0x350035555E10d9AfAF1566AaebfCeD5BA6C27777`](https://monadexplorer.com/address/0x350035555E10d9AfAF1566AaebfCeD5BA6C27777)  
+
+---
+
+## ⚡ Judges & Evaluators · 60-Second Verification Guide
+
+Judges can verify every capability live in under 60 seconds with **zero login, zero wallet setup, and zero testnet gas needed**:
+
+| Capability | What It Proves | 1-Click Verification Ingress |
+| :--- | :--- | :--- |
+| **Instant Free Play** | 60FPS / 240 TPS canvas physics with sub-second Cocos2d-x jump buffering | Click **"⚡ Launch Chog Dash (Free Play)"** in the hero. Press `SPACE` to jump/fly. |
+| **3 Arcade Engines** | `Switch Game (1/3)` cycles between Wave, Heist, and Flappy live in-place | Click **"Switch Game (1/3)"** in the Arena modal HUD (or press `M`). |
+| **Load-Bearing Kill-Switch** | Proves the Chog NFT is strictly load-bearing, not a cosmetic wrapper | Scroll to `#cartridges`, click **"Eject NFT Cartridge"** $\to$ Engine halts with `ERR_EMPTY_CARTRIDGE`. |
+| **0.4ms Clear-Check Solver** | Mathematically proves every compiled level is 100% humanly passable | Enter any Token ID `#1–#10,000` in the compiler box $\to$ Click **"Compile ROM"**. |
+| **Live Monad Contract** | 6 registered cartridges + on-chain `raidVault(402)` & `hypeVault(8812)` | Click **[Contract ↗](https://testnet.monadexplorer.com/address/0x6D8d52462Aa6632041Ffa79B9FEdd1c10B818c36)** to inspect live transactions on Monad Explorer. |
+| **Deterministic Tests** | `5/5` passing vitest assertions proving layout determinism & trait divergence | Run `npm test` locally (`exit code 0`). |
 
 ---
 

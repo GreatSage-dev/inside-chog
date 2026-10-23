@@ -4705,65 +4705,68 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
 
       // =======================================================================
       // MOVEMENT 1 (0% to 28% / 0px - 2688px): CUBE GAUNTLET & 3D PLATFORMS
+      // Stereo Madness design: flat floor run → spike → safe landing → spike
+      // Every spike has 200+px of clear floor before/after it for a fair jump arc.
       // =======================================================================
       const cubeSpan = shipPortalX - 400;
-      const stepCount = 7;
+      const stepCount = 5; // Fewer platforms, wider spacing = readable sightlines
       for (let i = 0; i < stepCount; i++) {
-        const bx = 380 + Math.floor(i * (cubeSpan / stepCount));
+        const bx = 600 + Math.floor(i * (cubeSpan / stepCount));
         const bounds = getWaveBoundsAt(bx);
-        const elevation = ((i * 3 + (seed % 3)) % 4) * 36;
-        const by = bounds.bot - 70 - elevation;
+        const elevation = ((i * 2 + (seed % 2)) % 3) * 28; // Gentler height variation
 
         // 3D Beveled Platform (Clean, zero debug text)
         waveBlocks.push({
           x: bx,
-          y: by,
-          w: 130,
+          y: bounds.bot - 60 - elevation,
+          w: 150,
           h: 22
         });
 
-        // Jump pad before alternate steps
-        if (i % 2 === 0) {
-          const padBounds = getWaveBoundsAt(bx - 55);
-          wavePads.push({
-            x: bx - 55,
-            y: padBounds.bot - 2,
-            w: 42,
-            boostVy: -11.6,
-            color: i % 4 === 0 ? "#ffd166" : "#ff99d3",
-            lastTrig: -99
-          });
-        }
-
-        // Triangular spikes on the floor between platforms
-        waveSpikes.push({
-          x: bx + 70,
-          y: bounds.bot,
-          w: 28,
-          h: 34,
-          isCeiling: false
+        // Jump pad ON the floor before every platform (guaranteed boost over it)
+        const padBounds = getWaveBoundsAt(bx - 70);
+        wavePads.push({
+          x: bx - 70,
+          y: padBounds.bot - 2,
+          w: 48,
+          boostVy: -11.6,
+          color: i % 2 === 0 ? "#ffd166" : "#ff99d3",
+          lastTrig: -99
         });
       }
 
-      // Authentic Geometry Dash Triangular Spikes in Movement 1 (Single, Double, Triple!)
-      // Single Spike Jump (Fair sightreading runway, 2+ seconds before first obstacle)
-      waveSpikes.push({ x: 540, y: getWaveBoundsAt(540).bot, w: 28, h: 34, isCeiling: false });
-      // Double Spike Jump
-      waveSpikes.push({ x: 740, y: getWaveBoundsAt(740).bot, w: 28, h: 34, isCeiling: false });
-      waveSpikes.push({ x: 770, y: getWaveBoundsAt(770).bot, w: 28, h: 34, isCeiling: false });
-      // Triple Spike Jump (The Legendary RobTop Challenge!)
-      waveSpikes.push({ x: 1480, y: getWaveBoundsAt(1480).bot, w: 28, h: 34, isCeiling: false });
-      waveSpikes.push({ x: 1510, y: getWaveBoundsAt(1510).bot, w: 28, h: 34, isCeiling: false });
-      waveSpikes.push({ x: 1540, y: getWaveBoundsAt(1540).bot, w: 28, h: 34, isCeiling: false });
-      // Late Movement 1 Spikes
-      waveSpikes.push({ x: 2120, y: getWaveBoundsAt(2120).bot, w: 28, h: 34, isCeiling: false });
-      waveSpikes.push({ x: 2150, y: getWaveBoundsAt(2150).bot, w: 28, h: 34, isCeiling: false });
+      // ── Carefully Placed Floor Spikes with GENEROUS Clear Gaps ──
+      // Rule: minimum 220px of open floor between any two spike clusters
+      // so a single tap-jump (vy = -10.4, gravity 0.56, arc width ≈ 138px)
+      // always clears any cluster with room to spare.
 
-      // Jump Orbs (Rings) with Pulsing Cores
-      waveOrbs.push({ x: 590, y: 245, r: 18, boostVy: -10.8, color: "#ffd166", triggered: false });
-      waveOrbs.push({ x: 1080, y: 220, r: 18, boostVy: -11.2, color: "#ffd166", triggered: false }); // Boosts to Coin 1!
-      waveOrbs.push({ x: 1860, y: 235, r: 18, boostVy: -10.5, color: "#5ce1e6", triggered: false });
-      waveOrbs.push({ x: 2420, y: 225, r: 18, boostVy: -10.8, color: "#ff99d3", triggered: false });
+      // Single Spike @ ~5% (3+ seconds into the run — plenty of sightread time)
+      waveSpikes.push({ x: 680, y: getWaveBoundsAt(680).bot, w: 26, h: 30, isCeiling: false });
+
+      // Single Spike @ ~8%
+      waveSpikes.push({ x: 1000, y: getWaveBoundsAt(1000).bot, w: 26, h: 30, isCeiling: false });
+
+      // Double Spike @ ~13% (two touching spikes, one jump clears both)
+      waveSpikes.push({ x: 1380, y: getWaveBoundsAt(1380).bot, w: 26, h: 30, isCeiling: false });
+      waveSpikes.push({ x: 1408, y: getWaveBoundsAt(1408).bot, w: 26, h: 30, isCeiling: false });
+
+      // Single Spike @ ~17%
+      waveSpikes.push({ x: 1720, y: getWaveBoundsAt(1720).bot, w: 26, h: 30, isCeiling: false });
+
+      // Double Spike @ ~21%
+      waveSpikes.push({ x: 2080, y: getWaveBoundsAt(2080).bot, w: 26, h: 30, isCeiling: false });
+      waveSpikes.push({ x: 2108, y: getWaveBoundsAt(2108).bot, w: 26, h: 30, isCeiling: false });
+
+      // Triple Spike @ ~25% (the RobTop challenge — needs precise timing but IS clearable)
+      waveSpikes.push({ x: 2440, y: getWaveBoundsAt(2440).bot, w: 26, h: 30, isCeiling: false });
+      waveSpikes.push({ x: 2468, y: getWaveBoundsAt(2468).bot, w: 26, h: 30, isCeiling: false });
+      waveSpikes.push({ x: 2496, y: getWaveBoundsAt(2496).bot, w: 26, h: 30, isCeiling: false });
+
+      // Jump Orbs (Rings) with Pulsing Cores — placed mid-air BEFORE tricky sections
+      waveOrbs.push({ x: 960, y: 280, r: 18, boostVy: -10.8, color: "#ffd166", triggered: false });
+      waveOrbs.push({ x: 1340, y: 260, r: 18, boostVy: -11.2, color: "#ffd166", triggered: false }); // Before double spike
+      waveOrbs.push({ x: 2040, y: 270, r: 18, boostVy: -10.5, color: "#5ce1e6", triggered: false }); // Before 2nd double
+      waveOrbs.push({ x: 2400, y: 260, r: 18, boostVy: -10.8, color: "#ff99d3", triggered: false }); // Before triple!
 
       // =======================================================================
       // MOVEMENT 2 (28% to 58% / 2688px - 5568px): SHIP / ROCKET TUNNEL
@@ -6278,7 +6281,7 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
 
         if (wavePlayer.form === "cube") {
           // PHASE 1: STEREO MADNESS / POLARGEIST CUBE PHYSICS (90-degree jump rotation + auto-jump when holding!)
-          wavePlayer.vy += 0.56 * subStepRatio;
+          wavePlayer.vy += 0.52 * subStepRatio; // Tuned gravity for fair spike clearance
           wavePlayer.y += wavePlayer.vy * subStepRatio;
           wavePlayer.isGrounded = false;
 
@@ -6311,7 +6314,7 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
             wavePlayer.cubeAngle += 0.11 * subStepRatio;
           } else if (holdingInput || jumpBufferTimer > 0) {
             // Auto-hop while holding SPACE/Click or from input buffer!
-            wavePlayer.vy = -10.4;
+            wavePlayer.vy = -11.0; // Strong jump — clears single/double/triple spikes
             wavePlayer.isGrounded = false;
             jumpBufferTimer = 0;
             playTone(493.88, 0.07, "square", 0.05);
@@ -6462,7 +6465,7 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         const spikeApexY = sp.isCeiling ? sp.y + sp.h : sp.y - sp.h;
         const spikeCenterY = (sp.y + spikeApexY) * 0.5;
         const spikeDist = Math.hypot(wavePlayer.x - sx, wavePlayer.y - spikeCenterY);
-        if (spikeDist < 16.5) {
+        if (spikeDist < 14.0) { // Fair 60% inner hitbox — clearable with well-timed jump
           spawnExplosion(wavePlayer.x, wavePlayer.y, "#ff4d6d");
           triggerEndState(false, "SPIKED BY TRAP");
           return;

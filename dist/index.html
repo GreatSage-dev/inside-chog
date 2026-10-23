@@ -173,6 +173,79 @@
       gap: 10px;
     }
 
+    .balance-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface);
+      border: 1px solid rgba(255, 153, 211, 0.22);
+      padding: 6px 12px;
+      clip-path: var(--motif-sm);
+      cursor: pointer;
+      transition: all 0.18s ease;
+      white-space: nowrap;
+    }
+
+    .balance-chip:hover {
+      border-color: var(--accent);
+      background: var(--surface-raised);
+      transform: translateY(-1px);
+    }
+
+    .balance-val {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 13px;
+      color: #ffffff;
+    }
+
+    .balance-sub {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--ink);
+      opacity: 0.85;
+    }
+
+    .faucet-tag {
+      font-family: var(--font-display);
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--accent);
+      background: rgba(255, 153, 211, 0.15);
+      padding: 2px 6px;
+      border-radius: 2px;
+      letter-spacing: 0.04em;
+    }
+
+    .hero-raider-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .raider-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface);
+      border: 1px solid rgba(255, 153, 211, 0.15);
+      padding: 6px 12px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--ink);
+      clip-path: var(--motif-sm);
+    }
+
+    .raider-pill .pill-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+    }
+
     .btn-motif {
       display: inline-flex;
       align-items: center;
@@ -709,10 +782,11 @@
     }
 
     .stage-fragment {
-      width: min(100%, 440px);
+      width: min(100%, 540px);
       background: var(--bg);
-      padding: 28px;
+      padding: 26px;
       clip-path: var(--motif-lg);
+      border: 1px solid rgba(255, 153, 211, 0.16);
       transition: opacity 0.2s ease, transform 0.2s ease;
     }
 
@@ -721,16 +795,20 @@
       font-weight: 700;
       font-size: var(--step-lead);
       margin-bottom: 14px;
+      color: #ffffff;
     }
 
     .stage-code-block {
       background: var(--surface);
-      padding: 16px;
-      font-size: var(--step-small);
-      line-height: 1.55;
+      padding: 18px 20px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      line-height: 1.65;
       overflow-x: auto;
       clip-path: var(--motif-sm);
       color: var(--ink);
+      white-space: pre-wrap;
+      word-break: break-all;
     }
 
     .stages-slider-bar {
@@ -1804,22 +1882,20 @@
     <nav class="header-nav">
       <div class="header-links">
         <a href="#cartridges">Cartridges</a>
+        <a href="#architecture">Compiler ROM</a>
         <a href="#loadbearing">Load-Bearing Proof</a>
-        <a href="#halloffame">Hall of Fame</a>
-        <a href="#architecture">How It Compiles</a>
+        <a href="#halloffame">Leaderboard</a>
         <a href="#yield">Landlord Yield</a>
         <a href="https://testnet.monadexplorer.com/address/0x6D8d52462Aa6632041Ffa79B9FEdd1c10B818c36" target="_blank" rel="noopener">Contract ↗</a>
       </div>
       <div class="wallet-bar" data-ui>
-        <span class="balance-pill" id="userBalanceBadge">5.00 MON</span>
-        <span class="balance-pill" id="chogBalanceBadge">1,000 $CHOG</span>
-        <span class="balance-pill" id="raiderRankBadge">Novice · Lvl 1 (0 XP)</span>
-        <span class="balance-pill" id="winStreakBadge">Streak: 0</span>
-        <button type="button" class="btn-faucet" id="faucetBtn" onclick="claimFreeSupplies()">+5.00 MON</button>
-        <button type="button" class="btn-faucet" id="chogFaucetBtn" onclick="claimChogSupplies()">+1,000 $CHOG</button>
-        <button type="button" class="btn-mint-hero" id="mintHeroBtn" onclick="openMintModal()">Mint Free Vault</button>
-        <code id="sessionBadge" style="background: var(--surface); padding: 8px 12px; clip-path: var(--motif-sm);">Burner Ready</code>
-        <button type="button" class="btn-motif" id="connectWalletBtn" onclick="connectMonadWallet()">Connect Wallet</button>
+        <div class="balance-chip" id="balanceChip" onclick="claimAllSupplies()" title="One-click faucet: Claim +5.00 MON & +1,000 $CHOG">
+          <span class="balance-val" id="userBalanceBadge">5.00 MON</span>
+          <span class="balance-sub" id="chogBalanceBadge">1,000 $CHOG</span>
+          <span class="faucet-tag">+ FREE</span>
+        </div>
+        <button type="button" class="btn-mint-hero" id="mintHeroBtn" onclick="openMintModal()">Mint Vault</button>
+        <button type="button" class="btn-motif" id="connectWalletBtn" onclick="connectMonadWallet()" style="padding: 10px 16px; font-size: 12px;">Connect Wallet</button>
       </div>
     </nav>
   </header>
@@ -1845,10 +1921,17 @@
         Inside Chog compiles every Chog NFT on Monad into a playable 60FPS vault cartridge and a cash-flowing arcade machine that pays its holder 40% of every challenger's raid toll.
       </p>
       <div class="hero-actions">
-        <a href="#cartridges" class="btn-motif">Inspect Vault Cartridges</a>
-        <button type="button" class="btn-motif-secondary" onclick="openArenaWithCurrent()">Launch Instant Heist</button>
+        <button type="button" class="btn-motif" onclick="openArenaWithCurrent()" style="padding: 16px 26px; font-size: var(--step-body);">
+          ⚡ Launch Chog Dash (Free Play)
+        </button>
+        <a href="#cartridges" class="btn-motif-secondary">Inspect Cartridge Dossier ↓</a>
       </div>
-      <div class="hero-mission-pills">
+      <div class="hero-raider-bar" data-ui>
+        <span class="raider-pill"><span class="pill-dot"></span><strong id="raiderRankBadge">Novice · Lvl 1 (0 XP)</strong></span>
+        <span class="raider-pill" id="winStreakBadge">Streak: 0</span>
+        <span class="raider-pill">Session: <code id="sessionBadge" style="color: #ffffff;">Burner 0x48F1 Ready</code></span>
+      </div>
+      <div class="hero-mission-pills" style="margin-top: 14px;">
         <span class="hero-mission-item"><span class="motif-bullet"></span>Deterministic 64-byte ROM</span>
         <span class="hero-mission-item"><span class="motif-bullet"></span>0.4ms Clear-Check Proof</span>
         <span class="hero-mission-item"><span class="motif-bullet"></span>Zero Wallet Popups Mid-Jump</span>
@@ -2540,8 +2623,8 @@ SOLVER_CHECK = PASS (0.4ms)</pre>
         owner: "0x71C4...89A2",
         bounty: 14.80,
         mortality: "86.4%",
-        defaultMode: "heist",
-        lore: "Holding competition arcade controls in royal crimson attire. Signature Game: Original Vault Platform Heist with stepping-stone ledges, blinking lasers, and swinging pendulums.",
+        defaultMode: "wave",
+        lore: "Holding competition arcade controls in royal crimson attire. Primary Engine: Chog Dash Portal Wave (Cube Gauntlet → Ship Tunnel → 45° Wave Corridor → 256 BPM Climax). Alternate modes: Vault Platform Heist & Parachute Flap.",
         speedMult: 1.0,
         corridorGap: 185,
         sawCount: 4,
@@ -2934,6 +3017,16 @@ SOLVER_CHECK = PASS (0.4ms)</pre>
     function updateChogBalanceHud() {
       const el = document.getElementById("chogBalanceBadge");
       if (el) el.textContent = userChogBalance.toLocaleString() + " $CHOG";
+    }
+
+    function claimAllSupplies() {
+      userBalance += 5.00;
+      userChogBalance += 1000;
+      updateBalanceHud();
+      updateChogBalanceHud();
+      playTone(880, 0.14, "triangle", 0.09);
+      spawnFloatingText(320, 180, "+5.00 MON & +1,000 $CHOG FAUCET FUNDED!", "#b8ff65");
+      prependTickerEvent("FAUCET", "Claimed +5.00 MON & +1,000 $CHOG Supplies");
     }
 
     function claimFreeSupplies() {
@@ -3691,7 +3784,7 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
     let heistPlayer = {
       x: 110,
       y: 410,
-      vx: 3.4,
+      vx: 2.25,
       vy: 0,
       radius: 20,
       isGrounded: false,
@@ -4653,7 +4746,7 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       heistVaultChest = { x: 920, y: -494, w: 66, h: 54 };
       heistCameraY = 0;
 
-      const baseRunSpd = (3.15 + Math.min(2.0, (stage - 1) * 0.4)) * (isDouble ? 1.18 : 1);
+      const baseRunSpd = (2.25 + Math.min(1.2, (stage - 1) * 0.20)) * (isDouble ? 1.15 : 1);
       heistPlayer = {
         x: 110,
         y: 434,
@@ -5803,7 +5896,7 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
     // ENGINE 1: 10-TIER VERTICAL VAULT TOWER HEIST (240 TPS + 60% INNER HITBOXES)
     //           With Smooth Vertical Camera, Moving/Crumbling Ledges & Overdrive!
     // =========================================================================
-    function updateAndDrawHeist(subStepRatio = 1.0, isDrawPass = true) {
+    function updateAndDrawHeist(subStepRatio = 0, isDrawPass = true) {
       if (isDrawPass) frameTick++;
       const totalClimb = Math.max(300, 434 - (heistVaultChest.y + 18));
       const climbPct = Math.max(0, Math.min(99, ((434 - heistPlayer.y) / totalClimb) * 100));
@@ -5817,19 +5910,20 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       const leftWall = 28;
       const rightWall = canvas.width - 28;
 
-      // Update Player Physics with Intensity Speed Multiplier (240 TPS sub-step)
-      const dirSign = heistPlayer.vx >= 0 ? 1 : -1;
-      const baseVx = (3.4 + (currentStageLevel - 1) * 0.32) * currentCartridge.speedMult * (activeDoubleOrNothing ? 1.15 : 1);
-      heistPlayer.vx = dirSign * baseVx * phase.speedMult;
+      if (subStepRatio > 0) {
+        // Update Player Physics with Industry-Calibrated Speed (Doodle Jump / Icy Tower Benchmark: 2.25 px/frame)
+        const dirSign = heistPlayer.vx >= 0 ? 1 : -1;
+        const baseVx = (2.25 + (currentStageLevel - 1) * 0.20) * currentCartridge.speedMult * (activeDoubleOrNothing ? 1.15 : 1);
+        heistPlayer.vx = dirSign * baseVx * phase.speedMult;
 
-      heistPlayer.vy += 0.52 * subStepRatio;
-      heistPlayer.x += heistPlayer.vx * subStepRatio;
-      heistPlayer.y += heistPlayer.vy * subStepRatio;
+        heistPlayer.vy += 0.52 * subStepRatio;
+        heistPlayer.x += heistPlayer.vx * subStepRatio;
+        heistPlayer.y += heistPlayer.vy * subStepRatio;
 
-      if (!heistPlayer.hasJumpedOnce && heistPlayer.x > 250) {
-        heistPlayer.x = 250;
-        heistPlayer.vx = -Math.abs(heistPlayer.vx);
-      }
+        if (!heistPlayer.hasJumpedOnce && heistPlayer.x > 250) {
+          heistPlayer.x = 250;
+          heistPlayer.vx = -Math.abs(heistPlayer.vx);
+        }
 
       if (heistPlayer.x + heistPlayer.radius > rightWall) {
         heistPlayer.x = rightWall - heistPlayer.radius;
@@ -6014,6 +6108,7 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         triggerEndState(true);
         return;
       }
+      } // end if (subStepRatio > 0) physics step
 
       // If this is a physics-only sub-step, stop here before drawing to canvas!
       if (!isDrawPass) return;
@@ -6251,14 +6346,16 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
     // ENGINE 2: 3-PHASE GEOMETRY DASH LEVEL (240 TPS + 60% INNER HITBOXES)
     //           With Rollercoaster Slopes, Clubstep Ramps & Overdrive Climax!
     // =========================================================================
-    function updateAndDrawWave(subStepRatio = 1.0, isDrawPass = true) {
+    function updateAndDrawWave(subStepRatio = 0, isDrawPass = true) {
       if (isDrawPass) frameTick++;
 
       progressPct = Math.min(100, (waveCameraX / (levelLengthPx - 260)) * 100);
       const phase = getIntensityPhase(progressPct);
 
-      const stageSpeedMult = 1 + (currentStageLevel - 1) * 0.18;
-      const speed = 2.65 * currentCartridge.speedMult * stageSpeedMult * (activeDoubleOrNothing ? 1.22 : 1) * phase.speedMult;
+      // Industry-Calibrated Starting Speed (Geometry Dash RobTop 1x Standard: 2.10 px/frame ~ 126 px/sec)
+      const baseSpeed = 2.10;
+      const stageSpeedMult = 1 + (currentStageLevel - 1) * 0.12;
+      const speed = baseSpeed * currentCartridge.speedMult * stageSpeedMult * (activeDoubleOrNothing ? 1.20 : 1) * phase.speedMult;
 
       const playerWorldX = waveCameraX + wavePlayer.x;
       const playerBounds = getWaveBoundsAt(playerWorldX);
@@ -6271,6 +6368,7 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         wavePlayer.form === "cube" ? "#ff99d3" :
         wavePlayer.form === "jetpack" ? "#5ce1e6" : "#ffd166";
 
+      if (subStepRatio > 0) {
       if (!wavePlayer.hasLaunched) {
         if (waveCameraX < 95) waveCameraX += speed * subStepRatio;
         wavePlayer.y = localBotWall - 18;
@@ -6281,7 +6379,7 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
 
         if (wavePlayer.form === "cube") {
           // PHASE 1: STEREO MADNESS / POLARGEIST CUBE PHYSICS (90-degree jump rotation + auto-jump when holding!)
-          wavePlayer.vy += 0.52 * subStepRatio; // Tuned gravity for fair spike clearance
+          wavePlayer.vy += 0.48 * subStepRatio; // Floatier, authentic RobTop jump gravity
           wavePlayer.y += wavePlayer.vy * subStepRatio;
           wavePlayer.isGrounded = false;
 
@@ -6314,7 +6412,7 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
             wavePlayer.cubeAngle += 0.11 * subStepRatio;
           } else if (holdingInput || jumpBufferTimer > 0) {
             // Auto-hop while holding SPACE/Click or from input buffer!
-            wavePlayer.vy = -11.0; // Strong jump — clears single/double/triple spikes
+            wavePlayer.vy = -11.2; // Floatier jump arc, comfortably clears single, double, and triple spikes
             wavePlayer.isGrounded = false;
             jumpBufferTimer = 0;
             playTone(493.88, 0.07, "square", 0.05);
@@ -6490,6 +6588,7 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         triggerEndState(true);
         return;
       }
+      } // end if (subStepRatio > 0) physics step
 
       // If physics-only sub-step, stop before drawing
       if (!isDrawPass) return;
@@ -6878,15 +6977,18 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
     // ENGINE 3: FLAPPY $100 PARACHUTE (240 TPS + 60% INNER HITBOXES)
     //           With Wind Geysers, Scissor Moving Gates & Multi-Tier Bulls!
     // =========================================================================
-    function updateAndDrawFlappy(subStepRatio = 1.0, isDrawPass = true) {
+    function updateAndDrawFlappy(subStepRatio = 0, isDrawPass = true) {
       if (isDrawPass) frameTick++;
 
       progressPct = Math.min(100, (flappyCameraX / (flappyLengthPx - 250)) * 100);
       const phase = getIntensityPhase(progressPct);
 
-      const stageSpeedMult = 1 + (currentStageLevel - 1) * 0.18;
-      const speed = 2.4 * currentCartridge.speedMult * stageSpeedMult * (activeDoubleOrNothing ? 1.25 : 1) * phase.speedMult;
+      // Industry-Calibrated Starting Speed (Flappy Bird Benchmark: 1.85 px/frame ~ 111 px/sec)
+      const baseSpeed = 1.85;
+      const stageSpeedMult = 1 + (currentStageLevel - 1) * 0.12;
+      const speed = baseSpeed * currentCartridge.speedMult * stageSpeedMult * (activeDoubleOrNothing ? 1.20 : 1) * phase.speedMult;
 
+      if (subStepRatio > 0) {
       if (!flappyPlayer.hasFlappedOnce) {
         if (flappyCameraX < 120) flappyCameraX += speed * subStepRatio;
         flappyPlayer.y = 225 + Math.sin(frameTick * 0.08) * 14;
@@ -7032,6 +7134,7 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         triggerEndState(true);
         return;
       }
+      } // end if (subStepRatio > 0) physics step
 
       // Stop before drawing if physics-only sub-step
       if (!isDrawPass) return;
@@ -7240,11 +7343,11 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
 
       if (gameActive || particles.length > 0 || tvStaticFrames > 0) {
         if (selectedMode === "heist") {
-          updateAndDrawHeist(1.0, true);
+          updateAndDrawHeist(0, true);
         } else if (selectedMode === "wave") {
-          updateAndDrawWave(1.0, true);
+          updateAndDrawWave(0, true);
         } else {
-          updateAndDrawFlappy(1.0, true);
+          updateAndDrawFlappy(0, true);
         }
       }
 

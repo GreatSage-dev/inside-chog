@@ -661,7 +661,7 @@
 
     .mode-selector-row {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 12px;
       margin: 16px 0;
     }
@@ -1921,7 +1921,7 @@
         Inside Chog compiles every Chog NFT on Monad into a playable 60FPS vault cartridge and a cash-flowing arcade machine that pays its holder 40% of every challenger's raid toll.
       </p>
       <div class="hero-actions">
-        <button type="button" class="btn-motif" onclick="openArenaWithCurrent()" style="padding: 16px 26px; font-size: var(--step-body);">
+        <button type="button" class="btn-motif" onclick="openArenaWithCurrent('wave')" style="padding: 16px 26px; font-size: var(--step-body);">
           ⚡ Launch Chog Dash (Free Play)
         </button>
         <a href="#cartridges" class="btn-motif-secondary">Inspect Cartridge Dossier ↓</a>
@@ -1952,7 +1952,7 @@
           <div class="hero-cartridge-title" id="heroPreviewTitle">CHOG #402</div>
           <div style="font-size: var(--step-small); color: var(--ink);">Laser Wave 1.45x · Bounty <code>14.80 MON</code></div>
         </div>
-        <button type="button" class="btn-motif" onclick="openArenaWithCurrent()">Play Cartridge</button>
+        <button type="button" class="btn-motif" onclick="openArenaWithCurrent('wave')">Play Cartridge</button>
       </div>
     </div>
   </section>
@@ -2064,24 +2064,20 @@
           <tbody id="traitTableBody"></tbody>
         </table>
 
-        <!-- 4-Game Arcade Selector Before Entering the Game -->
-        <div style="font-weight: 600; font-size: var(--step-small); margin-top: 14px;">Select Playable Vault Cartridge Game (4 High-Velocity Engines)</div>
+        <!-- 3-Game Arcade Selector Before Entering the Game -->
+        <div style="font-weight: 600; font-size: var(--step-small); margin-top: 14px;">Select Playable Vault Cartridge Game (3 High-Velocity Arcade Engines)</div>
         <div class="mode-selector-row" data-ui>
-          <button type="button" class="mode-option selected" id="modeHeistBtn" onclick="selectGameMode('heist')">
-            <span class="mode-option-title">Game 1 · Vault Platform Heist</span>
-            <span class="mode-option-desc">Original King of Thieves Remastered. Land on solid platforms, wall-bounce flip, time blinking lasers, and crack the top chest.</span>
+          <button type="button" class="mode-option selected" id="modeWaveBtn" onclick="selectGameMode('wave')">
+            <span class="mode-option-title">Game 1 · Chog Dash: Portal Wave</span>
+            <span class="mode-option-desc">Geometry Dash + Jetpack Joyride. Solid tech blockwork, floor/ceiling rail slide, and Cube-to-Jetpack-to-Wave portals.</span>
           </button>
-          <button type="button" class="mode-option" id="modeWaveBtn" onclick="selectGameMode('wave')">
-            <span class="mode-option-title">Game 2 · Chog Dash: Portal Wave</span>
-            <span class="mode-option-desc">Geometry Dash + Jetpack Joyride. Safe floor/ceiling rail slide, Jetpack-to-45° Wave portals. Starts slow, gets longer &amp; faster each Stage!</span>
+          <button type="button" class="mode-option" id="modeHeistBtn" onclick="selectGameMode('heist')">
+            <span class="mode-option-title">Game 2 · Vault Platform Heist</span>
+            <span class="mode-option-desc">Original King of Thieves Remastered. Land on solid platforms, wall-bounce flip, time blinking lasers, and crack the top chest.</span>
           </button>
           <button type="button" class="mode-option" id="modeFlappyBtn" onclick="selectGameMode('flappy')">
             <span class="mode-option-title">Game 3 · $100 Parachute Flap</span>
             <span class="mode-option-desc">Flappy Chog #7731. Tap to flap with your $100 MON bill parachute through laser gates, dodge green bulls, and grab 3 MON coins.</span>
-          </button>
-          <button type="button" class="mode-option" id="modeSocialBtn" onclick="selectGameMode('social')">
-            <span class="mode-option-title">Game 4 · AI Social Heist</span>
-            <span class="mode-option-desc">Intercom Social Engineering ("Suck Up!" Remastered). Un-jailbreakable AI classifier. Exploit on-chain traits or bribe with $CHOG to talk your way past the blast door!</span>
           </button>
         </div>
 
@@ -2379,11 +2375,10 @@ SOLVER_CHECK = PASS (0.4ms)</pre>
         <a href="#cartridges" onclick="selectCartridge(3)">Chog #7731</a>
       </div>
       <div class="footer-col">
-        <strong>4 Vault Engines</strong>
-        <a href="#cartridges" onclick="selectGameMode('heist')">Vault Platform Heist</a>
+        <strong>3 Vault Engines</strong>
         <a href="#cartridges" onclick="selectGameMode('wave')">Chog Dash Wave</a>
+        <a href="#cartridges" onclick="selectGameMode('heist')">Vault Platform Heist</a>
         <a href="#cartridges" onclick="selectGameMode('flappy')">$100 Parachute Flap</a>
-        <a href="#cartridges" onclick="selectGameMode('social')">AI Social Heist (Intercom)</a>
       </div>
       <div class="footer-col">
         <strong>Verification</strong>
@@ -3167,7 +3162,7 @@ SOLVER_CHECK = PASS (0.4ms)</pre>
       const cleanId = Math.max(1, Math.min(10000, Number(tokenId) || 1));
       const seed = hashSeed("MONAD_CHOG_" + cleanId);
       const artPool = ["chog1.jpg", "chognice.jpg", "chog5.jpg", "chog6.jpg", "chogbadge.jpg", "chogwow.jpg"];
-      const modePool = ["heist", "wave", "flappy", "social"];
+      const modePool = ["wave", "heist", "flappy"];
       const eyesPool = ["Plasma Visor", "Anime Glasses", "Tired", "3D Glasses", "Monocle", "Laser Eyes"];
       const headPool = ["Crown", "Star Cap", "Peace Hat", "Bucket Hat", "Headband", "Propeller Cap"];
       const bodyPool = ["Red Tuxedo", "Black Tracksuit", "Yellow Shirt", "Hawaiian Shirt", "Heavy Armor"];
@@ -3922,6 +3917,11 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
 
       const isOverdrive = progressPct >= 70 && progressPct < 96;
 
+      // 0. Always clear & fill opaque base layer so previous game mode frames never ghost through
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#120005";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
       // 1. SamMaxx Dynamic Sky Vertical Gradient
       const skyGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
       const topTint = isOverdrive ? "#3d0012" : (world.bg || "#09111e");
@@ -4592,15 +4592,19 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       shockwaves.push({ x: x, y: y, r: 10, maxR: 58, alpha: 1.0, color: color });
     }
 
-    function openArenaWithCurrent() {
+    function openArenaWithCurrent(forceMode) {
       if (cartridgeEjected) {
         alert("ERR_EMPTY_CARTRIDGE: Re-insert the Chog NFT Cartridge before launching the engine.");
         return;
       }
       attemptCount = 1;
       savedCheckpoint = null;
-      selectedMode = "wave"; // Ensure flagship Geometry Dash Wave & Cube arcade engine is active!
-      selectGameMode("wave");
+      if (forceMode) {
+        selectedMode = forceMode;
+      } else if (!["wave", "heist", "flappy"].includes(selectedMode)) {
+        selectedMode = "wave";
+      }
+      selectGameMode(selectedMode);
       chogSprite.src = currentCartridge.image;
       document.getElementById("arenaThumb").src = currentCartridge.image;
       document.getElementById("arenaModal").classList.add("open");
@@ -4623,8 +4627,9 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
     }
 
     function switchArenaModeInPlace() {
-      const order = ["wave", "heist", "flappy", "social"];
-      const nextIdx = (order.indexOf(selectedMode) + 1) % order.length;
+      const order = ["wave", "heist", "flappy"];
+      const currentIdx = order.indexOf(selectedMode);
+      const nextIdx = (currentIdx === -1 ? 0 : currentIdx + 1) % order.length;
       selectedMode = order[nextIdx];
       attemptCount = 1;
       savedCheckpoint = null;
@@ -5486,9 +5491,10 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       const stageMultiplier = Number((1 + (currentStageLevel - 1) * 0.5).toFixed(2));
       const effectiveBounty = (currentCartridge.bounty * stageMultiplier * (activeDoubleOrNothing ? 2 : 1)).toFixed(2);
 
-      const order = ["heist", "wave", "flappy", "social"];
-      const gameIdx = order.indexOf(selectedMode) + 1;
-      document.getElementById("switchGameBtn").textContent = "Switch Game (" + gameIdx + "/4)";
+      const order = ["wave", "heist", "flappy"];
+      const idx = order.indexOf(selectedMode);
+      const gameIdx = idx === -1 ? 1 : idx + 1;
+      document.getElementById("switchGameBtn").textContent = "Switch Game (" + gameIdx + "/3)";
 
       document.getElementById("arenaTitle").textContent =
         "CHOG #" + currentCartridge.tokenId + " · " + getModeDisplayName(selectedMode).toUpperCase();
@@ -5909,6 +5915,7 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
 
       const leftWall = 28;
       const rightWall = canvas.width - 28;
+      const vc = heistVaultChest;
 
       if (subStepRatio > 0) {
         // Update Player Physics with Industry-Calibrated Speed (Doodle Jump / Icy Tower Benchmark: 2.25 px/frame)
@@ -6094,7 +6101,6 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       }
 
       // Check Vault Sanctuary Chest Reached
-      const vc = heistVaultChest;
       if (
         heistPlayer.x + heistPlayer.radius > vc.x &&
         heistPlayer.x - heistPlayer.radius < vc.x + vc.w &&
@@ -6987,6 +6993,8 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       const baseSpeed = 1.85;
       const stageSpeedMult = 1 + (currentStageLevel - 1) * 0.12;
       const speed = baseSpeed * currentCartridge.speedMult * stageSpeedMult * (activeDoubleOrNothing ? 1.20 : 1) * phase.speedMult;
+      const topCeiling = 46;
+      const groundY = 485;
 
       if (subStepRatio > 0) {
       if (!flappyPlayer.hasFlappedOnce) {
@@ -7004,9 +7012,6 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
           if (isDrawPass) spawnFloatingText(flappyPlayer.x, flappyPlayer.y - 30, "MIDWAY CHECKPOINT SAVED!", "#b8ff65");
         }
       }
-
-      const topCeiling = 46;
-      const groundY = 485;
 
       // Apply Updraft Geysers & Vacuum Downdraft Vents
       for (let v = 0; v < flappyVents.length; v++) {

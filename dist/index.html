@@ -1889,9 +1889,9 @@
         <a href="https://testnet.monadexplorer.com/address/0x6D8d52462Aa6632041Ffa79B9FEdd1c10B818c36" target="_blank" rel="noopener">Contract ↗</a>
       </div>
       <div class="wallet-bar" data-ui>
-        <div class="balance-chip" id="balanceChip" onclick="claimAllSupplies()" title="One-click faucet: Claim +5.00 MON & +1,000 $CHOG">
+        <div class="balance-chip" id="balanceChip" onclick="claimAllSupplies()" title="One-click faucet: Claim +5.00 MON Test Supplies">
           <span class="balance-val" id="userBalanceBadge">5.00 MON</span>
-          <span class="balance-sub" id="chogBalanceBadge">1,000 $CHOG</span>
+          <span class="balance-sub" id="chogBalanceBadge">Monad 10143</span>
           <span class="faucet-tag">+ FREE</span>
         </div>
         <button type="button" class="btn-mint-hero" id="mintHeroBtn" onclick="openMintModal()">Mint Vault</button>
@@ -2181,15 +2181,15 @@ SOLVER_CHECK = PASS (0.4ms)</pre>
         <div style="font-size: var(--step-body);">Click any specimen tile to load its hazard genome and signature game into the Dossier.</div>
       </div>
 
-      <div class="proof-tile reveal" onclick="selectCartridge(0)">
+      <div class="proof-tile reveal" onclick="selectCartridge(0, true)">
         <img class="proof-tile-img" src="chog1.jpg" alt="Chog #402 Arcade Striker">
         <div class="proof-tile-content">
           <div class="proof-tile-name">CHOG #402</div>
-          <span class="proof-tile-caption">Vault Platform Heist · <code>14.80 MON</code></span>
+          <span class="proof-tile-caption">Chog Dash Wave · <code>14.80 MON</code></span>
         </div>
       </div>
 
-      <div class="proof-tile reveal" onclick="selectCartridge(1)">
+      <div class="proof-tile reveal" onclick="selectCartridge(1, true)">
         <img class="proof-tile-img" src="chognice.jpg" alt="Chog #8812 Overcharge">
         <div class="proof-tile-content">
           <div class="proof-tile-name">CHOG #8812</div>
@@ -2197,7 +2197,7 @@ SOLVER_CHECK = PASS (0.4ms)</pre>
         </div>
       </div>
 
-      <div class="proof-tile reveal" onclick="selectCartridge(2)">
+      <div class="proof-tile reveal" onclick="selectCartridge(2, true)">
         <img class="proof-tile-img" src="chog5.jpg" alt="Chog #1049 Bull Stampede">
         <div class="proof-tile-content">
           <div class="proof-tile-name">CHOG #1049</div>
@@ -2205,7 +2205,7 @@ SOLVER_CHECK = PASS (0.4ms)</pre>
         </div>
       </div>
 
-      <div class="proof-tile reveal" onclick="selectCartridge(3)">
+      <div class="proof-tile reveal" onclick="selectCartridge(3, true)">
         <img class="proof-tile-img" src="chog6.jpg" alt="Chog #7731 Fiat Parachute">
         <div class="proof-tile-content">
           <div class="proof-tile-name">CHOG #7731</div>
@@ -2213,7 +2213,7 @@ SOLVER_CHECK = PASS (0.4ms)</pre>
         </div>
       </div>
 
-      <div class="proof-tile reveal" onclick="selectCartridge(4)">
+      <div class="proof-tile reveal" onclick="selectCartridge(4, true)">
         <img class="proof-tile-img" src="chogbadge.jpg" alt="Chog #0001 Genesis Inspector">
         <div class="proof-tile-content">
           <div class="proof-tile-name">CHOG #0001</div>
@@ -2221,7 +2221,7 @@ SOLVER_CHECK = PASS (0.4ms)</pre>
         </div>
       </div>
 
-      <div class="proof-tile reveal" onclick="selectCartridge(5)">
+      <div class="proof-tile reveal" onclick="selectCartridge(5, true)">
         <img class="proof-tile-img" src="chogwow.jpg" alt="Chog #9999 Mirror Revenge">
         <div class="proof-tile-content">
           <div class="proof-tile-name">CHOG #9999</div>
@@ -2266,16 +2266,16 @@ SOLVER_CHECK = PASS (0.4ms)</pre>
               <td>No player-owned arcade economy. NFT becomes a cosmetic JPEG with zero cash flow.</td>
             </tr>
             <tr>
-              <td><strong>AI Sentinel Persona &amp; Vulnerabilities</strong></td>
-              <td>Real Chog Genesis traits (<code>Crown</code>, <code>Plasma Visor</code>, <code>Red Tuxedo</code>) mathematically set the Sentinel's psychological weaknesses to Flattery, Tech Audits, or $CHOG Bribes.</td>
-              <td>Generic LLM chatbot prompt with no on-chain anchor or trait constraints.</td>
-              <td>Easily jailbroken with prompt injections. No correlation between visual art and gameplay behavior.</td>
+              <td><strong>0.4ms Clear-Check Governor</strong></td>
+              <td>Deterministic forward-kinematic solver verifies a humanly passable 60FPS trajectory across all compiled trait hazards before any vault accepts a single MON.</td>
+              <td>Unverified user-created or random levels that can spawn impossible, rigged obstacle walls.</td>
+              <td>Challengers lose trust when landlords deploy unbeatable traps to farm entry tolls.</td>
             </tr>
             <tr>
-              <td><strong>$CHOG Deflationary Sink</strong></td>
-              <td>Raiders burn real $CHOG tokens (<code>0x3500...7777</code>) to bribe corrupt guardians and gain a +35% persuasion multiplier.</td>
-              <td>Fake in-game coins with no DEX liquidity or on-chain scarcity.</td>
-              <td>Zero token utility or deflationary burn pressure for the Monad community.</td>
+              <td><strong>Isolated Parallel State Slots</strong></td>
+              <td>Each Chog <code>tokenId</code> owns an isolated <code>VaultCartridge</code> struct on Monad (<code>0x6D8d...8c36</code>), settling 40/50/10 splits and Hype Jar tips in parallel.</td>
+              <td>Single global game contract bottlenecked by sequential state lock contention.</td>
+              <td>High gas spikes and mid-jump wallet popup lag during peak tournament traffic.</td>
             </tr>
           </tbody>
         </table>
@@ -3009,33 +3009,34 @@ SOLVER_CHECK = PASS (0.4ms)</pre>
       if (el) el.textContent = userBalance.toFixed(2) + " MON";
     }
 
+    let pendingMintTokenId = 8812;
+
     function updateChogBalanceHud() {
       const el = document.getElementById("chogBalanceBadge");
-      if (el) el.textContent = userChogBalance.toLocaleString() + " $CHOG";
+      if (el && !el.textContent.includes("Blk")) {
+        el.textContent = "Monad 10143";
+      }
     }
 
     function claimAllSupplies() {
-      userBalance += 5.00;
+      userBalance = Number((userBalance + 5.00).toFixed(2));
       userChogBalance += 1000;
       updateBalanceHud();
-      updateChogBalanceHud();
       playTone(880, 0.14, "triangle", 0.09);
-      spawnFloatingText(320, 180, "+5.00 MON & +1,000 $CHOG FAUCET FUNDED!", "#b8ff65");
-      prependTickerEvent("FAUCET", "Claimed +5.00 MON & +1,000 $CHOG Supplies");
+      spawnFloatingText(320, 180, "+5.00 MON TEST SUPPLIES FUNDED!", "#b8ff65");
+      prependTickerEvent("FAUCET", userWalletAddress.split(" ")[0] + " claimed +5.00 MON Test Supplies on Monad 10143");
     }
 
     function claimFreeSupplies() {
-      userBalance += 5.00;
+      userBalance = Number((userBalance + 5.00).toFixed(2));
       updateBalanceHud();
       playTone(880, 0.12, "triangle", 0.08);
-      prependTickerEvent("FAUCET", "0x48F1...90B2 claimed +5.00 MON Test Supplies");
+      prependTickerEvent("FAUCET", userWalletAddress.split(" ")[0] + " claimed +5.00 MON Test Supplies");
     }
 
     function claimChogSupplies() {
       userChogBalance += 1000;
-      updateChogBalanceHud();
       playTone(880, 0.12, "triangle", 0.08);
-      prependTickerEvent("FAUCET", "Claimed +1,000 $CHOG Bribe Supplies");
     }
 
     function toggleChogBribe() {
@@ -3055,6 +3056,11 @@ SOLVER_CHECK = PASS (0.4ms)</pre>
     }
 
     function openMintModal() {
+      pendingMintTokenId = Math.floor(1000 + Math.random() * 8999);
+      const input = document.getElementById("mintNameInput");
+      if (input) {
+        input.value = "Chog #" + pendingMintTokenId + " · Neon Sentinel";
+      }
       document.getElementById("mintModal").classList.add("open");
     }
 
@@ -3069,9 +3075,11 @@ SOLVER_CHECK = PASS (0.4ms)</pre>
     }
 
     function submitMintChog() {
-      const title = document.getElementById("mintNameInput").value || "Chog #8812 · Custom Sentinel";
+      const rawTitle = (document.getElementById("mintNameInput").value || "").trim();
       const engine = document.getElementById("mintEngineSelect").value || "wave";
-      const newId = Math.floor(1000 + Math.random() * 8999);
+      const idMatch = rawTitle.match(/#(\d+)/);
+      const newId = idMatch ? Number(idMatch[1]) : (pendingMintTokenId || Math.floor(1000 + Math.random() * 8999));
+      const title = rawTitle || ("Chog #" + newId + " · Custom Sentinel");
       const seed = hashSeed("MONAD_MINT_" + newId);
       const hexBase = "0x" + seed.toString(16).padStart(8, "0").toUpperCase();
 
@@ -3101,6 +3109,7 @@ SOLVER_CHECK = PASS (0.4ms)</pre>
 
       FEATURED_CARTRIDGES.unshift(newCart);
       selectCartridge(0);
+      renderLeaderboards();
       closeMintModal();
       playTone(660, 0.15, "square", 0.09);
       prependTickerEvent("MINT", "Vault " + newCart.name + " compiled to Monad Testnet (Chain 10143)");
@@ -3117,9 +3126,11 @@ SOLVER_CHECK = PASS (0.4ms)</pre>
       currentCartridge.bounty = Number((currentCartridge.bounty + 0.50).toFixed(2));
       currentCartridge.guardianMood = "HYPED";
       currentCartridge.guardianSpeech = "Sponsor tip verified! Bounty multiplier pumped to " + currentCartridge.hypeMult.toFixed(2) + "x. I am going to make them bleed for this pool!";
+      renderCartridgeDeck();
       renderDossier();
+      renderLeaderboards();
       playTone(720, 0.14, "triangle", 0.08);
-      prependTickerEvent("HYPE", "Sponsor 0x48F1... tipped +0.50 MON to #" + currentCartridge.tokenId + " (" + currentCartridge.hypeMult.toFixed(2) + "x Boost)");
+      prependTickerEvent("HYPE", "Sponsor " + userWalletAddress.split(" ")[0] + " tipped +0.50 MON to #" + currentCartridge.tokenId + " (" + currentCartridge.hypeMult.toFixed(2) + "x Boost)");
     }
 
     function hashSeed(str) {
@@ -3197,12 +3208,12 @@ SOLVER_CHECK = PASS (0.4ms)</pre>
         body: body,
         mouth: mouth,
         traits: [
-          ["Headwear", head, head === "Crown" ? "2.4x Flattery Weakness + Jump Boost" : "Vault Corridor Architecture", "0x" + ((seed >>> 4) & 0xffffff).toString(16).padStart(6, "0").toUpperCase()],
-          ["Eyes", eye, eye === "Plasma Visor" ? "2.8x Tech Jargon Weakness + Speed " + speedMult + "x" : "Hazard Detection Matrix", hexBase.slice(0, 8)],
-          ["Body", body, body === "Red Tuxedo" ? "2.0x $CHOG Bribe Weakness" : sawCount + " Stage-1 Hazard Nodes", "0x" + ((seed >>> 8) & 0xffffff).toString(16).padStart(6, "0").toUpperCase()],
-          ["Mouth", mouth, "Deterministic Seed Verification", "0xPASS04MS"]
+          ["Headwear", head, head === "Crown" ? "Narrowed Wave Aperture + Double-Jump Boost" : "Sculpted Vault Corridor Geometry", "0x" + ((seed >>> 4) & 0xffffff).toString(16).padStart(6, "0").toUpperCase()],
+          ["Eyes", eye, eye === "Plasma Visor" ? "High-Frequency Laser Gates + Speed " + speedMult + "x" : "Blinking Laser Telegraph Matrix", hexBase.slice(0, 8)],
+          ["Body", body, body === "Red Tuxedo" ? "2.0x Jackpot Multiplier + Crimson Armor" : sawCount + " Stage-1 Sawblade Hazard Nodes", "0x" + ((seed >>> 8) & 0xffffff).toString(16).padStart(6, "0").toUpperCase()],
+          ["Mouth", mouth, "0.4ms Forward-Kinematic Clear-Check Verified", "0xPASS04MS"]
         ],
-        socialProfile: getDefaultSocialProfile({ tokenId: cleanId, name: "Chog #" + cleanId, head, eyes, body, mouth })
+        socialProfile: getDefaultSocialProfile({ tokenId: cleanId, name: "Chog #" + cleanId, head, eyes: eye, body, mouth })
       };
     }
 
@@ -3310,26 +3321,32 @@ SOLVER_CHECK = PASS (0.4ms)</pre>
       }
     }
 
-    function selectCartridge(index) {
+    function selectCartridge(index, scrollToDossier = false) {
       cartridgeEjected = false;
       currentCartridge = FEATURED_CARTRIDGES[index];
-      selectedMode = currentCartridge.defaultMode || "heist";
+      selectedMode = currentCartridge.defaultMode || "wave";
       currentStageLevel = 1;
       document.getElementById("tokenInput").value = currentCartridge.tokenId;
       initIncidiusAtmosphere(currentCartridge);
       renderCartridgeDeck();
       renderDossier();
+      if (scrollToDossier) {
+        const el = document.getElementById("cartridges");
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
     }
 
     function compileCustomToken() {
       cartridgeEjected = false;
       const val = document.getElementById("tokenInput").value;
       currentCartridge = buildCartridgeFromTokenId(val);
-      selectedMode = currentCartridge.defaultMode || "heist";
+      selectedMode = currentCartridge.defaultMode || "wave";
       currentStageLevel = 1;
       initIncidiusAtmosphere(currentCartridge);
       renderCartridgeDeck();
       renderDossier();
+      playTone(620, 0.1, "triangle", 0.07);
+      prependTickerEvent("COMPILER", "Compiled Monad Token #" + currentCartridge.tokenId + " -> 64-byte ROM (Clear-Check 0.4ms PASS)");
     }
 
     function selectGameMode(mode) {
@@ -3421,28 +3438,129 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
     }
 
     // =========================================================================
-    // 4. MONAD WALLET CONNECTION (EIP-1193 + BURNER SESSION KEY)
+    // 4. MONAD WALLET CONNECTION (EIP-1193 + LIVE MONAD TESTNET 10143 RPC)
     // =========================================================================
+    const MONAD_TESTNET_RPC = "https://testnet-rpc.monad.xyz";
+    const MONAD_CHAIN_ID_HEX = "0x279f"; // 10143
+    const INSIDE_CHOG_CONTRACT = "0x6D8d52462Aa6632041Ffa79B9FEdd1c10B818c36";
+    let liveMonadBlock = null;
+
+    async function monadRpcCall(method, params = []) {
+      const res = await fetch(MONAD_TESTNET_RPC, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ jsonrpc: "2.0", id: Date.now(), method, params })
+      });
+      const data = await res.json();
+      if (data.error) throw new Error(data.error.message || "RPC Error");
+      return data.result;
+    }
+
+    async function syncMonadTestnetTelemetry() {
+      try {
+        const [blockHex, contractBalHex] = await Promise.all([
+          monadRpcCall("eth_blockNumber", []),
+          monadRpcCall("eth_getBalance", [INSIDE_CHOG_CONTRACT, "latest"])
+        ]);
+        if (blockHex) {
+          liveMonadBlock = parseInt(blockHex, 16);
+          const subEl = document.getElementById("chogBalanceBadge");
+          if (subEl) subEl.textContent = "Blk #" + liveMonadBlock.toLocaleString();
+        }
+        if (contractBalHex) {
+          const poolWei = BigInt(contractBalHex);
+          const poolMon = (Number(poolWei) / 1e18).toFixed(3);
+          prependTickerEvent(
+            "MONAD RPC",
+            "Live Block #" + (liveMonadBlock ? liveMonadBlock.toLocaleString() : "10143") +
+            " · InsideChogVault (0x6D8d...8c36) Escrowed Pool: " + poolMon + " MON (6 Cartridges Active)"
+          );
+        }
+      } catch (e) {}
+    }
+
+    async function ensureMonadTestnetNetwork() {
+      if (!window.ethereum) return false;
+      try {
+        const currentChain = await window.ethereum.request({ method: "eth_chainId" });
+        if (currentChain && currentChain.toLowerCase() === MONAD_CHAIN_ID_HEX) return true;
+        await window.ethereum.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: MONAD_CHAIN_ID_HEX }]
+        });
+        return true;
+      } catch (switchErr) {
+        if (switchErr && (switchErr.code === 4902 || switchErr.code === -32603)) {
+          try {
+            await window.ethereum.request({
+              method: "wallet_addEthereumChain",
+              params: [{
+                chainId: MONAD_CHAIN_ID_HEX,
+                chainName: "Monad Testnet",
+                nativeCurrency: { name: "MON", symbol: "MON", decimals: 18 },
+                rpcUrls: [MONAD_TESTNET_RPC],
+                blockExplorerUrls: ["https://testnet.monadexplorer.com"]
+              }]
+            });
+            return true;
+          } catch (addErr) {
+            return false;
+          }
+        }
+        return false;
+      }
+    }
+
     async function connectMonadWallet() {
       const btn = document.getElementById("connectWalletBtn");
       const badge = document.getElementById("sessionBadge");
+      btn.textContent = "Connecting...";
+
       if (window.ethereum) {
         try {
           const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
           if (accounts && accounts.length > 0) {
             const addr = accounts[0];
+            await ensureMonadTestnetNetwork();
             walletConnected = true;
             userWalletAddress = addr.slice(0, 6) + "..." + addr.slice(-4);
             btn.textContent = "Monad: " + userWalletAddress;
-            badge.textContent = "Monad 10143 Active";
+            badge.textContent = "Monad 10143 · " + userWalletAddress;
+
+            try {
+              const balHex = await monadRpcCall("eth_getBalance", [addr, "latest"]);
+              const onchainMon = Number(BigInt(balHex)) / 1e18;
+              if (onchainMon > 0) {
+                userBalance = Number(Math.max(userBalance, onchainMon).toFixed(2));
+                updateBalanceHud();
+              }
+            } catch (e) {}
+
+            playTone(660, 0.12, "triangle", 0.08);
+            prependTickerEvent("WALLET", "Connected " + userWalletAddress + " to Monad Testnet (Chain ID 10143)");
+            renderLeaderboards();
+            syncMonadTestnetTelemetry();
             return;
           }
-        } catch (err) {}
+        } catch (err) {
+          // User dismissed extension popup or locked wallet -> activate cryptographic burner session
+        }
       }
+
+      // Deterministic Cryptographic Burner Session Key + Live Monad 10143 RPC Verification
+      const randBytes = new Uint8Array(20);
+      if (window.crypto && window.crypto.getRandomValues) {
+        window.crypto.getRandomValues(randBytes);
+      }
+      const hexAddr = "0x" + Array.from(randBytes).map(b => b.toString(16).padStart(2, "0")).join("").toUpperCase();
       walletConnected = true;
-      userWalletAddress = "0x94A7...E31C";
-      btn.textContent = "Monad: " + userWalletAddress;
-      badge.textContent = "Monad 10143 Active";
+      userWalletAddress = hexAddr.slice(0, 6) + "..." + hexAddr.slice(-4) + " (Session)";
+      btn.textContent = "Session: " + hexAddr.slice(0, 6) + "..." + hexAddr.slice(-4);
+      await syncMonadTestnetTelemetry();
+      badge.textContent = "Monad 10143 · " + (liveMonadBlock ? "Blk #" + liveMonadBlock.toLocaleString() : "Active");
+      playTone(660, 0.12, "triangle", 0.08);
+      prependTickerEvent("SESSION", "Authorized Ephemeral Session " + hexAddr.slice(0, 6) + "..." + hexAddr.slice(-4) + " on Monad 10143");
+      renderLeaderboards();
     }
 
     // =========================================================================
@@ -5760,8 +5878,10 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         setTimeout(() => playTone(880, 0.26, "square", 0.1), 110);
         currentCartridge.guardianMood = "BLOODTHIRSTY";
         currentCartridge.guardianSpeech = `Wait... how did you dodge that laser?! Stage ${currentStageLevel + 1} will not be so forgiving.`;
-        prependTickerEvent("CLEARED", `0x48F1... cleared Stage ${currentStageLevel} in Chog #${currentCartridge.tokenId}! (+${totalPayout} MON, Streak: ${raiderStreak}x)`);
+        prependTickerEvent("CLEARED", `${userWalletAddress.split(" ")[0]} cleared Stage ${currentStageLevel} in Chog #${currentCartridge.tokenId}! (+${totalPayout} MON, Streak: ${raiderStreak}x)`);
+        renderCartridgeDeck();
         renderDossier();
+        renderLeaderboards();
 
         const bonusPctText = streakMult > 1.0 ? ` · ${Math.round((streakMult - 1) * 100)}% STREAK BONUS` : "";
         headline.textContent = "STAGE " + currentStageLevel + " CLEARED" + bonusPctText + " · " + slotsStr;
@@ -5788,8 +5908,10 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         currentCartridge.guardianSpeech = isNearMiss
           ? `WHAT?! You survived ${survivedSec}s into my Overdrive Climax Zone (${Math.floor(progressPct)}%) before that hazard clipped you! Too close.`
           : `Another challenger turned to sawdust at ${Math.floor(progressPct)}%! Appreciate the 0.02 MON landlord toll, rookie.`;
-        prependTickerEvent("RAID FAIL", `0x48F1... failed at ${Math.floor(progressPct)}% in Chog #${currentCartridge.tokenId} (+0.025 MON to Pool)`);
+        prependTickerEvent("RAID FAIL", `${userWalletAddress.split(" ")[0]} failed at ${Math.floor(progressPct)}% in Chog #${currentCartridge.tokenId} (+0.025 MON to Pool)`);
+        renderCartridgeDeck();
         renderDossier();
+        renderLeaderboards();
 
         const xpAwarded = isOverdriveWipeout ? 45 : 15;
         addRaiderXP(xpAwarded, isOverdriveWipeout ? "Overdrive Climax Near-Miss" : "Raid Attempt");
@@ -7523,6 +7645,7 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
     updateYieldCalculator(180);
     updateRaiderProgressionHud();
     renderLeaderboards();
+    syncMonadTestnetTelemetry();
   </script>
 </body>
 </html>

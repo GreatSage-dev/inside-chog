@@ -3227,6 +3227,7 @@ SOLVER_CHECK = PASS (0.4ms)</pre>
       selectedMode = currentCartridge.defaultMode || "heist";
       currentStageLevel = 1;
       document.getElementById("tokenInput").value = currentCartridge.tokenId;
+      initIncidiusAtmosphere(currentCartridge);
       renderCartridgeDeck();
       renderDossier();
     }
@@ -3237,6 +3238,7 @@ SOLVER_CHECK = PASS (0.4ms)</pre>
       currentCartridge = buildCartridgeFromTokenId(val);
       selectedMode = currentCartridge.defaultMode || "heist";
       currentStageLevel = 1;
+      initIncidiusAtmosphere(currentCartridge);
       renderCartridgeDeck();
       renderDossier();
     }
@@ -3756,6 +3758,559 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
     // Shared 3-Phase Intensity & Overdrive Climax State
     let runStartTime = 0;
     let lastPhaseIdx = 1;
+
+    // =========================================================================
+    // INCIDIUS GEOMETRY DASH 2.1/2.2 VISUAL & MECHANIC ENGINE
+    // Inspired by Incidius Masterclasses (Layouts, Backgrounds, Block Design,
+    // Triggers, Bossfights, Starpunk & Static TV FX)
+    // =========================================================================
+
+    let starpunkStars = [];
+    let cyberSkyline = [];
+    let skylineTotalWidth = 2400;
+    let tvStaticFrames = 0;
+    let vaultGuardian = {
+      active: false,
+      y: 270,
+      targetY: 270,
+      laserTimer: 0,
+      isLocked: false,
+      isFiring: false,
+      shieldHp: 3,
+      maxShieldHp: 3,
+      defeated: false,
+      defeatParticleTriggered: false
+    };
+
+    function initIncidiusAtmosphere(cart) {
+      const seed = hashSeed("INCIDIUS_STARS_" + (cart ? cart.tokenId : 402));
+      starpunkStars = [];
+      for (let i = 0; i < 80; i++) {
+        const sx = Math.abs((seed * (i * 37 + 13)) % 2400);
+        const sy = Math.abs((seed * (i * 19 + 47)) % 500) + 10;
+        const size = 1.2 + ((i % 4) * 0.7);
+        const phase = i * 0.35;
+        const colMod = i % 6;
+        const color =
+          colMod === 0 ? "#ffd166" :
+          colMod === 1 ? "#5ce1e6" :
+          colMod === 2 ? "#ff99d3" :
+          colMod === 3 ? "#b8ff65" : "#ffffff";
+        starpunkStars.push({ x: sx, y: sy, size, phase, color });
+      }
+
+      cyberSkyline = [];
+      let curX = 0;
+      for (let b = 0; b < 28; b++) {
+        const bw = 55 + Math.abs((seed + b * 41) % 65);
+        const bh = 100 + Math.abs((seed + b * 67) % 210);
+        const hasAntenna = (b % 3 === 0);
+        cyberSkyline.push({ x: curX, w: bw, h: bh, hasAntenna, winSeed: Math.abs(seed + b * 31) });
+        curX += bw + 12;
+      }
+      skylineTotalWidth = Math.max(2200, curX);
+    }
+
+    function getModeThemeColor() {
+      if (selectedMode === "wave") {
+        return wavePlayer.form === "cube" ? "#ff99d3" : (wavePlayer.form === "jetpack" ? "#5ce1e6" : "#ffd166");
+      }
+      if (selectedMode === "heist") return "#ff99d3";
+      return "#b8ff65";
+    }
+
+    // Incidius Multi-Layer Parallax Background with SamMaxx Gradient & Starpunk Stars
+    function drawIncidiusParallaxBackground(scrollX, scrollY, world, themeColor) {
+      if (starpunkStars.length === 0) {
+        initIncidiusAtmosphere(currentCartridge);
+      }
+
+      const isOverdrive = progressPct >= 70 && progressPct < 96;
+
+      // 1. SamMaxx Dynamic Sky Vertical Gradient
+      const skyGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      const topTint = isOverdrive ? "#3d0012" : (world.bg || "#09111e");
+      const midTint = isOverdrive
+        ? "rgba(255, 77, 109, " + (0.2 + beatPulse * 0.15).toFixed(2) + ")"
+        : "rgba(255, 153, 211, " + (0.12 + beatPulse * 0.08).toFixed(2) + ")";
+      skyGrad.addColorStop(0, topTint);
+      skyGrad.addColorStop(0.55, midTint);
+      skyGrad.addColorStop(1, "#120005");
+      ctx.fillStyle = skyGrad;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // 2. Far Layer: Starpunk Twinkling Stars (Parallax factor 0.07x)
+      ctx.save();
+      for (let i = 0; i < starpunkStars.length; i++) {
+        const s = starpunkStars[i];
+        const screenX = ((s.x - scrollX * 0.07) % 2400 + 2400) % 2400;
+        if (screenX > canvas.width) continue;
+        const screenY = (s.y - scrollY * 0.07) % canvas.height;
+        const twinkle = 0.35 + Math.abs(Math.sin(frameTick * 0.045 + s.phase)) * 0.55 + beatPulse * 0.15;
+        ctx.fillStyle = s.color;
+        ctx.globalAlpha = Math.min(1.0, twinkle);
+        ctx.beginPath();
+        ctx.arc(screenX, screenY, s.size * (1 + beatPulse * 0.4), 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+
+      // 3. Mid Layer: Parallax Monad Cyber Citadel Skyline (Parallax factor 0.22x)
+      ctx.save();
+      const skyOffsetY = Math.max(0, -scrollY * 0.15);
+      for (let b = 0; b < cyberSkyline.length; b++) {
+        const bld = cyberSkyline[b];
+        const bx = ((bld.x - scrollX * 0.22) % skylineTotalWidth + skylineTotalWidth) % skylineTotalWidth - 100;
+        if (bx < -bld.w || bx > canvas.width + 50) continue;
+        const by = canvas.height - bld.h + skyOffsetY;
+
+        // Silhouette tower body
+        ctx.fillStyle = isOverdrive ? "rgba(45, 2, 14, 0.72)" : "rgba(22, 4, 16, 0.75)";
+        ctx.fillRect(bx, by, bld.w, bld.h);
+
+        // Tower rim line
+        ctx.strokeStyle = isOverdrive ? "rgba(255, 77, 109, 0.25)" : "rgba(255, 153, 211, 0.18)";
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(bx, by, bld.w, bld.h);
+
+        // Blinking rooftop beacon
+        if (bld.hasAntenna) {
+          ctx.strokeStyle = "rgba(255, 240, 246, 0.4)";
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(bx + bld.w / 2, by);
+          ctx.lineTo(bx + bld.w / 2, by - 22);
+          ctx.stroke();
+
+          const beaconBlink = Math.sin(frameTick * 0.1 + b) > 0.3;
+          if (beaconBlink) {
+            ctx.fillStyle = isOverdrive ? "#ff4d6d" : "#ffd166";
+            ctx.beginPath();
+            ctx.arc(bx + bld.w / 2, by - 22, 3, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+
+        // Cyber window dots that illuminate on beat
+        const winRows = Math.floor(bld.h / 18);
+        const winCols = Math.floor(bld.w / 14);
+        for (let r = 1; r < winRows - 1; r += 2) {
+          for (let c = 1; c < winCols - 1; c++) {
+            const isLit = ((bld.winSeed + r * 7 + c * 13) % 4) === 0;
+            if (isLit) {
+              const wx = bx + c * 14;
+              const wy = by + r * 18;
+              ctx.fillStyle = isOverdrive ? "rgba(255, 77, 109, 0.45)" : "rgba(184, 255, 101, 0.35)";
+              ctx.fillRect(wx, wy, 6, 8);
+            }
+          }
+        }
+      }
+      ctx.restore();
+
+      // 4. Reactive EDM World Grid (Parallax factor 0.45x)
+      ctx.save();
+      ctx.strokeStyle = isOverdrive
+        ? "rgba(255, 77, 109, " + (0.10 + beatPulse * 0.12).toFixed(2) + ")"
+        : (world.gridColor || "rgba(255, 153, 211, 0.08)");
+      ctx.lineWidth = 1 + beatPulse * 1.6;
+      const gridSpacing = 48;
+      const gridOffsetX = (-scrollX * 0.45 % gridSpacing + gridSpacing) % gridSpacing;
+      const gridOffsetY = (-scrollY * 0.45 % gridSpacing + gridSpacing) % gridSpacing;
+      for (let x = gridOffsetX; x < canvas.width; x += gridSpacing) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+      }
+      for (let y = gridOffsetY; y < canvas.height; y += gridSpacing) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      // 5. Atmospheric Mist / Fog Hugging Top & Bottom Boundaries
+      const topFog = ctx.createLinearGradient(0, 0, 0, 75);
+      topFog.addColorStop(0, "rgba(20, 0, 6, 0.75)");
+      topFog.addColorStop(1, "rgba(20, 0, 6, 0)");
+      ctx.fillStyle = topFog;
+      ctx.fillRect(0, 0, canvas.width, 75);
+
+      const botFog = ctx.createLinearGradient(0, canvas.height - 75, 0, canvas.height);
+      botFog.addColorStop(0, "rgba(20, 0, 6, 0)");
+      botFog.addColorStop(1, "rgba(20, 0, 6, 0.75)");
+      ctx.fillStyle = botFog;
+      ctx.fillRect(0, canvas.height - 75, canvas.width, 75);
+    }
+
+    // Incidius Block Anatomy: Outer Bevel + Inner Tech Grid + Corner Rivets + Top Neon Edge
+    function drawIncidiusBlock(ctx, x, y, w, h, label, mainColor, accentColor, isCrumble, crumbleTimer) {
+      ctx.save();
+      const shakeX = isCrumble && crumbleTimer > 5 ? (Math.random() - 0.5) * 6 : 0;
+      const bx = x + shakeX;
+
+      // Dark carbon interior
+      ctx.fillStyle = isCrumble ? "#540d1c" : (mainColor || "#3d0012");
+      ctx.fillRect(bx, y, w, h);
+
+      // Inner diagonal tech hash pattern (Incidius texture rule)
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(bx + 3, y + 3, w - 6, h - 6);
+      ctx.clip();
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.08)";
+      ctx.lineWidth = 1.5;
+      for (let tx = -h; tx < w + h; tx += 12) {
+        ctx.beginPath();
+        ctx.moveTo(bx + tx, y);
+        ctx.lineTo(bx + tx + h, y + h);
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      // Outer chamfered border with emissive glow
+      ctx.strokeStyle = accentColor || "#ff99d3";
+      ctx.lineWidth = 2.5;
+      ctx.strokeRect(bx, y, w, h);
+
+      // Top energy rail edge (illuminates on beat!)
+      ctx.fillStyle = accentColor || "#ff99d3";
+      ctx.fillRect(bx, y, w, 4);
+
+      // 4 Corner Anchor Rivets
+      ctx.fillStyle = "#fff0f6";
+      ctx.fillRect(bx + 3, y + 6, 3, 3);
+      ctx.fillRect(bx + w - 6, y + 6, 3, 3);
+      if (h > 14) {
+        ctx.fillRect(bx + 3, y + h - 5, 3, 3);
+        ctx.fillRect(bx + w - 6, y + h - 5, 3, 3);
+      }
+
+      // Crumble Fissure Lines
+      if (isCrumble && crumbleTimer > 0) {
+        ctx.strokeStyle = crumbleTimer > 18 ? "#ff4d6d" : "#ffd166";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(bx + w * 0.25, y + 4);
+        ctx.lineTo(bx + w * 0.35, y + h * 0.5);
+        ctx.lineTo(bx + w * 0.55, y + h * 0.7);
+        ctx.lineTo(bx + w * 0.7, y + h - 2);
+        ctx.stroke();
+      }
+
+      // Block Label
+      if (label) {
+        ctx.fillStyle = "rgba(255, 240, 246, 0.82)";
+        ctx.font = "700 10px 'Libre Franklin', sans-serif";
+        ctx.fillText(label, bx + 10, y + Math.min(14, h - 4));
+      }
+      ctx.restore();
+    }
+
+    // Incidius Sawblade: 12-Tooth Blade + Counter-Rotating Inner Gear + Warning Core
+    function drawIncidiusSawblade(ctx, sx, sy, r, angle, themeColor) {
+      ctx.save();
+      ctx.translate(sx, sy);
+
+      // Emissive Corona Glow
+      const sawGlow = ctx.createRadialGradient(0, 0, r * 0.5, 0, 0, r * 1.35);
+      sawGlow.addColorStop(0, "rgba(255, 77, 109, 0.25)");
+      sawGlow.addColorStop(1, "rgba(255, 77, 109, 0)");
+      ctx.fillStyle = sawGlow;
+      ctx.beginPath();
+      ctx.arc(0, 0, r * 1.35, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Outer 12-Tooth Saw Blade
+      ctx.save();
+      ctx.rotate(angle);
+      ctx.fillStyle = themeColor || "#ff4d6d";
+      ctx.beginPath();
+      const teeth = 12;
+      for (let t = 0; t < teeth * 2; t++) {
+        const rad = t % 2 === 0 ? r : r * 0.72;
+        const a = (t * Math.PI) / teeth;
+        if (t === 0) ctx.moveTo(Math.cos(a) * rad, Math.sin(a) * rad);
+        else ctx.lineTo(Math.cos(a) * rad, Math.sin(a) * rad);
+      }
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+
+      // Counter-Rotating Inner 8-Tooth Gear
+      ctx.save();
+      ctx.rotate(-angle * 1.4);
+      ctx.fillStyle = "#3d0012";
+      ctx.beginPath();
+      const innerTeeth = 8;
+      for (let t = 0; t < innerTeeth * 2; t++) {
+        const rad = t % 2 === 0 ? r * 0.58 : r * 0.42;
+        const a = (t * Math.PI) / innerTeeth;
+        if (t === 0) ctx.moveTo(Math.cos(a) * rad, Math.sin(a) * rad);
+        else ctx.lineTo(Math.cos(a) * rad, Math.sin(a) * rad);
+      }
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+
+      // Central Danger Skull / Bolt Core
+      ctx.fillStyle = "#ffd166";
+      ctx.beginPath();
+      ctx.arc(0, 0, r * 0.22, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = "#3d0012";
+      ctx.fillRect(-2, -r * 0.16, 4, r * 0.32);
+      ctx.fillRect(-r * 0.16, -2, r * 0.32, 4);
+
+      ctx.restore();
+    }
+
+    // Incidius Swirling Portal Rings & Energy Gate
+    function drawIncidiusPortal(ctx, sx, yTop, yBot, label, color, targetForm) {
+      const gateH = yBot - yTop;
+      const midY = (yTop + yBot) / 2;
+      ctx.save();
+
+      // Swirling Energy Halo
+      const rotAngle = frameTick * 0.08;
+      for (let i = 0; i < 3; i++) {
+        const ringScale = 0.6 + i * 0.2;
+        ctx.save();
+        ctx.translate(sx, midY);
+        ctx.rotate(rotAngle * (i % 2 === 0 ? 1 : -1) + i);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2.5 - i * 0.5;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, 18 * ringScale, (gateH * 0.42) * ringScale, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // Outer Gate Bezel Pillars
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 4;
+      ctx.strokeRect(sx - 18, yTop, 36, gateH);
+
+      // Inner pulsating Diamond Core
+      const pulse = Math.abs(Math.sin(frameTick * 0.14)) * 6;
+      ctx.fillStyle = "#b8ff65";
+      ctx.beginPath();
+      ctx.moveTo(sx, midY - 14 - pulse);
+      ctx.lineTo(sx + 10 + pulse * 0.5, midY);
+      ctx.lineTo(sx, midY + 14 + pulse);
+      ctx.lineTo(sx - 10 - pulse * 0.5, midY);
+      ctx.closePath();
+      ctx.fill();
+
+      // Label Banner
+      ctx.fillStyle = color;
+      ctx.font = "700 11px 'Libre Franklin', sans-serif";
+      ctx.fillText(label, sx - 64, yTop + 22);
+
+      ctx.restore();
+    }
+
+    // Incidius Vault Guardian Boss Encounter (Overdrive Climax 70% - 95%)
+    function updateAndDrawVaultGuardian(playerX, playerY, progressPct, themeColor) {
+      const isBossZone = progressPct >= 70 && progressPct < 96 && !vaultGuardian.defeated;
+      if (!isBossZone) {
+        if (progressPct >= 96 && !vaultGuardian.defeated && vaultGuardian.active) {
+          // Boss Detonation Victory!
+          vaultGuardian.defeated = true;
+          vaultGuardian.active = false;
+          spawnExplosion(canvas.width - 120, vaultGuardian.y, "#ffd166");
+          spawnExplosion(canvas.width - 120, vaultGuardian.y - 30, "#b8ff65");
+          spawnShockwave(canvas.width - 120, vaultGuardian.y, "#ffd166");
+          spawnFloatingText(canvas.width - 180, vaultGuardian.y - 45, "GUARDIAN DESTROYED! +250 XP", "#ffd166");
+          playTone(880, 0.25, "sawtooth", 0.14);
+          raiderXP += 250;
+          updateRaiderProgressionHud();
+        }
+        return;
+      }
+
+      vaultGuardian.active = true;
+      const guardianX = canvas.width - 120;
+
+      // Smooth tracking to player's altitude
+      vaultGuardian.targetY = playerY;
+      vaultGuardian.y += (vaultGuardian.targetY - vaultGuardian.y) * 0.042;
+      const gy = vaultGuardian.y;
+
+      // Telegraphing Laser Sweep Loop
+      vaultGuardian.laserTimer = (vaultGuardian.laserTimer + 1) % 110;
+      const timer = vaultGuardian.laserTimer;
+
+      ctx.save();
+
+      // PHASE A: Targeting Lock (Frames 45 to 75)
+      if (timer >= 45 && timer < 75) {
+        vaultGuardian.isLocked = true;
+        vaultGuardian.isFiring = false;
+
+        const lockPct = (timer - 45) / 30;
+        ctx.strokeStyle = "rgba(255, 77, 109, " + (0.4 + lockPct * 0.5).toFixed(2) + ")";
+        ctx.lineWidth = 2 + lockPct * 2;
+        ctx.setLineDash([8, 8]);
+        ctx.beginPath();
+        ctx.moveTo(0, gy);
+        ctx.lineTo(guardianX, gy);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.fillStyle = frameTick % 10 < 5 ? "#ff4d6d" : "#ffd166";
+        ctx.font = "700 11px 'Libre Franklin', sans-serif";
+        ctx.fillText("! LASER LOCK " + Math.floor(lockPct * 100) + "% !", guardianX - 110, gy - 20);
+      }
+      // PHASE B: Full Plasma Beam Fire (Frames 75 to 95)
+      else if (timer >= 75 && timer < 95) {
+        vaultGuardian.isLocked = false;
+        vaultGuardian.isFiring = true;
+
+        // Blazing Plasma Core + Outer Dissipation Envelope
+        ctx.strokeStyle = "rgba(255, 77, 109, 0.35)";
+        ctx.lineWidth = 32;
+        ctx.beginPath();
+        ctx.moveTo(0, gy);
+        ctx.lineTo(guardianX, gy);
+        ctx.stroke();
+
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 8;
+        ctx.beginPath();
+        ctx.moveTo(0, gy);
+        ctx.lineTo(guardianX, gy);
+        ctx.stroke();
+
+        // Check Lethal Beam Collision
+        if (gameActive && Math.abs(playerY - gy) < 18) {
+          spawnExplosion(playerX, playerY, "#ff4d6d");
+          triggerEndState(false, "VAPORIZED BY GUARDIAN BEAM");
+          ctx.restore();
+          return;
+        }
+
+        if (timer === 76) {
+          playTone(220, 0.22, "sawtooth", 0.12);
+          shakeFrames = 8;
+        }
+      } else {
+        vaultGuardian.isLocked = false;
+        vaultGuardian.isFiring = false;
+      }
+
+      // Draw Robotic Vault Guardian Chassis
+      ctx.translate(guardianX, gy);
+      const bob = Math.sin(frameTick * 0.08) * 6;
+
+      // Twin Plasma Wing Blasters
+      ctx.fillStyle = "#610922";
+      ctx.strokeStyle = "#ff4d6d";
+      ctx.lineWidth = 2.5;
+
+      // Top Wing
+      ctx.beginPath();
+      ctx.moveTo(-16, -26 + bob);
+      ctx.lineTo(24, -40 + bob);
+      ctx.lineTo(12, -18 + bob);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // Bottom Wing
+      ctx.beginPath();
+      ctx.moveTo(-16, 26 + bob);
+      ctx.lineTo(24, 40 + bob);
+      ctx.lineTo(12, 18 + bob);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // Main Armored Hull
+      ctx.fillStyle = "#3d0012";
+      ctx.strokeStyle = "#ffd166";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(-32, bob);
+      ctx.lineTo(12, -24 + bob);
+      ctx.lineTo(24, bob);
+      ctx.lineTo(12, 24 + bob);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // Cyber Chog Visor Eye (animated horizontal scanner)
+      const eyeScan = Math.sin(frameTick * 0.14) * 8;
+      ctx.fillStyle = vaultGuardian.isLocked || vaultGuardian.isFiring ? "#ff4d6d" : "#5ce1e6";
+      ctx.fillRect(-16 + eyeScan, -5 + bob, 12, 10);
+
+      ctx.restore();
+
+      // Holographic Boss HUD at Top-Right
+      ctx.save();
+      const hudX = canvas.width - 240;
+      const hudY = 46;
+      ctx.fillStyle = "rgba(30, 0, 9, 0.88)";
+      ctx.fillRect(hudX, hudY, 216, 28);
+      ctx.strokeStyle = "#ff4d6d";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(hudX, hudY, 216, 28);
+
+      ctx.fillStyle = "#ff4d6d";
+      ctx.font = "700 11px 'Libre Franklin', sans-serif";
+      ctx.fillText("GUARDIAN #402", hudX + 8, hudY + 18);
+
+      // 3 Shield Segments
+      const currentShield = Math.max(0, 3 - coinsCollected);
+      for (let s = 0; s < 3; s++) {
+        ctx.fillStyle = s < currentShield ? "#ffd166" : "rgba(255, 209, 102, 0.2)";
+        ctx.fillRect(hudX + 120 + s * 28, hudY + 7, 22, 14);
+      }
+      ctx.restore();
+    }
+
+    // Incidius Static TV & Arcade Vignette Effect
+    function drawStaticTvOverlay() {
+      // 1. Subtle CRT Scanlines
+      ctx.save();
+      ctx.fillStyle = "rgba(0, 0, 0, 0.06)";
+      for (let y = 0; y < canvas.height; y += 3) {
+        ctx.fillRect(0, y, canvas.width, 1.2);
+      }
+
+      // 2. Arcade Bezel Radial Vignette
+      const vig = ctx.createRadialGradient(
+        canvas.width / 2,
+        canvas.height / 2,
+        canvas.width * 0.35,
+        canvas.width / 2,
+        canvas.height / 2,
+        canvas.width * 0.72
+      );
+      vig.addColorStop(0, "rgba(0, 0, 0, 0)");
+      vig.addColorStop(1, "rgba(18, 0, 6, 0.45)");
+      ctx.fillStyle = vig;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // 3. CRT Static Glitch Pulse on Death/Wipeout
+      if (tvStaticFrames > 0) {
+        tvStaticFrames--;
+        const staticImg = ctx.createImageData(canvas.width, canvas.height);
+        const buffer32 = new Uint32Array(staticImg.data.buffer);
+        const len = buffer32.length;
+        for (let i = 0; i < len; i += 4) {
+          if (Math.random() < 0.2) {
+            const gray = (Math.random() * 180) | 0;
+            buffer32[i] = (40 << 24) | (gray << 16) | (gray << 8) | gray;
+          }
+        }
+        ctx.putImageData(staticImg, 0, 0);
+      }
+      ctx.restore();
+    }
 
     function getIntensityPhase(pct) {
       if (pct < 40) {
@@ -4728,6 +5283,22 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       frameTick = 0;
       runStartTime = performance.now();
       lastPhaseIdx = 1;
+      tvStaticFrames = 0;
+      vaultGuardian = {
+        active: false,
+        y: 270,
+        targetY: 270,
+        laserTimer: 0,
+        isLocked: false,
+        isFiring: false,
+        shieldHp: 3,
+        maxShieldHp: 3,
+        defeated: false,
+        defeatParticleTriggered: false
+      };
+      if (starpunkStars.length === 0) {
+        initIncidiusAtmosphere(currentCartridge);
+      }
 
       buildHeistLevel(currentCartridge, currentStageLevel, activeDoubleOrNothing);
       buildWaveLevel(currentCartridge, currentStageLevel, activeDoubleOrNothing);
@@ -4954,6 +5525,7 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         revengeBtn.textContent = "Replay Stage " + currentStageLevel + " from 0%";
         doubleBtn.style.display = activeDoubleOrNothing ? "none" : "inline-flex";
       } else {
+        tvStaticFrames = 5;
         attemptCount++;
         const isOverdriveWipeout = progressPct >= 70;
         const isNearMiss = progressPct >= 70;
@@ -5332,7 +5904,7 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       ctx.save();
       ctx.translate(0, -heistCameraY);
 
-      // Draw Stepping-Stone & Moving/Crumbling Platforms
+      // Draw Stepping-Stone & Moving/Crumbling Platforms with Incidius Anatomy
       for (let i = 0; i < heistPlatforms.length; i++) {
         const p = heistPlatforms[i];
         if (p.y - heistCameraY < -60 || p.y - heistCameraY > canvas.height + 60) continue;
@@ -5346,19 +5918,32 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
           continue;
         }
 
-        const shakeX = p.crumble && p.crumbleTimer > 5 ? (Math.random() - 0.5) * 5 : 0;
-        ctx.fillStyle = p.crumble ? "#6e1423" : "#4d0519";
-        ctx.fillRect(p.x + shakeX, p.y, p.w, p.h);
-        ctx.fillStyle = i === heistPlatforms.length - 1 ? "#b8ff65" : (p.vx ? "#5ce1e6" : (p.crumble ? "#ffd166" : "#ff99d3"));
-        ctx.fillRect(p.x + shakeX, p.y, p.w, 4);
-        ctx.fillStyle = "rgba(255, 240, 246, 0.78)";
-        ctx.font = "700 10px 'Libre Franklin', sans-serif";
-        ctx.fillText(p.label, p.x + shakeX + 8, p.y + 13);
+        const platformColor =
+          i === heistPlatforms.length - 1
+            ? "#b8ff65"
+            : p.vx
+            ? "#5ce1e6"
+            : p.crumble
+            ? "#ffd166"
+            : "#ff99d3";
+        drawIncidiusBlock(ctx, p.x, p.y, p.w, p.h, p.label, p.crumble ? "#540d1c" : "#3d0012", platformColor, p.crumble, p.crumbleTimer);
       }
 
-      // Draw Yellow/Pink Auto-Jump Pads
+      // Draw Yellow/Pink Auto-Jump Pads with Incidius Sightreading Trajectory Arcs
       for (let j = 0; j < heistPads.length; j++) {
         const pad = heistPads[j];
+        const apexY = pad.y - 110;
+        ctx.save();
+        ctx.strokeStyle = "rgba(255, 209, 102, 0.25)";
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([4, 6]);
+        ctx.beginPath();
+        ctx.moveTo(pad.x + pad.w / 2, pad.y);
+        ctx.quadraticCurveTo(pad.x + pad.w / 2, apexY, pad.x + pad.w / 2 + (j % 2 === 0 ? -60 : 60), apexY + 20);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.restore();
+
         ctx.fillStyle = pad.color;
         ctx.beginPath();
         ctx.arc(pad.x + pad.w / 2, pad.y, pad.w / 2, Math.PI, 0);
@@ -5510,6 +6095,7 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       ctx.font = "700 10px 'Libre Franklin', sans-serif";
       ctx.fillText("TOWER ARCHETYPE: " + heistStructureName + " · 10-TIER VERTICAL ASCENT", 36, 28);
 
+      updateAndDrawVaultGuardian(heistPlayer.x, heistPlayer.y - heistCameraY, progressPct, "#ff99d3");
       checkAndDrawPhaseOverlay(progressPct);
 
       document.getElementById("arenaPercent").textContent = Math.floor(progressPct) + "%";
@@ -5787,14 +6373,7 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         const blk = waveBlocks[b];
         const sx = blk.x - waveCameraX;
         if (sx < -160 || sx > canvas.width + 160) continue;
-        ctx.fillStyle = "#4d0519";
-        ctx.fillRect(sx, blk.y, blk.w, blk.h);
-        ctx.strokeStyle = "#ff99d3";
-        ctx.lineWidth = 3;
-        ctx.strokeRect(sx, blk.y, blk.w, blk.h);
-        ctx.fillStyle = "#fff0f6";
-        ctx.font = "700 10px 'Libre Franklin', sans-serif";
-        ctx.fillText(blk.label, sx + 8, blk.y + 15);
+        drawIncidiusBlock(ctx, sx, blk.y, blk.w, blk.h, blk.label, "#4d0519", "#ff99d3", false, 0);
       }
 
       // Draw Auto-Jump Pads
@@ -5841,22 +6420,7 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         const sx = portal.x - waveCameraX;
         if (sx > -80 && sx < canvas.width + 80) {
           const pb = getWaveBoundsAt(portal.x);
-          ctx.strokeStyle = portal.color;
-          ctx.lineWidth = 6;
-          ctx.strokeRect(sx - 18, pb.top + 8, 36, pb.bot - pb.top - 16);
-          ctx.fillStyle = portal.color;
-          ctx.font = "700 11px 'Libre Franklin', sans-serif";
-          ctx.fillText(portal.label, sx - 64, pb.top + 24);
-
-          const midY = (pb.top + pb.bot) / 2;
-          ctx.fillStyle = "#b8ff65";
-          ctx.beginPath();
-          ctx.moveTo(sx, midY - 12);
-          ctx.lineTo(sx + 10, midY);
-          ctx.lineTo(sx, midY + 12);
-          ctx.lineTo(sx - 10, midY);
-          ctx.closePath();
-          ctx.fill();
+          drawIncidiusPortal(ctx, sx, pb.top + 8, pb.bot - 8, portal.label, portal.color, portal.targetForm);
         }
       }
 
@@ -5897,46 +6461,48 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         ctx.restore();
       }
 
-      // Draw Neon Trail
+      // Draw Incidius Tapered Wave Ribbon Trail
       if (wavePlayer.trail.length > 1) {
-        ctx.strokeStyle = themeColor;
-        ctx.lineWidth = 6;
-        ctx.beginPath();
-        for (let i = 0; i < wavePlayer.trail.length; i++) {
-          const pt = wavePlayer.trail[i];
-          const sx = pt.x - waveCameraX - (wavePlayer.hasLaunched ? 0 : (wavePlayer.trail.length - i) * 3);
-          if (i === 0) ctx.moveTo(sx, pt.y);
-          else ctx.lineTo(sx, pt.y);
+        ctx.save();
+        for (let i = 1; i < wavePlayer.trail.length; i++) {
+          const pPrev = wavePlayer.trail[i - 1];
+          const pCurr = wavePlayer.trail[i];
+          const sxPrev = pPrev.x - waveCameraX - (wavePlayer.hasLaunched ? 0 : (wavePlayer.trail.length - (i - 1)) * 3);
+          const sxCurr = pCurr.x - waveCameraX - (wavePlayer.hasLaunched ? 0 : (wavePlayer.trail.length - i) * 3);
+          const pctTrail = i / wavePlayer.trail.length;
+          const ribbonW = Math.max(2, pctTrail * 11);
+
+          ctx.strokeStyle = themeColor;
+          ctx.lineWidth = ribbonW;
+          ctx.globalAlpha = Math.min(1.0, pctTrail * 0.85);
+          ctx.beginPath();
+          ctx.moveTo(sxPrev, pPrev.y);
+          ctx.lineTo(sxCurr, pCurr.y);
+          ctx.stroke();
         }
-        ctx.stroke();
+        ctx.restore();
       }
 
-      // Draw Spinning Sawblades
+      // Rail Grind Sparks when riding floor or ceiling
+      if (wavePlayer.onRail && wavePlayer.hasLaunched && isDrawPass && Math.random() < 0.45) {
+        particles.push({
+          x: wavePlayer.x - 14,
+          y: wavePlayer.y + (wavePlayer.vy >= 0 ? 14 : -14),
+          vx: -3 - Math.random() * 4,
+          vy: (Math.random() - 0.5) * 4,
+          color: Math.random() < 0.5 ? "#ffd166" : themeColor,
+          life: 0.5,
+          decay: 0.08,
+          size: 2.5
+        });
+      }
+
+      // Draw Spinning Sawblades with Incidius 12-Tooth & Gear Design
       for (let i = 0; i < waveObstacles.length; i++) {
         const ob = waveObstacles[i];
         const sx = ob.x - waveCameraX;
         if (sx < -100 || sx > canvas.width + 100) continue;
-
-        ctx.save();
-        ctx.translate(sx, ob.y);
-        ctx.rotate(ob.angle);
-        ctx.fillStyle = "#ff4d6d";
-        ctx.beginPath();
-        const teeth = 10;
-        for (let t = 0; t < teeth * 2; t++) {
-          const rad = t % 2 === 0 ? ob.r : ob.r * 0.72;
-          const a = (t * Math.PI) / teeth;
-          if (t === 0) ctx.moveTo(Math.cos(a) * rad, Math.sin(a) * rad);
-          else ctx.lineTo(Math.cos(a) * rad, Math.sin(a) * rad);
-        }
-        ctx.closePath();
-        ctx.fill();
-
-        ctx.fillStyle = "#3d0012";
-        ctx.beginPath();
-        ctx.arc(0, 0, ob.r * 0.35, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
+        drawIncidiusSawblade(ctx, sx, ob.y, ob.r, ob.angle, phase.isOverdrive ? "#ff4d6d" : themeColor);
       }
 
       // Goal Gate at 100%
@@ -5956,6 +6522,29 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         ctx.fillText("TERRAIN: " + waveTerrainName + " · PRESS SPACE OR CLICK TO LAUNCH!", 140, 215);
       }
 
+      // Jetpack propulsion flames in Ship/Jetpack form
+      if (wavePlayer.form === "jetpack" && wavePlayer.hasLaunched) {
+        ctx.save();
+        ctx.translate(wavePlayer.x - 20, wavePlayer.y);
+        const flameLen = 14 + (holdingInput ? 12 : 4) + Math.random() * 6;
+        ctx.fillStyle = "#ff4d6d";
+        ctx.beginPath();
+        ctx.moveTo(0, -6);
+        ctx.lineTo(-flameLen, 0);
+        ctx.lineTo(0, 6);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = "#ffd166";
+        ctx.beginPath();
+        ctx.moveTo(0, -3);
+        ctx.lineTo(-flameLen * 0.6, 0);
+        ctx.lineTo(0, 3);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      }
+
       // Draw Chog Cube / Ship / Wave Rider
       ctx.save();
       ctx.translate(wavePlayer.x, wavePlayer.y);
@@ -5970,7 +6559,7 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       ctx.restore();
 
       updateAndDrawRivalGhosts(wavePlayer.x, wavePlayer.y, progressPct);
-
+      updateAndDrawVaultGuardian(wavePlayer.x, wavePlayer.y, progressPct, themeColor);
       checkAndDrawPhaseOverlay(progressPct);
     }
 
@@ -6288,6 +6877,7 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
 
       updateAndDrawRivalGhosts(flappyPlayer.x, flappyPlayer.y, progressPct);
 
+      updateAndDrawVaultGuardian(flappyPlayer.x, flappyPlayer.y, progressPct, "#b8ff65");
       checkAndDrawPhaseOverlay(progressPct);
     }
 
@@ -6332,26 +6922,10 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
       }
 
       const world = STAGE_WORLDS[Math.min(4, currentStageLevel)] || STAGE_WORLDS[1];
-      ctx.fillStyle = world.bg;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      // Dynamic atmospheric world grid pulsing with EDM kick drum beatPulse
-      ctx.strokeStyle = world.gridColor;
-      ctx.lineWidth = 1 + beatPulse * 1.5;
-      const gridSpacing = 44;
-      const gridOffset = (frameTick * 0.4) % gridSpacing;
-      for (let x = -gridSpacing + gridOffset; x < canvas.width; x += gridSpacing) {
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, canvas.height);
-        ctx.stroke();
-      }
-      for (let y = 0; y < canvas.height; y += gridSpacing) {
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(canvas.width, y);
-        ctx.stroke();
-      }
+      const activeScrollX = selectedMode === "wave" ? waveCameraX : (selectedMode === "flappy" ? flappyCameraX : 0);
+      const activeScrollY = selectedMode === "heist" ? heistCameraY : 0;
+      const themeColor = getModeThemeColor();
+      drawIncidiusParallaxBackground(activeScrollX, activeScrollY, world, themeColor);
 
       if (gameActive) {
         if (selectedMode === "heist") {
@@ -6412,6 +6986,8 @@ STATUS       = LIVE_PRODUCTION_ENGINE`
         ctx.fillText(ft.text, ft.x - 36, ft.y);
         ctx.globalAlpha = 1;
       }
+
+      drawStaticTvOverlay();
 
       ctx.restore();
       if (gameActive || particles.length > 0 || floatingTexts.length > 0 || shockwaves.length > 0) {

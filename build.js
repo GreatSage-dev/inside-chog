@@ -1,12 +1,14 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const dist = path.resolve('dist');
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const dist = path.resolve(__dirname, 'dist');
 if (!fs.existsSync(dist)) {
   fs.mkdirSync(dist, { recursive: true });
 }
 
-const files = fs.readdirSync('.');
+const files = fs.readdirSync(__dirname);
 let copied = 0;
 for (const file of files) {
   if (
@@ -16,7 +18,7 @@ for (const file of files) {
     file.endsWith('.svg') ||
     file.endsWith('.ico')
   ) {
-    fs.copyFileSync(file, path.join(dist, file));
+    fs.copyFileSync(path.join(__dirname, file), path.join(dist, file));
     copied++;
   }
 }

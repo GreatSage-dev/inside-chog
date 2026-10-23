@@ -1,0 +1,715 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>INSIDE CHOG · Full Judge Demo (Motionmaxxing)</title>
+<meta name="viewport" content="width=1920, height=1080">
+<link rel="stylesheet" href="./runtime/fonts.css">
+<style>
+:root {
+  --bg: #22000a;
+  --surface: #360012;
+  --surface-raised: #4d031b;
+  --ink: #fff0f7;
+  --ink-muted: #f29bcb;
+  --accent: #ff99d3;
+  --gold: #ffd166;
+  --acid: #b8ff65;
+  --danger: #ff4d6d;
+  --font: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  margin: 0;
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  background: #000;
+  font-family: var(--font);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+#main {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 30%, #4a0319 0%, #1e0008 70%, #100004 100%);
+}
+
+/* Atmospheric grid background */
+.grid-bg {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(to right, rgba(255, 153, 211, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 153, 211, 0.06) 1px, transparent 1px);
+  background-size: 54px 54px;
+  pointer-events: none;
+}
+
+/* Atmospheric Glow Orbs */
+.glow-orb-1 {
+  position: absolute;
+  top: -150px;
+  right: -100px;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(255, 153, 211, 0.15) 0%, transparent 70%);
+  filter: blur(80px);
+  pointer-events: none;
+}
+.glow-orb-2 {
+  position: absolute;
+  bottom: -150px;
+  left: -100px;
+  width: 700px;
+  height: 700px;
+  background: radial-gradient(circle, rgba(184, 255, 101, 0.08) 0%, transparent 70%);
+  filter: blur(90px);
+  pointer-events: none;
+}
+
+/* Header Telemetry */
+.header-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 76px;
+  padding: 0 54px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 153, 211, 0.2);
+  background: rgba(30, 0, 9, 0.9);
+  backdrop-filter: blur(20px);
+  z-index: 100;
+}
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.brand-mark {
+  background: var(--ink);
+  color: #22000a;
+  font-weight: 900;
+  font-size: 14px;
+  letter-spacing: 0.12em;
+  padding: 5px 10px;
+  clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 0 100%);
+}
+.brand-title {
+  font-weight: 800;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+.badge-pill {
+  font-family: monospace;
+  font-size: 13px;
+  padding: 5px 14px;
+  border-radius: 4px;
+  letter-spacing: 0.06em;
+  border: 1px solid rgba(255, 153, 211, 0.35);
+  background: rgba(255, 153, 211, 0.08);
+  color: var(--ink-muted);
+}
+.badge-pill.active {
+  border-color: var(--acid);
+  color: var(--acid);
+  background: rgba(184, 255, 101, 0.12);
+}
+.stage-indicator {
+  font-family: monospace;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--gold);
+  letter-spacing: 0.1em;
+}
+
+/* Scene Container - Visibility purely managed by motion.js (NO display:none, NO opacity:0) */
+.scene {
+  position: absolute;
+  inset: 0;
+  padding-top: 76px;
+  padding-bottom: 124px;
+  box-sizing: border-box;
+}
+
+/* Scene 1: Hook */
+#s1 .content-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.95fr;
+  height: 100%;
+  padding: 50px 80px;
+  gap: 60px;
+  align-items: center;
+}
+.hook-headline {
+  font-size: 80px;
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  color: #fff;
+}
+.hook-headline span {
+  color: var(--accent);
+  text-shadow: 0 0 30px rgba(255, 153, 211, 0.4);
+}
+.hook-subhead {
+  font-size: 24px;
+  line-height: 1.45;
+  color: var(--ink-muted);
+  margin-top: 24px;
+  max-width: 680px;
+}
+.hook-metrics {
+  display: flex;
+  gap: 20px;
+  margin-top: 36px;
+}
+.metric-box {
+  background: rgba(255, 153, 211, 0.08);
+  border: 1px solid rgba(255, 153, 211, 0.25);
+  padding: 16px 22px;
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%);
+}
+.metric-val {
+  font-size: 34px;
+  font-weight: 900;
+  font-family: monospace;
+  color: var(--gold);
+}
+.metric-label {
+  font-size: 13px;
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 4px;
+}
+.hook-visual {
+  position: relative;
+  perspective: 1200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.hero-card {
+  width: 600px;
+  border-radius: 14px;
+  border: 2px solid rgba(255, 153, 211, 0.35);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.85), 0 0 60px rgba(255, 153, 211, 0.25);
+  transform: rotateY(-6deg) rotateX(3deg);
+  overflow: hidden;
+}
+
+/* Scene 2: ROM Compiler */
+#s2 .compiler-stage {
+  padding: 40px 80px;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 48px;
+  height: 100%;
+  align-items: center;
+}
+.ui-panel {
+  background: rgba(30, 0, 10, 0.85);
+  border: 1px solid rgba(255, 153, 211, 0.25);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 24px 70px rgba(0,0,0,0.7);
+}
+.ui-panel img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.specs-card {
+  background: rgba(45, 2, 16, 0.75);
+  border: 1px solid rgba(255, 153, 211, 0.3);
+  padding: 38px;
+  border-radius: 10px;
+  clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 0 100%);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+}
+.spec-title {
+  font-size: 38px;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin-bottom: 20px;
+}
+.spec-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 153, 211, 0.14);
+  font-family: monospace;
+  font-size: 16px;
+}
+.spec-key { color: var(--ink-muted); }
+.spec-val { color: var(--gold); font-weight: 700; }
+.spec-val.acid { color: var(--acid); font-weight: 800; text-shadow: 0 0 12px rgba(184, 255, 101, 0.5); }
+
+/* Scene 3: Gameplay Arcade */
+#s3 .gameplay-stage {
+  padding: 24px 80px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.arcade-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 16px;
+}
+.arcade-title {
+  font-size: 36px;
+  font-weight: 900;
+  color: #fff;
+}
+.arcade-frame {
+  width: 100%;
+  height: 640px;
+  border: 2px solid rgba(255, 153, 211, 0.45);
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 30px 90px rgba(0,0,0,0.85), 0 0 80px rgba(184, 255, 101, 0.2);
+}
+.arcade-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+.arcade-overlay-badge {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  background: rgba(0, 0, 0, 0.88);
+  border: 1px solid var(--acid);
+  color: var(--acid);
+  font-family: monospace;
+  font-size: 15px;
+  padding: 8px 18px;
+  font-weight: 800;
+  border-radius: 4px;
+  box-shadow: 0 0 20px rgba(184, 255, 101, 0.3);
+}
+
+/* Scene 4: Revenue Split */
+#s4 .revenue-stage {
+  padding: 40px 80px;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 50px;
+  align-items: center;
+}
+.split-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.split-bar {
+  background: rgba(255, 153, 211, 0.06);
+  border: 1px solid rgba(255, 153, 211, 0.25);
+  padding: 22px 26px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%);
+}
+.split-bar.gold { border-left: 8px solid var(--gold); }
+.split-bar.accent { border-left: 8px solid var(--accent); }
+.split-bar.danger { border-left: 8px solid var(--danger); }
+.split-pct {
+  font-size: 40px;
+  font-weight: 900;
+  font-family: monospace;
+  color: #fff;
+  width: 105px;
+}
+.split-desc {
+  flex: 1;
+  padding: 0 20px;
+}
+.split-desc h4 { font-size: 20px; color: #fff; font-weight: 800; }
+.split-desc p { font-size: 14px; color: var(--ink-muted); margin-top: 3px; }
+.split-amt {
+  font-family: monospace;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--gold);
+}
+
+/* Scene 5: Ablation */
+#s5 .ablation-stage {
+  padding: 30px 80px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.alert-banner {
+  background: rgba(255, 77, 109, 0.2);
+  border: 2px solid var(--danger);
+  padding: 18px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22px;
+  clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%);
+  box-shadow: 0 0 40px rgba(255, 77, 109, 0.3);
+}
+.alert-banner-text {
+  font-family: monospace;
+  font-weight: 900;
+  font-size: 17px;
+  color: #fff;
+  letter-spacing: 0.06em;
+}
+
+/* Scene 6: Outro */
+#s6 .outro-stage {
+  padding: 40px 80px;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 50px;
+  align-items: center;
+}
+.cta-box {
+  background: rgba(255, 153, 211, 0.06);
+  border: 1px solid rgba(255, 153, 211, 0.35);
+  padding: 48px;
+  clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 24px, 100% 100%, 0 100%);
+}
+.cta-title {
+  font-size: 54px;
+  font-weight: 900;
+  line-height: 1.05;
+  color: #fff;
+  margin-bottom: 24px;
+}
+.cta-link {
+  display: inline-block;
+  background: var(--ink);
+  color: #22000a;
+  font-size: 20px;
+  font-weight: 900;
+  padding: 16px 36px;
+  text-decoration: none;
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%);
+  margin-top: 28px;
+  letter-spacing: 0.04em;
+  box-shadow: 0 10px 30px rgba(255, 153, 211, 0.4);
+}
+
+/* Frosted Glass Karaoke Subtitles */
+.caption-bar {
+  position: absolute;
+  bottom: 34px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1440px;
+  padding: 16px 40px;
+  background: rgba(18, 0, 6, 0.88);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 153, 211, 0.3);
+  border-radius: 9999px;
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255, 153, 211, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  z-index: 200;
+  min-height: 70px;
+}
+.caption-text {
+  font-size: 23px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: rgba(255, 255, 255, 0.65);
+}
+.caption-text .word {
+  display: inline-block;
+  margin: 0 4px;
+  transition: color 0.1s ease, transform 0.1s ease;
+}
+.caption-text .word.active {
+  color: var(--gold);
+  font-weight: 900;
+  transform: scale(1.1);
+  text-shadow: 0 0 20px rgba(255, 209, 102, 0.8);
+}
+.caption-text .word.past {
+  color: #ffffff;
+}
+</style>
+</head>
+<body>
+<div id="main">
+  <div class="grid-bg"></div>
+  <div class="glow-orb-1"></div>
+  <div class="glow-orb-2"></div>
+
+  <!-- Header Telemetry -->
+  <header class="header-bar">
+    <div class="header-left">
+      <div class="brand-mark">CHOG-OS</div>
+      <div class="brand-title">INSIDE CHOG</div>
+      <div class="badge-pill active">● MONAD TESTNET 10143</div>
+    </div>
+    <div id="stage-badge" class="stage-indicator">STAGE 1 · THE HIGH-STAKES HOOK</div>
+    <div class="badge-pill">CONTRACT 0x6D8d...8c36</div>
+  </header>
+
+  <!-- SCENE 1: HOOK (0s - 16.5s) -->
+  <section id="s1" class="scene">
+    <div class="content-grid">
+      <div class="hook-info">
+        <h1 class="hook-headline">Dead JPEGs<br><span>Now Bleed.</span></h1>
+        <p class="hook-subhead">Inside Chog compiles dormant Chog NFTs on Monad into executable 60FPS arcade vaults and cash-flowing automated landlords.</p>
+        <div class="hook-metrics">
+          <div class="metric-box">
+            <div class="metric-val">95%</div>
+            <div class="metric-label">NFTs Earning $0</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-val">0.05 MON</div>
+            <div class="metric-label">Raid Entry Toll</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-val">40%</div>
+            <div class="metric-label">Landlord Revenue</div>
+          </div>
+        </div>
+      </div>
+      <div class="hook-visual">
+        <div class="hero-card" id="hero-card">
+          <img src="./assets/scene1_hero.png" style="width:100%; display:block;" alt="Inside Chog Hero">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCENE 2: ROM COMPILER (16.5s - 34.0s) -->
+  <section id="s2" class="scene">
+    <div class="compiler-stage">
+      <div class="ui-panel" id="compiler-panel">
+        <img src="./assets/scene2_compiler.png" alt="ROM Compiler">
+      </div>
+      <div class="specs-card" id="specs-card">
+        <h2 class="spec-title">Deterministic Trait Compilation</h2>
+        <div class="spec-row"><span class="spec-key">TOKEN ID</span><span class="spec-val">#402 (ARCADE STRIKER)</span></div>
+        <div class="spec-row"><span class="spec-key">BYTECODE HASH</span><span class="spec-val">0xac300c01b9...</span></div>
+        <div class="spec-row"><span class="spec-key">CLEAR-CHECK SOLVER</span><span class="spec-val acid">PASS (0.4ms)</span></div>
+        <div class="spec-row"><span class="spec-key">HAZARD GENOME</span><span class="spec-val">STEPPING STONES + LASERS</span></div>
+        <div class="spec-row"><span class="spec-key">BOUNTY POOL</span><span class="spec-val">14.80 MON</span></div>
+        <div class="spec-row"><span class="spec-key">LANDLORD OWNER</span><span class="spec-val">0x71C4...89A2</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCENE 3: GAMEPLAY ARCADE (34.0s - 53.5s) -->
+  <section id="s3" class="scene">
+    <div class="gameplay-stage">
+      <div class="arcade-header">
+        <h2 class="arcade-title">Incidius Geometry Dash Engine · 240 TPS Wave &amp; Boss Gauntlet</h2>
+        <div class="badge-pill active">240 TPS FIXED SUB-STEPPING · ZERO INPUT LAG</div>
+      </div>
+      <div class="arcade-frame" id="arcade-frame">
+        <img id="arcade-img-wave" src="./assets/incidius_wave.png" alt="Incidius Wave Engine" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;">
+        <img id="arcade-img-boss" src="./assets/incidius_boss.png" alt="Incidius Boss Climax" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0;">
+        <div id="arcade-badge" class="arcade-overlay-badge">INCIDIUS 2.2 WAVE CORRIDOR · 240 TPS</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCENE 4: 40/50/10 REVENUE (53.5s - 69.5s) -->
+  <section id="s4" class="scene">
+    <div class="revenue-stage">
+      <div class="split-cards" id="split-cards">
+        <div class="split-bar gold">
+          <div class="split-pct">40%</div>
+          <div class="split-desc">
+            <h4>Landlord Yield</h4>
+            <p>Routes instantly on-chain to verified ownerOf(tokenId)</p>
+          </div>
+          <div class="split-amt">+0.02 MON</div>
+        </div>
+        <div class="split-bar accent">
+          <div class="split-pct">50%</div>
+          <div class="split-desc">
+            <h4>Jackpot Bounty Pool</h4>
+            <p>Swells vault treasury for successful 100% penetrators</p>
+          </div>
+          <div class="split-amt">+0.025 MON</div>
+        </div>
+        <div class="split-bar danger">
+          <div class="split-pct">10%</div>
+          <div class="split-desc">
+            <h4>Deflationary Burn</h4>
+            <p>Permanent burn sink sent directly to 0x0...dEaD</p>
+          </div>
+          <div class="split-amt">+0.005 MON</div>
+        </div>
+      </div>
+      <div class="ui-panel" id="revenue-ui">
+        <img src="./assets/scene4_revenue.png" alt="Revenue Model">
+      </div>
+    </div>
+  </section>
+
+  <!-- SCENE 5: ABLATION (69.5s - 86.5s) -->
+  <section id="s5" class="scene">
+    <div class="ablation-stage">
+      <div class="alert-banner" id="ablation-banner">
+        <div class="alert-banner-text">CRITICAL ARCHITECTURAL ABLATION: CHOG NFT REMOVED FROM RUNTIME</div>
+        <div class="badge-pill" style="border-color:var(--danger); color:var(--danger); background:rgba(255,77,109,0.2);">ERR_EMPTY_CARTRIDGE · HALTED</div>
+      </div>
+      <div class="ui-panel" id="ablation-ui" style="border-color: rgba(255,77,109,0.6);">
+        <img src="./assets/scene5_ablation.png" alt="Ablation Proof">
+      </div>
+    </div>
+  </section>
+
+  <!-- SCENE 6: OUTRO (86.5s - 103.0s) -->
+  <section id="s6" class="scene">
+    <div class="outro-stage">
+      <div class="cta-box" id="cta-box">
+        <h2 class="cta-title">Live on Monad Testnet.<br>Raid the Vaults.</h2>
+        <div class="spec-row"><span class="spec-key">NETWORK</span><span class="spec-val acid">MONAD TESTNET (CHAIN ID 10143)</span></div>
+        <div class="spec-row"><span class="spec-key">VERIFIED CONTRACT</span><span class="spec-val">0x6D8d...8c36</span></div>
+        <div class="spec-row"><span class="spec-key">DEPLOYER BALANCE</span><span class="spec-val" style="color:var(--gold)">4.7603 MON</span></div>
+        <a class="cta-link" href="https://inside-chog.vercel.app">inside-chog.vercel.app</a>
+      </div>
+      <div class="ui-panel" id="outro-ui">
+        <img src="./assets/scene6_outro.png" alt="Verified Receipts">
+      </div>
+    </div>
+  </section>
+
+  <!-- Frosted Glass Karaoke Subtitles -->
+  <div class="caption-bar">
+    <div id="caption-text" class="caption-text">Welcome to Inside Chog.</div>
+  </div>
+</div>
+
+<script src="./runtime/vendor/gsap.min.js"></script>
+<script src="./runtime/motion.js"></script>
+<script>
+const M = Motion.film({ fps: 30, duration: 103, width: 1920, height: 1080 });
+
+const phrases = [{"words":[{"text":"Right","start":0,"end":0.279,"scene":"hook"},{"text":"now,","start":0.325,"end":0.557,"scene":"hook"}],"start":0,"end":0.557,"text":"Right now,"},{"words":[{"text":"ninety-five","start":0.627,"end":1.126,"scene":"hook"},{"text":"percent","start":1.161,"end":1.416,"scene":"hook"},{"text":"of","start":1.451,"end":1.498,"scene":"hook"},{"text":"NFTs","start":1.556,"end":2.009,"scene":"hook"},{"text":"are","start":2.043,"end":2.148,"scene":"hook"},{"text":"sitting","start":2.171,"end":2.415,"scene":"hook"},{"text":"dead","start":2.473,"end":2.635,"scene":"hook"}],"start":0.627,"end":2.635,"text":"ninety-five percent of NFTs are sitting dead"},{"words":[{"text":"in","start":2.67,"end":2.717,"scene":"hook"},{"text":"cold","start":2.775,"end":2.972,"scene":"hook"},{"text":"wallets.","start":3.019,"end":3.553,"scene":"hook"}],"start":2.67,"end":3.553,"text":"in cold wallets."},{"words":[{"text":"You","start":3.936,"end":4.04,"scene":"hook"},{"text":"bought","start":4.098,"end":4.249,"scene":"hook"},{"text":"a","start":4.272,"end":4.296,"scene":"hook"},{"text":"JPEG,","start":4.354,"end":5.039,"scene":"hook"}],"start":3.936,"end":5.039,"text":"You bought a JPEG,"},{"words":[{"text":"and","start":5.074,"end":5.306,"scene":"hook"},{"text":"it","start":5.364,"end":5.433,"scene":"hook"},{"text":"earns","start":5.503,"end":5.724,"scene":"hook"},{"text":"you","start":5.77,"end":5.863,"scene":"hook"},{"text":"zero","start":5.944,"end":6.281,"scene":"hook"},{"text":"dollars","start":6.339,"end":6.676,"scene":"hook"},{"text":"while","start":6.711,"end":6.873,"scene":"hook"}],"start":5.074,"end":6.873,"text":"and it earns you zero dollars while"},{"words":[{"text":"you","start":6.896,"end":6.966,"scene":"hook"},{"text":"wait","start":7.012,"end":7.152,"scene":"hook"},{"text":"for","start":7.198,"end":7.303,"scene":"hook"},{"text":"a","start":7.349,"end":7.372,"scene":"hook"},{"text":"buyer.","start":7.419,"end":7.895,"scene":"hook"}],"start":6.896,"end":7.895,"text":"you wait for a buyer."},{"words":[{"text":"What","start":8.336,"end":8.522,"scene":"hook"},{"text":"if","start":8.557,"end":8.626,"scene":"hook"},{"text":"your","start":8.673,"end":8.8,"scene":"hook"},{"text":"NFT","start":8.882,"end":9.276,"scene":"hook"},{"text":"was","start":9.451,"end":9.578,"scene":"hook"},{"text":"an","start":9.636,"end":9.706,"scene":"hook"},{"text":"arcade","start":9.787,"end":10.263,"scene":"hook"}],"start":8.336,"end":10.263,"text":"What if your NFT was an arcade"},{"words":[{"text":"machine","start":10.286,"end":10.751,"scene":"hook"},{"text":"that","start":10.832,"end":11.018,"scene":"hook"},{"text":"pays","start":11.064,"end":11.285,"scene":"hook"},{"text":"you","start":11.331,"end":11.413,"scene":"hook"},{"text":"rent","start":11.505,"end":11.738,"scene":"hook"},{"text":"every","start":11.854,"end":12.132,"scene":"hook"},{"text":"time","start":12.179,"end":12.423,"scene":"hook"}],"start":10.286,"end":12.423,"text":"machine that pays you rent every time"},{"words":[{"text":"someone","start":12.457,"end":12.725,"scene":"hook"},{"text":"plays","start":12.759,"end":13.015,"scene":"hook"},{"text":"it?","start":13.061,"end":13.293,"scene":"hook"}],"start":12.457,"end":13.293,"text":"someone plays it?"},{"words":[{"text":"Welcome","start":14.106,"end":14.466,"scene":"hook"},{"text":"to","start":14.489,"end":14.536,"scene":"hook"},{"text":"Inside","start":14.617,"end":15.105,"scene":"hook"},{"text":"Chog.","start":15.139,"end":15.929,"scene":"hook"}],"start":14.106,"end":15.929,"text":"Welcome to Inside Chog."},{"words":[{"text":"Every","start":16.5,"end":16.848,"scene":"revenue"},{"text":"Chog","start":16.918,"end":17.266,"scene":"revenue"},{"text":"NFT","start":17.336,"end":17.649,"scene":"revenue"},{"text":"compiles","start":17.8,"end":18.218,"scene":"revenue"},{"text":"into","start":18.265,"end":18.439,"scene":"revenue"},{"text":"an","start":18.52,"end":18.578,"scene":"revenue"},{"text":"executable","start":18.694,"end":19.298,"scene":"revenue"}],"start":16.5,"end":19.298,"text":"Every Chog NFT compiles into an executable"},{"words":[{"text":"arcade","start":19.344,"end":19.728,"scene":"revenue"},{"text":"vault.","start":19.762,"end":20.169,"scene":"revenue"}],"start":19.344,"end":20.169,"text":"arcade vault."},{"words":[{"text":"Challengers","start":20.552,"end":21.074,"scene":"revenue"},{"text":"pay","start":21.121,"end":21.272,"scene":"revenue"},{"text":"a","start":21.307,"end":21.33,"scene":"revenue"},{"text":"zero","start":21.399,"end":21.713,"scene":"revenue"},{"text":"point","start":21.759,"end":21.968,"scene":"revenue"},{"text":"zero","start":22.003,"end":22.235,"scene":"revenue"},{"text":"five","start":22.293,"end":22.572,"scene":"revenue"}],"start":20.552,"end":22.572,"text":"Challengers pay a zero point zero five"},{"words":[{"text":"MON","start":22.63,"end":22.932,"scene":"revenue"},{"text":"entry","start":22.978,"end":23.187,"scene":"revenue"},{"text":"ticket.","start":23.234,"end":23.64,"scene":"revenue"}],"start":22.63,"end":23.64,"text":"MON entry ticket."},{"words":[{"text":"Half","start":24.081,"end":24.325,"scene":"revenue"},{"text":"of","start":24.383,"end":24.43,"scene":"revenue"},{"text":"that","start":24.476,"end":24.604,"scene":"revenue"},{"text":"ticket","start":24.65,"end":24.94,"scene":"revenue"},{"text":"goes","start":24.987,"end":25.161,"scene":"revenue"},{"text":"straight","start":25.196,"end":25.451,"scene":"revenue"},{"text":"to","start":25.475,"end":25.533,"scene":"revenue"}],"start":24.081,"end":25.533,"text":"Half of that ticket goes straight to"},{"words":[{"text":"the","start":25.579,"end":25.649,"scene":"revenue"},{"text":"jackpot.","start":25.683,"end":26.287,"scene":"revenue"}],"start":25.579,"end":26.287,"text":"the jackpot."},{"words":[{"text":"Ten","start":26.728,"end":26.995,"scene":"revenue"},{"text":"percent","start":27.077,"end":27.413,"scene":"revenue"},{"text":"burns","start":27.46,"end":27.692,"scene":"revenue"},{"text":"forever.","start":27.75,"end":28.284,"scene":"revenue"}],"start":26.728,"end":28.284,"text":"Ten percent burns forever."},{"words":[{"text":"And","start":28.563,"end":28.714,"scene":"revenue"},{"text":"forty","start":28.83,"end":29.097,"scene":"revenue"},{"text":"percent","start":29.155,"end":29.492,"scene":"revenue"},{"text":"goes","start":29.55,"end":29.712,"scene":"revenue"},{"text":"directly","start":29.747,"end":30.142,"scene":"revenue"},{"text":"into","start":30.177,"end":30.281,"scene":"revenue"},{"text":"the","start":30.339,"end":30.409,"scene":"revenue"}],"start":28.563,"end":30.409,"text":"And forty percent goes directly into the"},{"words":[{"text":"NFT","start":30.455,"end":30.757,"scene":"revenue"},{"text":"owner's","start":30.873,"end":31.117,"scene":"revenue"},{"text":"wallet","start":31.187,"end":31.535,"scene":"revenue"},{"text":"as","start":31.605,"end":31.779,"scene":"revenue"},{"text":"instant","start":31.86,"end":32.173,"scene":"revenue"},{"text":"cash","start":32.22,"end":32.475,"scene":"revenue"},{"text":"flow.","start":32.499,"end":33.079,"scene":"revenue"}],"start":30.455,"end":33.079,"text":"NFT owner's wallet as instant cash flow."},{"words":[{"text":"Inside","start":34,"end":34.546,"scene":"wave"},{"text":"Chog","start":34.592,"end":34.929,"scene":"wave"},{"text":"runs","start":34.998,"end":35.242,"scene":"wave"},{"text":"four","start":35.358,"end":35.614,"scene":"wave"},{"text":"full","start":35.672,"end":35.869,"scene":"wave"},{"text":"arcade","start":35.916,"end":36.299,"scene":"wave"},{"text":"engines.","start":36.334,"end":36.844,"scene":"wave"}],"start":34,"end":36.844,"text":"Inside Chog runs four full arcade engines."},{"words":[{"text":"In","start":37.228,"end":37.355,"scene":"wave"},{"text":"the","start":37.39,"end":37.46,"scene":"wave"},{"text":"Geometry","start":37.506,"end":38.052,"scene":"wave"},{"text":"Dash","start":38.098,"end":38.377,"scene":"wave"},{"text":"Wave,","start":38.458,"end":38.841,"scene":"wave"}],"start":37.228,"end":38.841,"text":"In the Geometry Dash Wave,"},{"words":[{"text":"we","start":38.865,"end":38.957,"scene":"wave"},{"text":"ported","start":39.016,"end":39.283,"scene":"wave"},{"text":"the","start":39.306,"end":39.375,"scene":"wave"},{"text":"real","start":39.445,"end":39.642,"scene":"wave"},{"text":"twenty-two","start":39.689,"end":40.095,"scene":"wave"},{"text":"physics","start":40.165,"end":40.502,"scene":"wave"},{"text":"standard","start":40.525,"end":40.989,"scene":"wave"}],"start":38.865,"end":40.989,"text":"we ported the real twenty-two physics standard"},{"words":[{"text":"at","start":41.163,"end":41.361,"scene":"wave"},{"text":"two","start":41.396,"end":41.558,"scene":"wave"},{"text":"hundred","start":41.628,"end":41.872,"scene":"wave"},{"text":"and","start":41.895,"end":41.964,"scene":"wave"},{"text":"forty","start":42.022,"end":42.266,"scene":"wave"},{"text":"sub-ticks","start":42.336,"end":42.812,"scene":"wave"},{"text":"per","start":42.847,"end":42.963,"scene":"wave"}],"start":41.163,"end":42.963,"text":"at two hundred and forty sub-ticks per"},{"words":[{"text":"second.","start":43.009,"end":43.416,"scene":"wave"}],"start":43.009,"end":43.416,"text":"second."},{"words":[{"text":"RobTop's","start":44.112,"end":44.693,"scene":"wave"},{"text":"sixty","start":44.867,"end":45.204,"scene":"wave"},{"text":"percent","start":45.262,"end":45.587,"scene":"wave"},{"text":"inner","start":45.645,"end":45.819,"scene":"wave"},{"text":"hitboxes","start":45.877,"end":46.457,"scene":"wave"},{"text":"give","start":46.516,"end":46.678,"scene":"wave"},{"text":"you","start":46.713,"end":46.794,"scene":"wave"}],"start":44.112,"end":46.794,"text":"RobTop's sixty percent inner hitboxes give you"},{"words":[{"text":"skin-of-the-teeth","start":46.864,"end":47.595,"scene":"wave"},{"text":"near-miss","start":47.769,"end":48.21,"scene":"wave"},{"text":"sparks,","start":48.234,"end":48.884,"scene":"wave"}],"start":46.864,"end":48.884,"text":"skin-of-the-teeth near-miss sparks,"},{"words":[{"text":"while","start":49.209,"end":49.441,"scene":"wave"},{"text":"procedural","start":49.476,"end":49.987,"scene":"wave"},{"text":"EDM","start":50.068,"end":50.463,"scene":"wave"},{"text":"drops","start":50.532,"end":50.823,"scene":"wave"},{"text":"at","start":50.857,"end":50.939,"scene":"wave"},{"text":"two","start":50.974,"end":51.113,"scene":"wave"},{"text":"hundred","start":51.171,"end":51.38,"scene":"wave"}],"start":49.209,"end":51.38,"text":"while procedural EDM drops at two hundred"},{"words":[{"text":"and","start":51.403,"end":51.473,"scene":"wave"},{"text":"fifty-six","start":51.519,"end":51.96,"scene":"wave"},{"text":"BPM.","start":52.018,"end":52.808,"scene":"wave"}],"start":51.403,"end":52.808,"text":"and fifty-six BPM."},{"words":[{"text":"Or","start":53.5,"end":53.674,"scene":"social"},{"text":"play","start":53.767,"end":54.022,"scene":"social"},{"text":"the","start":54.092,"end":54.162,"scene":"social"},{"text":"Social","start":54.231,"end":54.615,"scene":"social"},{"text":"Infiltration","start":54.684,"end":55.358,"scene":"social"},{"text":"Heist.","start":55.427,"end":55.88,"scene":"social"}],"start":53.5,"end":55.88,"text":"Or play the Social Infiltration Heist."},{"words":[{"text":"AI","start":56.321,"end":56.67,"scene":"social"},{"text":"understands","start":56.739,"end":57.18,"scene":"social"},{"text":"your","start":57.204,"end":57.308,"scene":"social"},{"text":"pitch,","start":57.343,"end":57.714,"scene":"social"}],"start":56.321,"end":57.714,"text":"AI understands your pitch,"},{"words":[{"text":"but","start":58.04,"end":58.202,"scene":"social"},{"text":"deterministic","start":58.248,"end":59.026,"scene":"social"},{"text":"code","start":59.084,"end":59.433,"scene":"social"},{"text":"decides","start":59.479,"end":59.874,"scene":"social"},{"text":"who","start":59.897,"end":60.002,"scene":"social"},{"text":"wins.","start":60.06,"end":60.547,"scene":"social"}],"start":58.04,"end":60.547,"text":"but deterministic code decides who wins."},{"words":[{"text":"Complimenting","start":61.058,"end":61.766,"scene":"social"},{"text":"a","start":61.813,"end":61.836,"scene":"social"},{"text":"Sentinel's","start":61.917,"end":62.312,"scene":"social"},{"text":"Royal","start":62.358,"end":62.579,"scene":"social"},{"text":"Crown","start":62.637,"end":62.916,"scene":"social"},{"text":"triggers","start":62.974,"end":63.322,"scene":"social"},{"text":"a","start":63.368,"end":63.403,"scene":"social"}],"start":61.058,"end":63.403,"text":"Complimenting a Sentinel's Royal Crown triggers a"},{"words":[{"text":"two","start":63.473,"end":63.659,"scene":"social"},{"text":"point","start":63.74,"end":63.972,"scene":"social"},{"text":"four","start":64.03,"end":64.228,"scene":"social"},{"text":"times","start":64.286,"end":64.588,"scene":"social"},{"text":"flattery","start":64.646,"end":64.994,"scene":"social"},{"text":"weakness.","start":65.052,"end":65.586,"scene":"social"}],"start":63.473,"end":65.586,"text":"two point four times flattery weakness."},{"words":[{"text":"And","start":65.911,"end":66.05,"scene":"social"},{"text":"prompt","start":66.108,"end":66.387,"scene":"social"},{"text":"injections","start":66.422,"end":66.944,"scene":"social"},{"text":"are","start":66.979,"end":67.072,"scene":"social"},{"text":"stopped","start":67.095,"end":67.374,"scene":"social"},{"text":"dead","start":67.397,"end":67.536,"scene":"social"},{"text":"by","start":67.571,"end":67.653,"scene":"social"}],"start":65.911,"end":67.653,"text":"And prompt injections are stopped dead by"},{"words":[{"text":"the","start":67.687,"end":67.757,"scene":"social"},{"text":"governor.","start":67.792,"end":68.454,"scene":"social"}],"start":67.687,"end":68.454,"text":"the governor."},{"words":[{"text":"Now","start":69.5,"end":69.674,"scene":"ablation"},{"text":"the","start":69.721,"end":69.79,"scene":"ablation"},{"text":"ultimate","start":69.848,"end":70.197,"scene":"ablation"},{"text":"test.","start":70.22,"end":70.684,"scene":"ablation"}],"start":69.5,"end":70.684,"text":"Now the ultimate test."},{"words":[{"text":"Watch","start":71.125,"end":71.404,"scene":"ablation"},{"text":"what","start":71.439,"end":71.555,"scene":"ablation"},{"text":"happens","start":71.613,"end":71.926,"scene":"ablation"},{"text":"when","start":71.95,"end":72.066,"scene":"ablation"},{"text":"we","start":72.101,"end":72.182,"scene":"ablation"},{"text":"eject","start":72.217,"end":72.495,"scene":"ablation"},{"text":"the","start":72.53,"end":72.6,"scene":"ablation"}],"start":71.125,"end":72.6,"text":"Watch what happens when we eject the"},{"words":[{"text":"cartridge.","start":72.635,"end":73.169,"scene":"ablation"}],"start":72.635,"end":73.169,"text":"cartridge."},{"words":[{"text":"The","start":73.552,"end":73.68,"scene":"ablation"},{"text":"entire","start":73.738,"end":74.19,"scene":"ablation"},{"text":"engine","start":74.248,"end":74.574,"scene":"ablation"},{"text":"immediately","start":74.597,"end":75.026,"scene":"ablation"},{"text":"halts.","start":75.096,"end":75.618,"scene":"ablation"}],"start":73.552,"end":75.618,"text":"The entire engine immediately halts."},{"words":[{"text":"No","start":75.944,"end":76.106,"scene":"ablation"},{"text":"map","start":76.187,"end":76.361,"scene":"ablation"},{"text":"can","start":76.431,"end":76.547,"scene":"ablation"},{"text":"generate,","start":76.617,"end":77.197,"scene":"ablation"}],"start":75.944,"end":77.197,"text":"No map can generate,"},{"words":[{"text":"no","start":77.406,"end":77.557,"scene":"ablation"},{"text":"vault","start":77.65,"end":77.882,"scene":"ablation"},{"text":"can","start":77.929,"end":78.057,"scene":"ablation"},{"text":"load,","start":78.126,"end":78.591,"scene":"ablation"}],"start":77.406,"end":78.591,"text":"no vault can load,"},{"words":[{"text":"and","start":78.8,"end":78.951,"scene":"ablation"},{"text":"no","start":79.02,"end":79.148,"scene":"ablation"},{"text":"game","start":79.229,"end":79.45,"scene":"ablation"},{"text":"can","start":79.485,"end":79.601,"scene":"ablation"},{"text":"start.","start":79.647,"end":80.112,"scene":"ablation"}],"start":78.8,"end":80.112,"text":"and no game can start."},{"words":[{"text":"The","start":80.622,"end":80.762,"scene":"ablation"},{"text":"Chog","start":80.831,"end":81.214,"scene":"ablation"},{"text":"NFT","start":81.296,"end":81.749,"scene":"ablation"},{"text":"isn't","start":82.027,"end":82.259,"scene":"ablation"},{"text":"cosmetic.","start":82.306,"end":83.06,"scene":"ablation"}],"start":80.622,"end":83.06,"text":"The Chog NFT isn't cosmetic."},{"words":[{"text":"It","start":83.386,"end":83.513,"scene":"ablation"},{"text":"is","start":83.56,"end":83.641,"scene":"ablation"},{"text":"the","start":83.699,"end":83.769,"scene":"ablation"},{"text":"load-bearing","start":83.862,"end":84.454,"scene":"ablation"},{"text":"hardware","start":84.535,"end":84.918,"scene":"ablation"},{"text":"engine.","start":84.964,"end":85.615,"scene":"ablation"}],"start":83.386,"end":85.615,"text":"It is the load-bearing hardware engine."},{"words":[{"text":"Inside","start":86.5,"end":87.08,"scene":"outro"},{"text":"Chog","start":87.127,"end":87.44,"scene":"outro"},{"text":"is","start":87.498,"end":87.58,"scene":"outro"},{"text":"live","start":87.673,"end":87.951,"scene":"outro"},{"text":"right","start":87.986,"end":88.149,"scene":"outro"},{"text":"now","start":88.195,"end":88.311,"scene":"outro"},{"text":"on","start":88.381,"end":88.462,"scene":"outro"}],"start":86.5,"end":88.462,"text":"Inside Chog is live right now on"},{"words":[{"text":"Monad","start":88.52,"end":88.834,"scene":"outro"},{"text":"Testnet","start":88.868,"end":89.368,"scene":"outro"},{"text":"at","start":89.437,"end":89.577,"scene":"outro"},{"text":"inside-chog.vercel.app.","start":89.67,"end":92.618,"scene":"outro"}],"start":88.52,"end":92.618,"text":"Monad Testnet at inside-chog.vercel.app."},{"words":[{"text":"Verified","start":93.002,"end":93.512,"scene":"outro"},{"text":"contracts.","start":93.559,"end":94.325,"scene":"outro"}],"start":93.002,"end":94.325,"text":"Verified contracts."},{"words":[{"text":"Zero","start":94.708,"end":95.103,"scene":"outro"},{"text":"mocks.","start":95.184,"end":95.753,"scene":"outro"}],"start":94.708,"end":95.753,"text":"Zero mocks."},{"words":[{"text":"Stop","start":96.194,"end":96.554,"scene":"outro"},{"text":"letting","start":96.636,"end":96.868,"scene":"outro"},{"text":"your","start":96.903,"end":97.007,"scene":"outro"},{"text":"JPEGs","start":97.077,"end":97.529,"scene":"outro"},{"text":"sleep.","start":97.553,"end":98.017,"scene":"outro"}],"start":96.194,"end":98.017,"text":"Stop letting your JPEGs sleep."},{"words":[{"text":"Turn","start":98.342,"end":98.598,"scene":"outro"},{"text":"them","start":98.644,"end":98.76,"scene":"outro"},{"text":"into","start":98.807,"end":98.946,"scene":"outro"},{"text":"cash-flowing","start":99.016,"end":99.689,"scene":"outro"},{"text":"arcade","start":99.747,"end":100.118,"scene":"outro"},{"text":"vaults.","start":100.153,"end":100.641,"scene":"outro"}],"start":98.342,"end":100.641,"text":"Turn them into cash-flowing arcade vaults."},{"words":[{"text":"Thank","start":101.082,"end":101.338,"scene":"outro"},{"text":"you.","start":101.384,"end":101.918,"scene":"outro"}],"start":101.082,"end":101.918,"text":"Thank you."}];
+
+const scenes = [
+  { id: 's1', start: 0, end: 16.5, stage: 'STAGE 1 · THE HIGH-STAKES HOOK' },
+  { id: 's2', start: 16.5, end: 34.0, stage: 'STAGE 2 · DETERMINISTIC ROM COMPILER' },
+  { id: 's3', start: 34.0, end: 53.5, stage: 'STAGE 3 · 240 TPS ARCADE GAMEPLAY' },
+  { id: 's4', start: 53.5, end: 69.5, stage: 'STAGE 4 · 40/50/10 REVENUE ENGINE' },
+  { id: 's5', start: 69.5, end: 86.5, stage: 'STAGE 5 · LOAD-BEARING ABLATION PROOF' },
+  { id: 's6', start: 86.5, end: 103.0, stage: 'STAGE 6 · VERIFIED MONAD TESTNET RECEIPTS' }
+];
+
+const stageBadge = document.getElementById('stage-badge');
+const captionContainer = document.getElementById('caption-text');
+
+// Scene cut transitions (Frame-accurate hard cuts)
+scenes.forEach((sc, i) => {
+  const f = Math.round(sc.start * 30);
+  const hideOthers = scenes.filter((_, idx) => idx !== i).map(x => '#' + x.id);
+  M.cut(f, { hide: hideOthers, show: ['#' + sc.id] });
+});
+
+// Scene 1: Card 3D entrance and drift
+M.enter('#hero-card', { at: 2, frames: 16, from: { y: 60, scale: 0.9, opacity: 0 } });
+M.kf('#hero-card', 'scale', [[2, 0.9], [250, 1.0], [490, 1.03, 'glide']]);
+
+// Scene 2: Compiler panel snap
+M.enter('#compiler-panel', { at: 500, frames: 14, from: { x: -80, opacity: 0 } });
+M.enter('#specs-card', { at: 508, frames: 16, from: { x: 80, opacity: 0 } });
+
+// Scene 3: Arcade frame entry and zoom
+M.enter('#arcade-frame', { at: 1025, frames: 16, from: { scale: 0.94, opacity: 0 } });
+M.kf('#arcade-frame', 'scale', [[1025, 0.94], [1300, 1.0], [1600, 1.02, 'glide']]);
+
+// Scene 4: Split cards cascading entry
+M.enter('#split-cards', { at: 1610, frames: 15, from: { y: 40, opacity: 0 } });
+M.enter('#revenue-ui', { at: 1618, frames: 15, from: { scale: 0.95, opacity: 0 } });
+
+// Scene 5: Ablation alert pulse
+M.enter('#ablation-banner', { at: 2090, frames: 12, from: { y: -30, opacity: 0 } });
+M.enter('#ablation-ui', { at: 2098, frames: 16, from: { scale: 0.96, opacity: 0 } });
+
+// Scene 6: Outro cta entry
+M.enter('#cta-box', { at: 2600, frames: 16, from: { x: -60, opacity: 0 } });
+M.enter('#outro-ui', { at: 2608, frames: 16, from: { x: 60, opacity: 0 } });
+
+// WRAP window.__seek SO MOTION'S INTERNAL TIMELINE AND CLOCK RUN DETERMINISTICALLY
+const motionSeek = window.__seek;
+window.__seek = (t) => {
+  // 1. Run Motion.js internal seek (GSAP tweens, visibility ops, renders)
+  if (typeof motionSeek === 'function') {
+    motionSeek(t);
+  }
+
+  // 2. Update stage telemetry badge
+  const activeScene = scenes.find(s => t >= s.start && t < s.end) || scenes[scenes.length - 1];
+  if (activeScene && stageBadge.innerText !== activeScene.stage) {
+    stageBadge.innerText = activeScene.stage;
+  }
+
+  // 2b. Update Arcade Stage sub-modes (Incidius Wave vs 256 BPM Boss Climax)
+  const waveImg = document.getElementById('arcade-img-wave');
+  const bossImg = document.getElementById('arcade-img-boss');
+  const arcadeBadge = document.getElementById('arcade-badge');
+  if (waveImg && bossImg && arcadeBadge) {
+    if (t >= 44.0 && t < 53.5) {
+      waveImg.style.opacity = '0';
+      bossImg.style.opacity = '1';
+      arcadeBadge.innerText = 'OVERDRIVE 256 BPM · VAULT GUARDIAN #402';
+      arcadeBadge.style.borderColor = 'var(--danger)';
+      arcadeBadge.style.color = 'var(--danger)';
+      arcadeBadge.style.boxShadow = '0 0 20px rgba(255, 77, 109, 0.5)';
+    } else {
+      waveImg.style.opacity = '1';
+      bossImg.style.opacity = '0';
+      arcadeBadge.innerText = 'INCIDIUS 2.2 WAVE CORRIDOR · 240 TPS';
+      arcadeBadge.style.borderColor = 'var(--acid)';
+      arcadeBadge.style.color = 'var(--acid)';
+      arcadeBadge.style.boxShadow = '0 0 20px rgba(184, 255, 101, 0.3)';
+    }
+  }
+
+  // 3. Update word-level karaoke subtitles
+  const phrase = phrases.find(p => t >= p.start - 0.1 && t <= p.end + 0.3);
+  if (!phrase) {
+    captionContainer.innerHTML = '<span style="opacity:0.4">Inside Chog · Monad Testnet</span>';
+    return;
+  }
+
+  let htmlWords = '';
+  for (const w of phrase.words) {
+    const isActive = t >= w.start && t <= w.end + 0.08;
+    const isPast = t > w.end + 0.08;
+    const cls = isActive ? 'word active' : (isPast ? 'word past' : 'word');
+    htmlWords += '<span class="' + cls + '">' + w.text + '</span> ';
+  }
+  captionContainer.innerHTML = htmlWords;
+};
+
+window.__ready = Motion.loaded();
+</script>
+</body>
+</html>
